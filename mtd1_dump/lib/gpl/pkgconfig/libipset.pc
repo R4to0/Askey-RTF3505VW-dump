@@ -1,0 +1,11 @@
+prefix=/home/Public/_Build/release/BRCMGPON/RTF35XX/414L04A_gvt/targets/RTF3505VW_NV/fs.install
+exec_prefix=${prefix}
+libdir=/home/Public/_Build/release/BRCMGPON/RTF35XX/414L04A_gvt/targets/RTF3505VW_NV/fs.install/lib/gpl
+includedir=/home/Public/_Build/release/BRCMGPON/RTF35XX/414L04A_gvt/targets/RTF3505VW_NV/fs.install/include
+
+Name: libipset
+Description: Userspace library for the ipset extensions and the kernel interface
+Version: 6.34
+Cflags: -I${includedir}
+Libs: -L${libdir} -lipset
+Requires.private: libmnl >= 1

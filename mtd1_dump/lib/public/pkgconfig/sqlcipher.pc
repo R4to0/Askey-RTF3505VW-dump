@@ -1,0 +1,13 @@
+# Package Information for pkg-config
+
+prefix=/home/Public/_Build/release/BRCMGPON/RTF35XX/414L04A_gvt/userspace/public/libs/sqlcipher
+exec_prefix=${prefix}
+libdir=/home/Public/_Build/release/BRCMGPON/RTF35XX/414L04A_gvt/targets/RTF3505VW_NV/fs.install/lib/public
+includedir=/home/Public/_Build/release/BRCMGPON/RTF35XX/414L04A_gvt/targets/RTF3505VW_NV/fs.install/include
+
+Name: SQLCipher
+Description: SQL database engine
+Version: 3.20.1
+Libs: -L${libdir} -lsqlcipher
+Libs.private: -lcrypto -lpthread 
+Cflags: -I${includedir}/sqlcipher

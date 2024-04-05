@@ -1,0 +1,67 @@
+{
+	"logging":
+	{
+		"level":"warn",
+		"output":"syslog"
+	},
+	"database":
+	{
+		"max_stadb_size":1024,
+	},
+	"networks": [
+		{
+			"MDID": "00:00",
+			"logics": [
+				{
+					"name": "sl.qtn",
+					"parameters":
+					{
+						"steer_only11v_runtime":1,
+						"max_steerings":5,
+						"check_overloaded_bss":1,
+						"check_suffering_sta":1,
+						"min_rate_gain":120,
+						"excellent_rate_gain":200,
+						"allow_inefficient":0,
+						"log_level":"warn",
+						"never_steer_list":"",
+					}
+				}
+			]
+		},
+		{
+			"MDID": "00:00",
+			"logics": [
+				{
+					"name": "spdia.qtn",
+					"parameters":
+					{
+						"stations": [
+							{"mac":"00:26:86:f0:86:04", "period":50, "mode":"ndp", "reorder":1, "ng":1},
+							{"mac":"00:26:86:f0:84:12", "period":50, "mode":"data", "reorder":1, "ng":0},
+						],
+						"dump_level":2,
+						"dump_interval":1000,
+						"dump_burst":1,
+						"dump_kbytes":500,
+						"dump_port":50005,
+						"log_level":"warn",
+					}
+				}
+			]
+		},
+
+	],
+	"drivers": [
+		{"_comments": "leave drivers blank or * indicates support all drivers"},
+		{"name": "*"},
+	],
+	"communications": [
+		{
+			"name":"comm.qtn",
+		}
+	],
+	"miscs": [
+		{"name": "misc.qtn.csmdcli"}
+	],
+}

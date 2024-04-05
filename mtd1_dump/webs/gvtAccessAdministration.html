@@ -1,0 +1,73 @@
+<html>
+   <head>
+      <meta HTTP-EQUIV='Pragma' CONTENT='no-cache'>
+      <meta name="viewport" content="width=device-width, maximum-scale=1.0, minimum-scale=1.0" />
+      <link rel="stylesheet" href='stylemain.css' type='text/css'>
+      <link rel="stylesheet" href='colors.css' type='text/css'>
+      <script language="javascript" src="util.js"></script>
+      <script language="javascript" src="te_util.js"></script>
+      <script language="javascript" src="assets/_js/jquery-1.11.3.min.js"></script>
+      <script language="javascript" src="assets/_js/jquery-migrate-1.2.1.min.js"></script>
+<script language="javascript">
+<!-- hide
+
+var sessionKey = '<%ejGetOther(sessionKey)%>';
+var sshEnabled = '<%ejGetOther(GvtAppCfg, sshdEnabled)%>';
+var telEnabled = '<%ejGetOther(GvtAppCfg, telnetdEnabled)%>';
+
+function frmLoad()
+{
+  with (document.forms[0])
+  {
+    chkSsh.checked = (sshEnabled!='0');
+    chkTel.checked = (telEnabled!='0');
+    //20180507-weichen-F#13966,[Brazil][SmartWiFi] Security requirements (from the Global Security Team of Telefonica)
+    //Description: Remove Telnet service support. The user can't configure telnet service by advanced web.
+    document.getElementById("ctrlTelnetd").style.display='none';
+  }
+}
+
+function btnApply()
+{
+  with ( document.forms[0] )
+  {
+    var _sshEnabled = (chkSsh.checked)?1:0;
+    var _telEnabled = (chkTel.checked)?1:0;
+    var loc = 'gvt_appcfg.cmd?action=modify';
+    loc += '&sshdEnable='+_sshEnabled;
+    loc += '&telnetdEnable='+_telEnabled;
+    loc += '&sessionKey='+sessionKey;
+    window.location = loc;
+  }
+}
+
+// done hiding -->
+</script>
+   </head>
+   <body topmargin="0" leftmargin="0" onLoad="frmLoad()">
+         <blockquote>
+         <b>Remote Administration</b><br/>
+
+         <form style="padding:15px;">
+         <table border='0' cellpadding='5' cellspacing='5'>
+         <tr id="ctrlSshd">
+            <td class='hd'><label>Allowed SSH Ingress:&nbsp;&nbsp;</label></td>
+            <td><label>&nbsp;&nbsp;<input type='checkbox' name="chkSsh" />LAN and WAN</label></td>
+            <td><label>&nbsp;</label></td>
+         </tr>
+         <tr id="ctrlTelnetd">
+            <td class='hd'><label>Allowed Telnet Ingress:&nbsp;&nbsp;</label></td>
+            <td><label>&nbsp;&nbsp;<input type='checkbox' name="chkTel" />LAN and WAN</label></td>
+            <td><label>&nbsp;</label></td>
+         </tr>
+         <tr>
+            <td colspan='3'><label>&nbsp;</label></td>
+            <td align='right'><input type='button' name='apply' onClick='btnApply()' value='Apply/Save'/></td>
+         </tr>
+         </table><br/>
+         </form>
+
+         </blockquote>
+         <br/>
+   </body>
+</html>

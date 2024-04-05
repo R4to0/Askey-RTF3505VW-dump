@@ -1,0 +1,16 @@
+# libnetfilter_queue pkg-config file
+
+prefix=/home/Public/_Build/release/BRCMGPON/RTF35XX/414L04A_gvt/targets/RTF3505VW_NV/fs.install
+exec_prefix=${prefix}
+libdir=/home/Public/_Build/release/BRCMGPON/RTF35XX/414L04A_gvt/targets/RTF3505VW_NV/fs.install/lib/gpl
+includedir=${prefix}/include
+
+Name: libnetfilter_queue
+Description: netfilter userspace packet queueing library
+URL: http://netfilter.org/projects/libnetfilter_queue/
+Version: 1.0.2
+Requires: libnfnetlink
+Conflicts:
+Libs: -L${libdir} -lnetfilter_queue
+Libs.private: -L/home/Public/_Build/release/BRCMGPON/RTF35XX/414L04A_gvt/targets/RTF3505VW_NV/fs.install/lib/gpl -lnfnetlink  
+Cflags: -I${includedir}

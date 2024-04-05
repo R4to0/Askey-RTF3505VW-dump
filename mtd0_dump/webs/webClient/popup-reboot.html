@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta name="robots" content="noindex">
+<%ejGetOther(webLang, head)%>
+
+<script language="javascript" src="../assets/_js/popup-reboot.js"> </script>
+
+<script nonce="VGVsZWZvbmljYS1jc3Atbm9uY2U=">
+
+var loc = 'rebootinfo.cgi?sessionKey=<%ejGetOther(sessionKey)%>';
+
+
+</script>
+
+</head>
+<body class="no-bg">
+	<div class="page-popup">
+		<table class="setupWifiTable">
+			<tr>
+				<td class="text-left"><%ejGetOther(webLang, 0255)%></td> 
+			</tr>
+			<tr>
+				<td class="text-left"> <span class="red"><%ejGetOther(webLang, 0256)%></span></td> 
+			</tr>
+			<tr>
+				<td>
+					<a href="#" class="btn-default-orange-small left" id="btnaAccept"><span><%ejGetOther(webLang, 0257)%></span></a>
+					<a href="#" class="btn-default-orange-small left" id="btnaDeny"><span><%ejGetOther(webLang, 0258)%></span></a>
+				</td>
+			</tr>
+		</table>
+	</div>
+</body>
+
+</html>

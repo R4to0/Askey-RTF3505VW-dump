@@ -1,0 +1,107 @@
+{
+	"logging":
+	{
+		"level":"info",
+		"output":"stdout"
+	},
+	"database":
+	{
+		"max_stadb_size":1024,
+		"sta_ageout":120,
+	},
+	"networks": [
+		{
+			"MDID": "aa:aa",
+			"logics": [
+				{
+					"name": "sl.qtn",
+					"parameters":
+					{
+						"steering_period":120,
+						"fat_monitor_period":60,
+						"stat_monitor_period":5,
+						"monitor_period":120,
+						"monitor_duty_cycle":1,
+						"deauth_timeout_len":20,
+						"log_level":"info",
+						"steer_only11v_runtime":0,
+						"fat_loaded_5g":400,
+						"fat_loaded_2g":200,
+						"fat_unloaded_5g":600,
+						"fat_unloaded_2g":400,
+						"phyrate_drop":50,
+						"min_rate_gain":120,
+						"excellent_rate_gain":200,
+						"exclude_2g":0,
+						"uns_btm_disassoc_imminent":1,
+						"mbo_enabled":0,
+					}
+				}
+			]
+		},
+		{
+			"MDID": "00:00",
+			"logics": [
+				{
+					"name": "sl.qtn",
+					"parameters":
+					{
+						"steering_period":120,
+						"fat_monitor_period":60,
+						"stat_monitor_period":5,
+						"monitor_period":120,
+						"monitor_duty_cycle":1,
+						"deauth_timeout_len":20,
+						"log_level":"info",
+						"steer_only11v_runtime":0,
+						"fat_loaded_5g":400,
+						"fat_loaded_2g":200,
+						"fat_unloaded_5g":600,
+						"fat_unloaded_2g":400,
+						"phyrate_drop":50,
+						"min_rate_gain":120,
+						"excellent_rate_gain":200,
+						"exclude_2g":0,
+						"uns_btm_disassoc_imminent":1,
+						"mbo_enabled":0,
+					}
+				}
+			]
+		},
+		{
+			"MDID": "aa:aa",
+			"logics": [
+				{
+					"name": "spdia.qtn",
+					"parameters":
+					{
+						"dump_level":2,
+						"dump_interval":1000,
+						"dump_burst":1,
+						"dump_kbytes":500,
+						"dump_port":40005,
+						"log_level":"warn",
+					}
+				}
+			]
+		},
+	],
+	"drivers": [
+		{"name": "driver.qtn.netlink"},
+	],
+	"communications": [
+		{
+			"name":"comm.qtn",
+			"parameters":
+			{
+				"master_preferred":0,
+				"db_update_period":60,
+				"log_level":"info",
+			}
+		}
+	],
+	"miscs": [
+		{"name": "misc.qtn.csmdcli"}
+	],
+}
+

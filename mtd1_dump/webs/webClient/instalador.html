@@ -1,0 +1,200 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<%ejGetOther(webLang, head)%>
+
+<script>
+var choiceRegion='<%ejGetOther(getDefaultRegion)%>';	//RTF_DEF, #14255
+
+$(document).ready(function () {
+	$('#accordion a.item').click(function () {
+		$('#accordion li').children('ul').slideUp('fast');
+		$("#accordion a").removeClass("active");
+		$(this).addClass("active");
+		$(this).siblings('ul').slideDown('fast');
+		return false;
+	});
+
+	$('#btnCancel').on('click', function() {$('#txtSlid').val(gponPw).select().focus();});
+	var gponUp='<%ejGetOther(installation, gponUp)%>';
+	var gponPw='<%ejGetOther(installation, gponPw)%>';
+
+	gponPw = unescape(gponPw.replace(/(..)/g, '%$1').replace(/%00/g, ''));
+	$('#txtSlid').val(gponPw).select().focus();
+	if (gponUp == '1') $('#txtSlid').attr('disabled', true);
+
+	$('#btn-clicktocall').on('click', function() {
+		if ($('#txtSlid').attr('disabled')) return false;
+
+		var patrn = /^[\x20-\x7e]{10}$/;
+		if (!patrn.test($('#txtSlid').val())) {
+			invalidMsg($('#txtSlid'), '<%ejGetOther(webLang, 0266)%>');
+			$('#txtSlid').select().focus();
+			return false;
+		}
+
+		invalidMsg($('#txtSlid'), '');
+	});
+
+	//RTF_DEF, #14255
+	$('#btnClickToSaveRegion').on('click', function() {
+		var sessionKey = '<%ejGetOther(sessionKey)%>';
+		var loc = 'setDefaultRegion.cmd?';
+		
+		with ( document.forms[0] ){
+			var selectRegion=(vivoRegion[0].checked)?"vivo1":"vivo2";
+			var showSelectRegion=(vivoRegion[0].checked)?"Vivo1":"Vivo2";
+		}
+		
+		var confirmWord = '<%ejGetOther(webLang, 0666)%>';
+		if(confirm(confirmWord + " " + showSelectRegion + "?"))
+		{
+			loc += 'region=' + selectRegion;
+			loc += '&sessionKey=' + sessionKey;
+			var code = 'location="' + loc + '"';
+			eval(code);
+		}
+	});
+	//End RTF_DEF, #14255
+});
+</script>
+<script>
+	<!--POP-UP-->
+	$("#btn-clicktocall, .btn-clicktocall").fancybox({
+		width: 580,
+		height: 180,
+		fitToView: true,
+		autoSize: true,
+		closeClick: false,
+		openEffect: 'elastic',
+		closeEffect: 'fade',
+		padding: 30,
+		scrolling: "no"
+	});
+	<!--POP-UP-->
+</script>
+
+</head>
+
+<body>
+
+<%ejGetOther(webLang, header-gateway)%>
+
+<div id="content">
+
+	<div class="wrap">
+
+		<div id="conteudo-gateway">
+
+<%ejGetOther(webLang, menu)%>
+
+			<div class="col-722 left">
+
+				<h3 class="azul-2 text-up"><%ejGetOther(webLang, 0267)%></h3>
+
+					<table class="gatewayTable" id="table_model" cellpadding="0" cellspacing="0">
+					<thead>
+						<tr>
+							<th colspan="4" class="firstChild"><%ejGetOther(webLang, 0049)%></th>
+						</tr>
+					</thead>
+				<tbody>
+					<tr class="odd">
+					<td class="firstChild"><strong><%ejGetOther(webLang, 0050)%></strong></td><td><%ejGet(teamName)%></td>
+					<td class="firstChild"><strong><%ejGetOther(webLang, 0051)%></strong></td><td><%ejGet(modelName)%></td>
+					</tr>    
+					<tr class="even">
+					<td class="firstChild"><strong><%ejGetOther(webLang, 0052)%></strong></td><td><%ejGet(sysVersion)%></td>
+					<td class="firstChild"><strong><%ejGetOther(webLang, 0053)%></strong></td><td><%ejGet(hardwareVersion)%></td>
+					</tr>
+					<tr class="odd">
+					<td class="firstChild"><strong><%ejGetOther(webLang, 0054)%></strong></td><td><%ejGet(serialNumber)%></td>
+					<td class="firstChild"><strong><%ejGetOther(webLang, 0055)%></strong></td><td><%ejGet(gponSerial)%></td>
+					</tr>
+					</tr>    
+					<tr class="even">
+					<td class="firstChild"><strong><%ejGetOther(webLang, 0056)%></strong></td><td><%ejGetOther(devInfo, mac_veip0.1)%></td>
+					<td class="firstChild"><strong><%ejGetOther(webLang, 0057)%></strong></td><td><%ejGetOther(devInfo, mac_br0)%></td>
+					</tr>
+
+					</table>
+
+				<div class="clear"></div>
+
+				<table class="gatewayTable " id="table_model" cellpadding="0" cellspacing="0">
+					<thead>
+						<tr>
+							<th colspan="2" class="firstChild">ONT</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr class="odd"><td colspan="2"><strong><%ejGetOther(webLang, 0268)%></strong></td></tr>
+						<tr class="even">
+							<td class="odd" width="150px"><strong>SLID:</strong></td>
+							<td>
+								<input name="input" type="text" class="input-text" id="txtSlid" maxlength="10" />
+							</td>
+						</tr><tr class="odd">
+							<td colspan="2">
+								<a href="#" id="btnCancel" class="btn-default-orange-small right"><span><%ejGetOther(webLang, 0067)%></span></a>
+								<a href="popup-instalador-slid.html" id="btn-clicktocall" data-fancybox-type="iframe" class="btn-default-orange-small right"><span><%ejGetOther(webLang, 0105)%></span></a>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				
+
+				<div class="clear"></div>
+
+				<table class="gatewayTable " id="table_model" cellpadding="0" cellspacing="0">
+					<thead>
+						<tr>
+							<th colspan="2" class="firstChild">Regi&atilde;o Padr&atilde;o</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr class="odd"><td colspan="2"><strong><%ejGetOther(webLang, 0664)%><br><br><%ejGetOther(webLang, 0665)%></strong></td></tr>
+						<tr class="even">
+							<td class="odd" width="150px"><strong>Regi&atilde;o:</strong></td>
+							<td>
+								<form>
+									<input name="vivoRegion" type="radio" value="on" /> Vivo1 &nbsp; &nbsp;
+									<input name="vivoRegion" type="radio" value="off"/> Vivo2
+									<script>		//RTF_DEF, #14255
+										with ( document.forms[0]) {
+											if(choiceRegion == 'vivo1')
+											{
+												vivoRegion[0].checked=true;
+											}
+											else
+											{
+												vivoRegion[1].checked=true;
+											}
+										}
+									</script>
+								</form>
+							</td>
+						</tr>
+						<tr class="odd">
+							<td colspan="2">
+								<a id="btnClickToSaveRegion" onClick='btnApply()' data-fancybox-type="iframe" class="btn-default-orange-small right"><span><%ejGetOther(webLang, 0105)%></span></a>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div><!--col-722-->
+
+			<div class="clear"></div>
+
+			
+		</div><!--conteudo-->
+
+		<div class="clear"></div>
+
+	</div><!--wrap-->
+
+</div><!--content-->
+
+</body>

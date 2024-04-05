@@ -1,0 +1,772 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta name="robots" content="noindex">
+<%ejGetOther(webLang, head)%>
+
+<script nonce="VGVsZWZvbmljYS1jc3Atbm9uY2U=">
+var lanHostList=null;
+try  {
+  var orgLanHostList="<%ejGet(lanDevicesList)%>";
+  //var orgLanHostList="[['0','','0','1.1.1.198','Cable Ethernet','no','00:0E:2E:76:EA:BE'],['0','','0','192.168.25.2','WIFI','no','20:35:05:00:19:0D'],['0','Leo','0','192.168.25.4','WIFI','no','34:13:E8:2B:54:9E'],['1','','0','192.168.25.199','Cable Ethernet','no','00:02:72:BB:1B:CD'],['1','','0','192.168.25.5','WIFI','no','10:BF:48:5A:F4:13'],['1','','0','192.168.25.199','Cable Ethernet','no','00:02:72:bb:1b:cd'],['1','','0','192.168.25.5','WIFI','no','10:bf:48:5a:f4:13']]";
+  lanHostList=eval(orgLanHostList);
+}
+catch(exception) {
+  //alert(exception);
+}
+
+//pre-loaded variable declared here
+var ethIntfSts='<%ejGetOther(EthIntfSts, 0, 4)%>';
+//var ethIntfSts='eth0,0,2,3,0,5,6,7,8/eth1,11,12,13,14,15,16,17,18/eth2,21,22,23,24,25,26,27,28/eth3,1132,158435,0,0,0,912501,0,0';
+var wlanIntfSts='<%ejGetOther(WlanIntfSts, 0, 2)%>';
+//var wlanIntfSts='wl0,4,3,2,1,3,2,1,0';
+
+var wlan2dot4GBssId='<%ejGetWl(wlBssid_main0)%>';
+var wlan2dot4GSsId=htmlDecode('<%ejGetWl(wlSsid_main0)%>');
+var wlan2dot4GChannel='<%ejGetWl(wlChannel_main0)%>';
+var wlan2dot4GTxPower='<%ejGetWl(wlTxPwrPcnt_main0)%>';
+var wlan2dot4GAuthMode='<%ejGetWl(wlAuthMode_main0)%>';
+var wlan2dot4GWpa='<%ejGetWl(wlWpa_main0)%>';
+var wlan2dot4GWep='<%ejGetWl(wlWep_main0)%>';
+var wlan2dot4GNmode='<%ejGetWl(wlNmode)%>'; 
+var wlan2dot4GNReqd='<%ejGetWl(wlNReqd_main0)%>';
+var wlan2dot4GGmode='<%ejGetWl(wlgMode)%>';
+var wlan2dot4GopCap='<%ejGetWl(wlopCap)%>';
+var wlan2dot4GAssociatedList='<%ejGetWl(wlAssociatedList_main0)%>';
+var wlan5GBssId='<%ejGetWl(wlBssid_main1)%>';
+var wlan5GSsId=htmlDecode('<%ejGetWl(wlSsid_main1)%>');
+var wlan5GChannel='<%ejGetWl(wlChannel_main1)%>';
+var wlan5GTxPower='<%ejGetWl(wlTxPwrPcnt_main1)%>';
+var wlan5GAuthMode='<%ejGetWl(wlAuthMode_main1)%>';
+var wlan5GWpa='<%ejGetWl(wlWpa_main1)%>';
+var wlan5GACmode='<%ejGetWl(wlACmode_main1)%>';
+var wlan5GAssociatedList='<%ejGetWl(wlAssociatedList_main1)%>';
+
+var gponUp='<%ejGetOther(installation, gponUp)%>';
+var gponSt='<%ejGetOther(installation, gponSt)%>';
+var gponPw='<%ejGetOther(installation, gponPw)%>';
+var gponSn='<%ejGetOther(installation, gponSn)%>';
+var opticalPower='<%ejGetOther(installation, opticalPower)%>';
+
+
+jQuery.fn.extend({
+  getConvertedUser: function(associatedList, hostList) {
+    var converted=[];
+    var convertedTmp=associatedList.split("/");
+    $.each(convertedTmp, function(idx, val) {
+      if(val.length>0)
+      {
+        var associatedItem=val.split(",");
+        var name='';
+        var ipaddr='';
+        $.each(hostList, function(idxInDetail, valInDetail) {
+          if( valInDetail[6].toLowerCase()==associatedItem[0].toLowerCase() )
+          {
+            name=valInDetail[1];
+            ipaddr=valInDetail[3];
+            return false; //the same as break
+          }
+        });
+        var item=[name, associatedItem[0].toUpperCase(), ipaddr, associatedItem[1]];
+        converted.push( item );
+      }
+    });
+    
+    return converted;
+  }
+});
+
+jQuery.fn.extend({
+  getConvertedSecurity: function(mode, wpa, wep) {
+        wifiAuthType = 'none';
+        if (mode == 'open') {
+            wifiAuthType = (wep == 'disabled')?'open':'wep';
+        }
+        else if (mode =='psk2') {
+            if (wpa == 'aes')
+                wifiAuthType = 'wpa2_a';
+            else if (wpa == 'tkip+aes')
+                wifiAuthType = 'wpa2_ta';
+        }
+        else if (mode =='psk psk2') {
+            wifiAuthType ='wpawpa2';
+        }
+        var Converted={
+          "open": "Open",
+          "wep": "WEP",
+          "wpa2_a": "WPA2 (AES)",
+          "wpa2_ta": "WPA2 (TKIP+AES)",
+          "wpawpa2": "WPA/WPA2 (TKIP+AES)"
+        };
+
+        return Converted[wifiAuthType];
+  }
+});
+
+$(document).ready(function () {
+  var opticalPowerTx=parseFloat(opticalPower.split(';')[0].substr(opticalPower.split(';')[0].search('TX:')+3)).toFixed(3);
+  var opticalPowerRx=parseFloat(opticalPower.split(';')[1].substr(opticalPower.split(';')[1].search('RX:')+3)).toFixed(3);
+  if(opticalPowerRx==-40.0)
+  {
+    opticalPowerTx='-inf';
+    opticalPowerRx='-inf';
+  }
+  $('#gponPowerRx').text(opticalPowerRx);
+  $('#gponPowerTx').text(opticalPowerTx);
+
+  $('#gponLink').text(gponUp=='0'?'<%ejGetOther(webLang, 0002)%>':'<%ejGetOther(webLang, 0001)%>');
+  $('#gponAssociated').text(gponSt);
+  $('#gponSerial').text(gponSn);
+  $('#gponPassword').text(unescape(gponPw.replace(/(..)/g, '%$1').replace(/%00/g, '')));
+
+  var ethIntfStsList=[];
+  var ethIntfStsTmp=ethIntfSts.split("/");
+  $.each(ethIntfStsTmp, function(idx, val) {
+    ethIntfStsList.push( val.split(",") );
+  });
+  $.each(ethIntfStsList, function(idx, val) {
+    var sel="td["+"stsif='"+val[0]+"']";
+    $.each( $(sel), function(idxInDetail, valInDetail) {
+      switch(idxInDetail)
+      {
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+          $(valInDetail).text( val[idxInDetail+1] );
+          break;
+        case 4:
+          var calc=(val[3+1]/val[0+1]).toFixed(3);
+          $(valInDetail).text( calc=='NaN'?'0.00':calc );
+          break;
+        case 5:
+        case 6:
+        case 7:
+        case 8:
+          $(valInDetail).text( val[idxInDetail+0] );
+          break;
+        case 9:
+          var calc=(val[8+0]/val[5+0]).toFixed(3);
+          $(valInDetail).text( calc=='NaN'?'0.00':calc );
+          break;
+        default:
+          break;
+      } //end switch case
+    });
+  });
+
+  var wlanIntfStsList=[];
+  var wlanIntfStsTmp=wlanIntfSts.split("/");
+  $.each(wlanIntfStsTmp, function(idx, val) {
+    wlanIntfStsList.push( val.split(",") );
+  });
+  $.each(wlanIntfStsList, function(idx, val) {
+    var sel="td["+"stsif='"+val[0]+"']";
+    $.each( $(sel), function(idxInDetail, valInDetail) {
+      switch(idxInDetail)
+      {
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+          $(valInDetail).text( val[idxInDetail+1] );
+          break;
+        case 4:
+          var calc=(val[3+1]/val[0+1]).toFixed(3);
+          $(valInDetail).text( calc=='NaN'?'0.00':calc );
+          break;
+        case 5:
+        case 6:
+        case 7:
+        case 8:
+          $(valInDetail).text( val[idxInDetail+0] );
+          break;
+        case 9:
+          var calc=(val[8+0]/val[5+0]).toFixed(3);
+          $(valInDetail).text( calc=='NaN'?'0.00':calc );
+          break;
+        default:
+          break;
+      } //end switch case
+    });
+  });
+
+  $('#ssid2dot4g').text(wlan2dot4GSsId);
+  $('#bssid2dot4g').text(wlan2dot4GBssId);
+  $('#security2dot4g').text( $().getConvertedSecurity(wlan2dot4GAuthMode, wlan2dot4GWpa, wlan2dot4GWep) );
+  $('#channel2dot4g').text(wlan2dot4GChannel=='0'?'Auto':wlan2dot4GChannel);
+  $('#power2dot4g').text( wlan2dot4GTxPower );
+  if (wlan2dot4GNmode == 'auto') {
+    //$('#mode2dot4g').text( wlan2dot4GNReqd=='0'?'802.11b/g/n':'802.11n' );
+    $('#mode2dot4g').text( wlan2dot4GNReqd=='0'?(wlan2dot4GopCap=='0'?'802.11b/g/n':'802.11g/n'):'802.11n' );
+  }
+  else {
+    $('#mode2dot4g').text( wlan2dot4GGmode=='0'?'802.11b':'802.11b/g' );
+  }
+  //alert( $().getConvertedUser(wlan2dot4GAssociatedList, lanHostList).length );
+  $('#connected2dot4g').find('tbody').find('tr').remove();
+  var connected2dot4g=$().getConvertedUser(wlan2dot4GAssociatedList, lanHostList);
+  $('#titled2dot4g').text( ''+connected2dot4g.length+' '+'<%ejGetOther(webLang, 0077)%>' );
+  $.each(connected2dot4g, function(idx, val) {
+    var item='<tr>'+
+      '<td class="cinza">'+'<label>'+val[0]+'</label>'+'</td>'+
+      '<td class="center">'+'<label>'+val[1]+'</label>'+'</td>'+
+      '<td class="center">'+'<label>'+val[2]+'</label>'+'</td>'+
+      '<td class="center">'+'<label>'+val[3]+'</label>'+'</td>'+
+      '</tr>';
+    $('#connected2dot4g').find('tbody').append(item);
+  });
+  
+  $('#ssid5g').text(wlan5GSsId);
+  $('#bssid5g').text(wlan5GBssId);
+  $('#security5g').text( $().getConvertedSecurity(wlan5GAuthMode, wlan5GWpa, 'disabled') );
+  $('#channel5g').text(wlan5GChannel=='0'?'Auto':wlan5GChannel);
+  $('#power5g').text( wlan5GTxPower );
+  $('#mode5g').text( wlan5GACmode=='0'?'802.11n':'802.11ac+n' );
+  //alert( $().getConvertedUser(wlan5GAssociatedList, lanHostList).length );
+  $('#connected5g').find('tbody').find('tr').remove();
+  var connected5g=$().getConvertedUser(wlan5GAssociatedList, lanHostList);
+  $('#titled5g').text( ''+connected5g.length+' '+'<%ejGetOther(webLang, 0077)%>' );
+  $.each(connected5g, function(idx, val) {
+    var item='<tr>'+
+      '<td class="cinza">'+'<label>'+val[0]+'</label>'+'</td>'+
+      '<td class="center">'+'<label>'+val[1]+'</label>'+'</td>'+
+      '<td class="center">'+'<label>'+val[2]+'</label>'+'</td>'+
+      '<td class="center">'+'<label>'+val[3]+'</label>'+'</td>'+
+      '</tr>';
+    $('#connected5g').find('tbody').append(item);
+  });
+
+	$('#accordion a.item').click(function () {
+		window.top.name = '';
+		$('#accordion li').children('ul').slideUp('fast');
+		$('#accordion a').removeClass('active');
+		$(this).addClass('active');
+		$(this).siblings('ul').slideDown('fast');
+		return false;
+	});
+});
+
+$(window).load(function() {
+    //firewall
+    var gvtMode = '<%ejGetOther(devInfo, gvtMode)%>';
+    var accessClass = gvtMode.split('|')[0];
+    /*if (accessClass == 'service02') {
+        var firewall = document.getElementById("firewall");
+        firewall.style.display = "none";
+    }*/	//RM11739
+
+	$('.gerenciamento').trigger('click');
+});
+</script>
+</head>
+
+<body>
+
+<%ejGetOther(webLang, header-gateway)%>
+
+<script nonce="VGVsZWZvbmljYS1jc3Atbm9uY2U=">
+$(document).ready(function() {
+	var tab = '#tab-01';
+	var name = window.top.name.split(':');
+
+	if (name[0] == 'STS') tab = name[1];
+	$('.tab').slideUp();
+	$(tab).slideDown();
+	$('#menu-statistic a[rel="'+ tab.split('-')[1] +'"]').addClass('active');
+
+	$('#menu-statistic li a').click(function() {
+		var i = $(this).attr('rel');
+		$('#menu-statistic li a').removeClass('active');
+		$(this).addClass('active');
+		$('.tab').slideUp();
+		$('#tab-'+i).slideDown();
+		window.top.name = 'STS:#tab-'+i;
+		return false;
+	});
+});
+</script>
+
+<div id="content">
+
+	<div class="wrap">
+
+		<div id="conteudo-gateway">
+
+<%ejGetOther(webLang, menu)%>
+
+			<div class="col-722 left">
+			
+				<h3 class="text-up"><%ejGetOther(webLang, 0652)%></h3>
+				
+				<div id="menu-statistic">
+					<ul>
+						<li><a href="#" rel="01">LAN Ethernet</a></li>
+						<li><a href="#" rel="03"><%ejGetOther(webLang, 0026)%></a></li>
+						<li><a href="#" rel="04"><%ejGetOther(webLang, 0032)%></a></li>
+						<li><a href="#" rel="06" class="no-border">GPON</a></li>
+					</ul>
+				</div><!--menu-statistic-->
+				
+				<div class="clear"></div>
+				
+				<div id="tab-01" class="tab">
+				
+					<table class="setupWifiTable">
+						<thead>
+							<th class="no-up"><%ejGetOther(webLang, 0652)%></th>
+							<th class="no-up">LAN 1</th>
+							<th class="no-up">LAN 2</th>
+							<th class="no-up">LAN 3</th>
+							<th class="no-up">LAN 4</th>
+						</thead>
+						<tbody>
+							<tr><td colspan="5"><%ejGetOther(webLang, 0079)%></td></tr>
+							<tr>
+								<td class="cinza"><%ejGetOther(webLang, 0080)%></td>
+								<td class="center" stsif="eth0">2378</td>
+								<td class="center" stsif="eth1">2378</td>
+								<td class="center" stsif="eth2">2378</td>
+								<td class="center" stsif="eth3">2378</td>
+							</tr>
+							<tr>
+								<td class="cinza2">Bytes:</td>
+								<td class="cinza2 center" stsif="eth0">656924</td>
+								<td class="cinza2 center" stsif="eth1">656924</td>
+								<td class="cinza2 center" stsif="eth2">656924</td>
+								<td class="cinza2 center" stsif="eth3">656924</td>
+							</tr>
+							<tr>
+								<td class="cinza"><%ejGetOther(webLang, 0081)%></td>
+								<td class="cinza center" stsif="eth0">0</td>
+								<td class="cinza center" stsif="eth1">0</td>
+								<td class="cinza center" stsif="eth2">0</td>
+								<td class="cinza center" stsif="eth3">0</td>
+							</tr>
+							<tr>
+								<td class="cinza2"><%ejGetOther(webLang, 0082)%></td>
+								<td class="cinza2 center" stsif="eth0">0</td>
+								<td class="cinza2 center" stsif="eth1">0</td>
+								<td class="cinza2 center" stsif="eth2">0</td>
+								<td class="cinza2 center" stsif="eth3">0</td>
+							</tr>
+							<tr>
+								<td class="cinza"><%ejGetOther(webLang, 0083)%></td>
+								<td class="center" stsif="eth0">0.00</td>
+								<td class="center" stsif="eth1">0.00</td>
+								<td class="center" stsif="eth2">0.00</td>
+								<td class="center" stsif="eth3">0.00</td>
+							</tr>
+							<tr><td colspan="5"><%ejGetOther(webLang, 0084)%></td></tr>
+							<tr>
+								<td class="cinza"><%ejGetOther(webLang, 0080)%></td>
+								<td class="center" stsif="eth0">2378</td>
+								<td class="center" stsif="eth1">2378</td>
+								<td class="center" stsif="eth2">2378</td>
+								<td class="center" stsif="eth3">2378</td>
+							</tr>
+							<tr>
+								<td class="cinza2">Bytes:</td>
+								<td class="cinza2 center" stsif="eth0">656924</td>
+								<td class="cinza2 center" stsif="eth1">656924</td>
+								<td class="cinza2 center" stsif="eth2">656924</td>
+								<td class="cinza2 center" stsif="eth3">656924</td>
+							</tr>
+							<tr>
+								<td class="cinza"><%ejGetOther(webLang, 0081)%></td>
+								<td class="cinza center" stsif="eth0">0</td>
+								<td class="cinza center" stsif="eth1">0</td>
+								<td class="cinza center" stsif="eth2">0</td>
+								<td class="cinza center" stsif="eth3">0</td>
+							</tr>
+							<tr>
+								<td class="cinza2"><%ejGetOther(webLang, 0085)%></td>
+								<td class="cinza2 center" stsif="eth0">0</td>
+								<td class="cinza2 center" stsif="eth1">0</td>
+								<td class="cinza2 center" stsif="eth2">0</td>
+								<td class="cinza2 center" stsif="eth3">0</td>
+							</tr>
+							<tr>
+								<td class="cinza"><%ejGetOther(webLang, 0083)%></td>
+								<td class="center" stsif="eth0">0.00</td>
+								<td class="center" stsif="eth1">0.00</td>
+								<td class="center" stsif="eth2">0.00</td>
+								<td class="center" stsif="eth3">0.00</td>
+							</tr>
+						</tbody>
+					</table>
+				</div><!--tab-01-->
+				
+				<div id="tab-03" class="tab">
+				
+				<div id="tabela_esquerdaDSL">
+					<table class="setupWifiTable width-hpna">
+						<tbody>
+							<tr>
+								<td class="cinza">SSID:</td>
+								<td class="cinza center" id="ssid2dot4g">VIVO-D6B2</td>
+							</tr>
+							<tr>
+								<td class="cinza2"><%ejGetOther(webLang, 0086)%></td>
+								<td class="cinza2 center" id="mode2dot4g">802.11b/g/n</td>
+							</tr>
+							<tr>
+								<td class="cinza"><%ejGetOther(webLang, 0027)%></td>
+								<td class="cinza center" id="security2dot4g">WPA</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+					
+					<div id="tabela_direitaDSL">
+					<table class="setupWifiTable width-hpna">
+						<tbody>
+							<tr>
+								<td class="cinza"><%ejGetOther(webLang, 0031)%></td>
+								<td class="cinza center" id="channel2dot4g">9</td>
+							</tr>
+							<tr>
+								<td class="cinza2"><%ejGetOther(webLang, 0087)%></td>
+								<td class="cinza2 center" id="power2dot4g">100</td>
+							</tr>
+							<tr>
+								<td class="cinza">BSSID:</td>
+								<td class="cinza center" id="bssid2dot4g">c0:d0:44:fb:d6:b6</td>
+							</tr>
+						</tbody>
+					</table>
+					</div>
+
+				
+				<div id="tabela_esquerdaDSL">
+					<table class="setupWifiTable width-hpna">
+						<thead>
+							<th class="no-up" colspan="2" width="240"><%ejGetOther(webLang, 0079)%></th>
+						</thead>
+						<thead>
+							<th class="no-up" width="240"><%ejGetOther(webLang, 0652)%></th>
+							<th class="no-up"><%ejGetOther(webLang, 0088)%></th>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="cinza"><%ejGetOther(webLang, 0080)%></td>
+								<td class="cinza center" stsif="wl0">0</td>
+							</tr>
+							<tr>
+								<td class="cinza2">Bytes:</td>
+								<td class="cinza2 center" stsif="wl0">0</td>
+							</tr>
+							<tr>
+								<td class="cinza"><%ejGetOther(webLang, 0081)%></td>
+								<td class="cinza center" stsif="wl0">0.0</td>
+							</tr>
+							<tr>
+								<td class="cinza2"><%ejGetOther(webLang, 0082)%></td>
+								<td class="cinza2 center" stsif="wl0">0.0</td>
+							</tr>
+							<tr>
+								<td class="cinza"><%ejGetOther(webLang, 0083)%></td>
+								<td class="cinza center" stsif="wl0">0.0</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+					
+					<div id="tabela_direitaDSL">
+					<table class="setupWifiTable width-hpna">
+						<thead>
+							<th class="no-up" colspan="2" width="240"><%ejGetOther(webLang, 0084)%></th>
+						</thead>
+						<thead>
+							<th class="no-up" width="240"><%ejGetOther(webLang, 0652)%></th>
+							<th class="no-up"><%ejGetOther(webLang, 0088)%></th>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="cinza"><%ejGetOther(webLang, 0080)%></td>
+								<td class="cinza center" stsif="wl0">0</td>
+							</tr>
+							<tr>
+								<td class="cinza2">Bytes:</td>
+								<td class="cinza2 center" stsif="wl0">0</td>
+							</tr>
+							<tr>
+								<td class="cinza"><%ejGetOther(webLang, 0081)%></td>
+								<td class="cinza center" stsif="wl0">0.0</td>
+							</tr>
+							<tr>
+								<td class="cinza2"><%ejGetOther(webLang, 0082)%></td>
+								<td class="cinza2 center" stsif="wl0">0.0</td>
+							</tr>
+							<tr>
+								<td class="cinza"><%ejGetOther(webLang, 0083)%></td>
+								<td class="cinza center" stsif="wl0">0.0</td>
+							</tr>
+						</tbody>
+					</table>
+					</div>
+					
+					<div id="table_wifi_users">
+					<table class="setupWifiTable" id="connected2dot4g">
+						<thead>
+							<tr>
+								<th colspan="4" id="titled2dot4g"></th>
+							</tr>
+							<tr>
+								<th>Hostname</th>
+								<th><%ejGetOther(webLang, 0089)%></th>
+								<th><%ejGetOther(webLang, 0090)%></th>
+								<th><%ejGetOther(webLang, 0091)%></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="cinza">NOTCTARO5-5571</td>
+								<td class="center">00:0c:c3:3a:3c:6c</td>
+								<td class="center">192.168.15.2</td>
+								<td class="center">128 min</td>
+							</tr>
+							<tr>
+								<td class="cinza2">NOTCTARO5-5571</td>
+								<td class="cinza2 center">00:0c:c3:3a:3c:5c</td>
+								<td class="cinza2 center">192.168.15.3</td>
+								<td class="cinza2 center">354 min</td>
+							</tr>
+							<tr>
+								<td class="cinza">NOTCTARO5-5571</td>
+								<td class="center">00:0c:c3:3a:3c:6D</td>
+								<td class="center">192.168.15.4</td>
+								<td class="center">45 min</td>
+							</tr>
+						</tbody>
+					</table>
+					</div>
+					
+				</div><!--tab-03-->
+				
+				<div id="tab-04" class="tab">
+				
+					<div id="tabela_esquerdaDSL">
+					<table class="setupWifiTable width-hpna">
+						<tbody>
+							<tr>
+								<td class="cinza">SSID:</td>
+								<td class="cinza center" id="ssid5g">VIVO-D6B2-5G</td>
+							</tr>
+							<tr>
+								<td class="cinza2"><%ejGetOther(webLang, 0086)%></td>
+								<td class="cinza2 center" id="mode5g">802.11n/ac</td>
+							</tr>
+							<tr>
+								<td class="cinza"><%ejGetOther(webLang, 0027)%></td>
+								<td class="cinza center" id="security5g">WPA2</td>
+							</tr>
+						</tbody>
+					</table>
+					</div>
+					
+					<div id="tabela_direitaDSL">
+					<table class="setupWifiTable width-hpna">
+						<tbody>
+							<tr>
+								<td class="cinza"><%ejGetOther(webLang, 0031)%></td>
+								<td class="cinza center" id="channel5g">108</td>
+							</tr>
+							<tr>
+								<td class="cinza2"><%ejGetOther(webLang, 0087)%></td>
+								<td class="cinza2 center" id="power5g">100</td>
+							</tr>
+							<tr>
+								<td class="cinza">BSSID:</td>
+								<td class="cinza center" id="bssid5g">c0:d0:44:fb:d6:b6</td>
+							</tr>
+						</tbody>
+					</table>
+					</div>
+					
+					<div id="tabela_esquerdaDSL">
+					<table class="setupWifiTable width-hpna">
+						<thead>
+							<th class="no-up" colspan="2" width="240"><%ejGetOther(webLang, 0079)%></th>
+						</thead>
+						<thead>
+							<th class="no-up" width="240"><%ejGetOther(webLang, 0652)%></th>
+							<th class="no-up"><%ejGetOther(webLang, 0088)%></th>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="cinza"><%ejGetOther(webLang, 0080)%></td>
+								<td class="cinza center" stsif="wl1">0</td>
+							</tr>
+							<tr>
+								<td class="cinza2">Bytes:</td>
+								<td class="cinza2 center" stsif="wl1">0</td>
+							</tr>
+							<tr>
+								<td class="cinza"><%ejGetOther(webLang, 0081)%></td>
+								<td class="cinza center" stsif="wl1">0.0</td>
+							</tr>
+							<tr>
+								<td class="cinza2"><%ejGetOther(webLang, 0082)%></td>
+								<td class="cinza2 center" stsif="wl1">0.0</td>
+							</tr>
+							<tr>
+								<td class="cinza"><%ejGetOther(webLang, 0083)%></td>
+								<td class="cinza center" stsif="wl1">0.0</td>
+							</tr>
+						</tbody>
+					</table>
+					</div>
+					
+					<div id="tabela_direitaDSL">
+					<table class="setupWifiTable width-hpna">
+						<thead>
+							<th class="no-up" colspan="2" width="240"><%ejGetOther(webLang, 0084)%></th>
+						</thead>
+						<thead>
+							<th class="no-up" width="240"><%ejGetOther(webLang, 0652)%></th>
+							<th class="no-up"><%ejGetOther(webLang, 0088)%></th>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="cinza"><%ejGetOther(webLang, 0080)%></td>
+								<td class="cinza center" stsif="wl1">0</td>
+							</tr>
+							<tr>
+								<td class="cinza2">Bytes:</td>
+								<td class="cinza2 center" stsif="wl1">0</td>
+							</tr>
+							<tr>
+								<td class="cinza"><%ejGetOther(webLang, 0081)%></td>
+								<td class="cinza center" stsif="wl1">0.0</td>
+							</tr>
+							<tr>
+								<td class="cinza2"><%ejGetOther(webLang, 0082)%></td>
+								<td class="cinza2 center" stsif="wl1">0.0</td>
+							</tr>
+							<tr>
+								<td class="cinza"><%ejGetOther(webLang, 0083)%></td>
+								<td class="cinza center" stsif="wl1">0.0</td>
+							</tr>
+						</tbody>
+					</table>
+					</div>
+					
+					<div id="table_wifi_users">
+					<table class="setupWifiTable" id="connected5g">
+						<thead>
+							<tr>
+								<th colspan="4" id="titled5g">2 Connected Devices</th>
+							</tr>
+							<tr>
+								<th>Hostname</th>
+								<th><%ejGetOther(webLang, 0089)%></th>
+								<th><%ejGetOther(webLang, 0090)%></th>
+								<th><%ejGetOther(webLang, 0091)%></th>
+							</tr>
+						</thead>
+						<tbody>
+								<tr>
+								<td class="cinza">NOTCTARO5-5571</td>
+								<td class="center">00:0c:c3:3a:3c:6c</td>
+								<td class="center">192.168.15.8</td>
+								<td class="center">78 min</td>
+							</tr>
+							<tr>
+								<td class="cinza2">NOTCTARO5-5571</td>
+								<td class="cinza2 center">00:0c:c3:3a:3c:5c</td>
+								<td class="cinza2 center">192.168.15.9</td>
+								<td class="cinza2 center">13 min</td>
+							</tr>
+						</tbody>
+					</table>
+					</div>
+					
+				</div><!--tab-04-->
+				
+				<div id="tab-06" class="tab">
+					
+					<div id="tabela_esquerdaDSL">
+					<table class="setupWifiTable width-hpna">
+						<tbody>
+							<tr>
+								<td class="cinza"><%ejGetOther(webLang, 0092)%></td>
+								<td class="cinza center"><label id="gponLink">Up</label></td>
+							</tr>
+							<tr>
+								<td class="cinza"><%ejGetOther(webLang, 0055)%></td>
+								<td class="cinza center"><label id="gponSerial">SAGE89343245</label></td>
+							</tr>
+						</tbody>
+					</table>
+					</div>
+					
+					<div id="tabela_direitaDSL">
+					<table class="setupWifiTable width-hpna">
+						<tbody>
+							<tr>
+								<td class="cinza"><%ejGetOther(webLang, 0093)%></td>
+								<td class="cinza center"><label id="gponAssociated">O5 - Operation State</label></td>
+							</tr>
+							<tr>
+								<td class="cinza">SLID:</td>
+								<td class="cinza center"><label id="gponPassword">0123456789</label></td>
+							</tr>
+						</tbody>
+					</table>
+					</div>
+					
+					<div id="tabela_esquerdaDSL">
+					<table class="setupWifiTable width-hpna">
+						<thead>
+							<th class="no-up" colspan="2" width="240"><%ejGetOther(webLang, 0094)%></th>
+						</thead>
+						<thead>
+							<th class="no-up" width="240"><%ejGetOther(webLang, 0652)%></th>
+							<th class="no-up"><%ejGetOther(webLang, 0088)%></th>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="cinza"><%ejGetOther(webLang, 0095)%></td>
+								<td class="cinza center"><label id="gponPowerRx">0</label></td>
+							</tr>
+						</tbody>
+					</table>
+					</div>
+					
+					<div id="tabela_direitaDSL">
+					<table class="setupWifiTable width-hpna">
+					<thead>
+						<th class="no-up" colspan="2" width="240"><%ejGetOther(webLang, 0096)%></th>
+					</thead>
+					<thead>
+						<th class="no-up" width="240"><%ejGetOther(webLang, 0652)%></th>
+						<th class="no-up"><%ejGetOther(webLang, 0088)%></th>
+					</thead>
+					<tbody>
+						<tr>
+							<td class="cinza"><%ejGetOther(webLang, 0095)%></td>
+							<td class="cinza center"><label id="gponPowerTx">0</label></td>
+						</tr>
+					</tbody>
+					</table>
+					</div>
+					
+				</div><!--tab-06-->
+			</div><!--col-722-->
+			
+			<div class="clear"></div>
+			
+			<p>&nbsp;</p>
+			
+		</div><!--conteudo-->
+		
+		<div class="clear"></div>
+		
+	</div><!--wrap-->
+	
+</div><!--content-->
+
+</body>
+</html>

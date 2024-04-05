@@ -1,0 +1,379 @@
+<html>
+  <head>
+    <meta HTTP-EQUIV='Pragma' CONTENT='no-cache'>
+    <link rel="stylesheet" href='stylemain.css' type='text/css'>
+         <link rel="stylesheet" href='colors.css' type='text/css'>
+            <script language="javascript" src="util.js"></script>
+            <script language="javascript">
+<!-- hide
+
+function ddnsEnableClick(cb) {
+  with ( document.forms[0] ) {
+	if (cb.checked == true)
+   	{
+		hideDDNSProvider(0);
+		ddnsChange();
+   	}
+	else
+   	{
+		hideDDNSProvider(1);
+		hideDDNSInfo( 1 );
+		hideDynDNSInfo( 1 );
+	    hideNoipInfo(1);
+		hideTZOInfo( 1 );
+   	}
+  }
+}
+
+function ddnsChange() {
+  with ( document.forms[0] ) {
+    var ddns = ddnsMode[ddnsMode.selectedIndex].value;
+
+    switch( ddns ) {
+    case "dyndns":
+      hideDDNSInfo( 0 );
+      hideTZOInfo( 1 );
+	  hideNoipInfo(1);
+	  hideDynDNSInfo( 0 );
+      break;
+    case "no-ip":
+      hideDDNSInfo( 0 );
+      hideTZOInfo( 1 );
+	  hideNoipInfo(0);
+      hideDynDNSInfo( 1 );
+      break;
+    case "tzo":
+      hideDDNSInfo( 0 );
+      hideTZOInfo( 0 );
+	  hideNoipInfo(1);
+      hideDynDNSInfo( 1 );
+      break;
+    }
+  }
+}
+
+function hideDDNSProvider(hide) {
+  var status = 'visible';
+  if ( hide == 1 )
+    status = 'hidden';
+  if (document.getElementById) // DOM3 = IE5, NS6
+    document.getElementById('ddnsProviderInfo').style.visibility = status;
+  else {
+    if (document.layers) { // NS4
+      with ( document.forms[0] ) {
+        if ( hide == 1 ) {
+          ddnsHostname.value = '';
+        } else {
+          ddnsHostname.value = 'Hostname';
+        }
+      }
+    } else {
+      document.all.ddnsInfo.style.visibility = status;
+    }
+  }
+}
+
+function hideDDNSInfo(hide) {
+  var status = 'visible';
+  if ( hide == 1 )
+    status = 'hidden';
+  if (document.getElementById) // DOM3 = IE5, NS6
+    document.getElementById('ddnsInfo').style.visibility = status;
+  else {
+    if (document.layers) { // NS4
+      with ( document.forms[0] ) {
+        if ( hide == 1 ) {
+          ddnsHostname.value = '';
+        } else {
+          ddnsHostname.value = 'Hostname';
+        }
+      }
+    } else {
+      document.all.ddnsInfo.style.visibility = status;
+    }
+  }
+}
+
+function hideDynDNSInfo(hide) {
+  var status = 'visible';
+  if ( hide == 1 )
+    status = 'hidden';
+  if (document.getElementById) // DOM3 = IE5, NS6
+    document.getElementById('dyndnsInfo').style.visibility = status;
+  else {
+    if (document.layers) { // NS4
+      with ( document.forms[0] ) {
+        if ( hide == 1 ) {
+          dyndnsHostname.value = '';
+        } else {
+          dyndnsHostname.value = 'Hostname';
+        }
+      }
+    } else {
+      document.all.ddnsInfo.style.visibility = status;
+    }
+  }
+}
+
+function hideNoipInfo(hide) {
+  var status = 'visible';
+  if ( hide == 1 )
+    status = 'hidden';
+  if (document.getElementById) // DOM3 = IE5, NS6
+    document.getElementById('noipInfo').style.visibility = status;
+  else {
+    if (document.layers) { // NS4
+      with ( document.forms[0] ) {
+        if ( hide == 1 ) {
+          dyndnsHostname.value = '';
+        } else {
+          dyndnsHostname.value = 'Hostname';
+        }
+      }
+    } else {
+      document.all.ddnsInfo.style.visibility = status;
+    }
+  }
+}
+
+function hideTZOInfo(hide) {
+  var status = 'visible';
+  if ( hide == 1 )
+    status = 'hidden';
+  if (document.getElementById) // DOM3 = IE5, NS6
+    document.getElementById('tzoInfo').style.visibility = status;
+  else {
+    if (document.layers) { // NS4
+      with ( document.forms[0] ) {
+        if ( hide == 1 ) {
+          tzoEmail.value = '';
+          tzoKey.value = '';
+        } else {
+          tzoEmail.value = 'Name';
+          tzoKey.value = 'Password';
+        }
+      }
+    } else {
+      document.all.ddnsInfo.style.visibility = status;
+    }
+  }
+}
+
+function frmLoad() {
+with (document.forms[0]) {
+	var ddnsInfo = '';
+	ddnsInfo = '<%ejGetOther(ddnsConf)%>';
+	var ddns = ddnsInfo.split('|');
+	ddns[1] = htmlDecode(ddns[1]);
+	ddns[2] = htmlDecode(ddns[2]);
+	ddns[3] = htmlDecode(ddns[3]);
+
+	if (ddns[0] == 0) /* ddns disabled */
+		chkDdnsEnable.checked = false;
+	else
+		chkDdnsEnable.checked = true;
+
+	/* Status */
+	ddnsStatus.innerHTML = ddns[5];
+	if ((ddnsStatus.innerHTML == 'Success'))
+		ddnsStatus.style.color = "green";
+	else if ((ddnsStatus.innerHTML == 'Updating') || (ddnsStatus.innerHTML == 'IP address has not changed') || (ddnsStatus.innerHTML == 'Only available to donators'))
+		ddnsStatus.style.color = "blue";
+	else
+		ddnsStatus.style.color = "red";
+
+	/* Host Name */
+	ddnsHostname.value = ddns[1];
+
+	/* provider */	
+	ddnsMode.selectedIndex = ddns[4];
+	if (ddnsMode.selectedIndex == 0) /* dynDNS */
+	{
+		dyndnsUsername.value = ddns[2];
+		dyndnsPassword.value = ddns[3];
+	}
+	else if (ddnsMode.selectedIndex == 1) /* no-ip */
+	{
+		noipUsername.value = ddns[2];
+		noipPassword.value = ddns[3];
+	}
+	else if (ddnsMode.selectedIndex == 2) /* tzo */
+	{
+		tzoEmail.value = ddns[2];
+		tzoKey.value = ddns[3];
+	}
+
+	ddnsEnableClick(chkDdnsEnable);
+}
+}
+
+function btnApply() {
+  var loc = 'ddnsmngr.cmd?action=modify&enable=';
+
+    with ( document.forms[0] ) {
+      if ( chkDdnsEnable.checked == true )
+         loc += '1';
+      else
+         loc += '0';
+
+	  loc += '&service=' + ddnsMode.selectedIndex;
+
+      switch( ddnsMode[ddnsMode.selectedIndex].value ) {
+      case "dyndns":
+        update_username = dyndnsUsername.value;
+        update_password = dyndnsPassword.value;
+        break;
+      case "no-ip":
+        update_username = noipUsername.value;
+        update_password = noipPassword.value;
+        break;
+      case "tzo":
+        update_username = tzoEmail.value;
+        update_password = tzoKey.value;
+        break;
+      }
+
+	  if (chkDdnsEnable.checked == true)
+	  {
+	      if ( update_username.length == 0 ) {
+	        if ( (ddnsMode[ddnsMode.selectedIndex].value == 'dyndns') || (ddnsMode[ddnsMode.selectedIndex].value == 'no-ip') )
+	          alert('Empty username.' );
+	        else
+	          alert('Invalid Email address.' );
+	        return;
+	      }
+		  if( isXSS(update_username) ){
+				alert("!!Scripting Cross-site (Persistent) - Persistent XSS on Username");
+				return false;
+		  }else{
+				loc += '&username=' + update_username;
+		  }
+	      
+	      if ( update_password.length == 0 ) {
+	        if ( (ddnsMode[ddnsMode.selectedIndex].value == 'dyndns') || (ddnsMode[ddnsMode.selectedIndex].value == 'no-ip') )
+	          alert('Empty password.' );
+	        else
+	          alert('Invalid key.' );
+	        return;
+	      }
+
+		  if( isXSS(update_password) ){
+				alert("!!Scripting Cross-site (Persistent) - Persistent XSS on Username");
+				return false;
+		  }else{
+		      loc += '&password=' + update_password;
+		  }
+
+	      if ( ddnsHostname.value.length == 0 ) {
+	        alert('Empty hostname.');
+	        return;
+	      }
+		  if( isXSS(ddnsHostname.value) ){
+				alert("!!Scripting Cross-site (Persistent) - Persistent XSS on Hostname");
+				return false;
+		  }else{
+				loc += '&hostname=' + ddnsHostname.value;
+		  }
+	  }
+    }
+    loc += '&sessionKey=<%ejGetOther(sessionKey)%>';
+    var code = 'location="' + loc + '"';
+    eval(code);
+}
+
+// done hiding -->
+    </script>
+  </head>
+  <body onLoad='frmLoad()'>
+    <blockquote>
+      <form>
+        <b>Configure Dynamic DNS</b><br><br>
+        <br>
+        This page allows you to configure Dynamic DNS address from
+        specific DDNS provider.
+        <br><br>
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr>
+            <td width='180'>D-DNS</td>
+            <td>
+              <input type='checkbox' name='chkDdnsEnable' onClick='ddnsEnableClick(this)'>&nbsp;&nbsp;Enable
+            </td>
+          </tr>
+        </table>
+		<br>
+        <br>
+        <div id="ddnsInfo">
+          <table border="0" cellpadding="0" cellspacing="0">
+            <tr>
+              <td width='180'>Status</td>
+              <td id="ddnsStatus"></td>
+            </tr>
+			<br>
+            <tr>
+              <td width='180'>Hostname</td>
+              <td><input type="text" name="ddnsHostname" maxlength="40"></td>
+            </tr>
+          </table><br>
+        </div>
+        <div id="ddnsProviderInfo">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr>
+            <td width='180'>D-DNS provider</td>
+            <td><select name='ddnsMode' size="1" onChange='ddnsChange()'>
+                  <option value="dyndns">DynDNS.org</option>
+                  <option value="no-ip">NO-IP</option>
+<!-- GVT require only dyndns and no-ip
+                  <option value="tzo">TZO</option>
+-->
+                </select>
+            </td>
+          </tr>
+        </table>
+        </div>
+        <div id="dyndnsInfo">
+          <b>DynDNS Settings<b><br>
+          <table border="0" cellpadding="0" cellspacing="0">
+            <tr>
+              <td width='180'>Username</td>
+              <td><input type='text' name='dyndnsUsername' size='20' maxlength='40'></td>
+            </tr>
+            <tr>
+              <td>Password</td>
+              <td><input type="password" name="dyndnsPassword" maxlength="24"></td>
+            </tr>
+          </table>
+        </div>
+        <div id="noipInfo">
+          <b>NO-IP Settings<b><br>
+          <table border="0" cellpadding="0" cellspacing="0">
+            <tr>
+              <td width='180'>Username</td>
+              <td><input type='text' name='noipUsername' size='20' maxlength='40'></td>
+            </tr>
+            <tr>
+              <td>Password</td>
+              <td><input type="password" name="noipPassword" maxlength="24"></td>
+            </tr>
+          </table>
+        </div>
+        <div id="tzoInfo">
+          <b>TZO Settings</b><br>
+          <table border="0" cellpadding="0" cellspacing"0">
+            <tr>
+              <td width='180'>Email</td>
+              <td><input type="text" name="tzoEmail" size='20' maxlength='40'></td>
+            </tr>
+            <tr>
+              <td>Key</td>
+              <td><input type="password" name="tzoKey" maxlength="24"></td>
+            </tr>
+          </table>
+        </div>
+        <center>
+          <input type='button' value="Apply/Save" onClick='btnApply()'>
+        </center>
+      </form>
+    </blockquote>
+  </body>
+</html>
+

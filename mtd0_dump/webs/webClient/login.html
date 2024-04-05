@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta name="robots" content="noindex">
+<%ejGetOther(webLang, head)%>
+
+<script nonce="VGVsZWZvbmljYS1jc3Atbm9uY2U=">
+
+
+</script>
+
+<script type='text/javascript' src='../assets/_js/csp_login_account_setting.js'></script>
+
+</head>
+
+<body>
+
+<%ejGetOther(webLang, header-gateway)%>
+
+<div id="content">
+
+	<div class="wrap">
+
+		<div id="conteudo-gateway">
+
+<%ejGetOther(webLang, menu)%>
+
+			<form method="post" action="login.cgi">
+				<input type="hidden" name="loginUsername"/>
+				<input type="hidden" name="loginPassword"/>
+			</form>
+
+			<div class="col-722 left">
+
+				<h3 class="text-up"><%ejGetOther(webLang, 0042)%></h3>
+
+
+					<table class="setupWifiTable">
+						<thead>
+							<th colspan="2"><%ejGetOther(webLang, 0043)%></th>
+						</thead>
+						<tbody>
+							<tr>
+								<td colspan="2"><%ejGetOther(webLang, 0044)%></td>
+							</tr>
+							<tr>
+								<td><%ejGetOther(webLang, 0045)%></td>
+									<td><input type="text" name="textfield" id="txtUser" maxlength="15"/></td>
+							</tr>
+							<tr>
+								<td><%ejGetOther(webLang, 0046)%></td>
+								<td><input type="password" name="textfield" id="txtPass" maxlength="15"/></td>
+							</tr>
+							<tr>
+								<td colspan="2">
+									<a id='btnLogin' class="btn-default-orange-small right"><span><%ejGetOther(webLang, 0047)%></span></a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+
+
+			</div><!--col-722-->
+
+			<div class="clear"></div>
+
+			<p>&nbsp;</p>
+
+		</div><!--conteudo-->
+
+		<div class="clear"></div>
+
+	</div><!--wrap-->
+
+</div><!--content-->
+
+</body>
+</html>

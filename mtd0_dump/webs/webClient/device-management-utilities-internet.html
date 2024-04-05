@@ -1,0 +1,226 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta name="robots" content="noindex">
+<%ejGetOther(webLang, head)%>
+
+<script nonce="VGVsZWZvbmljYS1jc3Atbm9uY2U=">
+$(document).ready(function () {
+	$('#accordion a.item').click(function () {
+		window.top.name = '';
+		$('#accordion li').children('ul').slideUp('fast');
+		$('#accordion a').removeClass('active');
+		$(this).addClass('active');
+		$(this).siblings('ul').slideDown('fast');
+		return false;
+	});
+});
+
+$(window).load(function() {
+    //firewall
+    var gvtMode = '<%ejGetOther(devInfo, gvtMode)%>';
+    var accessClass = gvtMode.split('|')[0];
+    /*if (accessClass == 'service02') {
+        var firewall = document.getElementById("firewall");
+        firewall.style.display = "none";
+    }*/	//RM11739
+
+	$('.gerenciamento').trigger('click');
+
+	$('#selUtil').on('change', function() {
+		$('#trPings').css('display', ($(this).val()=='ping')?'':'none');
+	});
+
+	$('#txtDest,#txtNum').keypress(function(e) {
+		if (e.which == 13) $('#btnTest').trigger('click');
+	});
+	$('#btnTest').on('click', function() {
+		if (pid >= 0) return;
+		var util = $('#selUtil').val();
+		var dest = $('#txtDest').val();
+		var ng = false;
+
+		if (!isDomainName(dest) && !isIPv4(dest)) {
+			ng = true;
+			invalidMsg($('#txtDest'), '<%ejGetOther(webLang, 0106)%>');
+		}
+		else invalidMsg($('#txtDest'), '');
+
+		if (util == 'ping') {
+			var n = $('#txtNum').val();
+			if (n == '') n = '4';
+			n = parseInt(n);
+			if (isNaN(n)) {
+				ng = true;
+				invalidMsg($('#txtNum'), '<%ejGetOther(webLang, 0107)%>');
+			}
+			else invalidMsg($('#txtNum'), '');
+
+			loc = 'ajax_getvar.cmd?varName=utilPing';
+			loc += '&dest='+ dest;
+			loc += '&num='+ n;
+		}
+		else if(util == 'nslookup')	//RTF_DEF, RM15469
+		{
+			loc = 'ajax_getvar.cmd?varName=utilNslookup';
+			loc += '&dest='+ dest;
+		}
+		else {
+			loc = 'ajax_getvar.cmd?varName=utilTraceroute';
+			loc += '&dest='+ dest;
+		}
+
+		if (ng) return false;
+		$('#txtResult').val('');
+		//$('#trResult').show();
+		seq = 0;
+		$.get(loc+'&seq='+seq, function(ret) {});
+		pid = setInterval(doUtil, 900);
+	});
+
+	$('#btnCancel').on('click', function() {
+		//$('#trResult').hide();
+		clearInterval(pid);
+		pid = -1;
+	});
+
+	$('#btnClear').on('click', function() {
+		$('#txtResult').val('');
+		pid = -1;
+	});
+});
+
+var pid=-1, seq=0, loc;
+function doUtil() {
+	seq++;
+	$.get(loc+'&seq='+seq, function(ret) {
+		var res = $('#txtResult');
+		res.val(ret);
+		res.scrollTop(res[0].scrollHeight - res.height());
+
+		if (ret.search('complete!') >= 0) {
+			clearInterval(pid);
+			pid = -1;
+		}
+		
+		//RTF_DEF, RM15469
+		if (ret.search('time out!') >= 0) {
+			clearInterval(pid);
+			pid = -1;
+		}
+	});
+}
+</script>
+</head>
+
+<body>
+
+<%ejGetOther(webLang, header-gateway)%>
+
+<script nonce="VGVsZWZvbmljYS1jc3Atbm9uY2U=">
+	<!--MENU STATISTIC-->
+	$(document).ready(function(){
+		var tab = '#tab-01';
+		var name = window.top.name.split(':');
+
+		if (name[0] == 'UTL') tab = name[1];
+		$(".tab").slideUp();
+		$(tab).slideDown();
+		$('#menu-utilities a[rel="'+ tab.split('-')[1] +'"]').addClass('active');
+
+		$("#menu-utilities li a").click(function() {
+			var i = $(this).attr("rel");
+			$("#menu-utilities li a").removeClass("active");
+			$(this).addClass("active");
+			$(".tab").slideUp();
+			$("#tab-"+i).slideDown();
+			window.top.name = 'UTL:#tab-'+i;
+			return false;
+		});
+	});
+	<!--MENU STATISTIC-->
+</script>
+
+<div id="content">
+
+	<div class="wrap">
+
+		<div id="conteudo-gateway">
+
+<%ejGetOther(webLang, menu)%>
+
+			<div class="col-722 left">
+			
+				<h3 class="text-up"><%ejGetOther(webLang, 0108)%></h3>
+				
+				<div id="menu-utilities">
+					<ul>
+						<li><a href="#" rel="01" class="no-border">Internet</a></li>
+					</ul>
+				</div><!--menu-statistic-->
+				
+				<div class="clear"></div>
+				
+				<div id="tab-01" class="tab">
+					<table class="setupWifiTable">
+						<thead>
+							<th colspan="2"><%ejGetOther(webLang, 0109)%></th>
+						</thead>
+						<tbody>
+							<tr>
+								<td><%ejGetOther(webLang, 0110)%></td>
+								<td><select id="selUtil">
+								<option value="ping">Ping</option>
+								<option value="trace">TraceRoute</option>
+								<option value="nslookup">DNS Lookup</option>
+								</select></td>
+							</tr>
+							<tr>
+								<td><%ejGetOther(webLang, 0111)%></td>
+								<td><input type="text" id="txtDest" /></td>
+							</tr>
+							<tr id="trPings">
+								<td><%ejGetOther(webLang, 0112)%></td>
+								<td><input type="text" id="txtNum" maxlength="8" /></td>
+							</tr>
+							<tr>
+								<td colspan="2">
+									<a id="btnCancel" class="btn-default-orange-small right"><span><%ejGetOther(webLang, 0067)%></span></a>
+									<a id="btnTest"   class="btn-default-orange-small right"><span><%ejGetOther(webLang, 0113)%></span></a>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2"><%ejGetOther(webLang, 0613)%></td>
+							</tr>
+							<tr id="trResult">
+								<td colspan="2">
+									<textarea id="txtResult" readonly="readonly" rows="10" cols="40" class="text-left">
+									</textarea>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2">
+									<a id="btnClear"   class="btn-default-orange-small right"><span><%ejGetOther(webLang, 0680)%></span></a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div><!--tab-01-->
+					
+			</div><!--col-722-->
+		
+			<div class="clear"></div>
+			
+			<p>&nbsp;</p>
+			
+		</div><!--conteudo-->
+		
+		<div class="clear"></div>
+		
+	</div><!--wrap-->
+	
+</div><!--content-->
+
+</body>
+</html>

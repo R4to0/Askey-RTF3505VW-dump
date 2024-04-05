@@ -1,0 +1,1373 @@
+<html>
+   <head>
+      <meta HTTP-EQUIV='Pragma' CONTENT='no-cache'>
+      <meta name="viewport" content="width=device-width, maximum-scale=1.0, minimum-scale=1.0" />
+      <link rel="stylesheet" href='stylemain.css' type='text/css'>
+      <link rel="stylesheet" href='colors.css' type='text/css'>
+      <script language="javascript" src="util.js"></script>
+      <script language="javascript" src="te_util.js"></script>
+      <script language="javascript" src="assets/_js/jquery-1.11.3.min.js"></script>
+      <script language="javascript" src="assets/_js/jquery-migrate-1.2.1.min.js"></script>
+      <script language="javascript">
+<!-- hide
+
+var sessionKey='<%ejGetOther(sessionKey)%>';
+var currentSecurityLevel = '<%ejGetOther(tefFiWa, securityLevel)%>';
+var currentRuleList = '<%ejGetOther(tefFiWa, detailedRuleList)%>';
+var currentEntryList = '<%ejGetOther(tefFiWa, detailedEntryList)%>';
+var rawInterfaceList = '<%ejGetOther(tefFiWa, interfaceList)%>';
+var reservedLevelEntryPair = '<%ejGetOther(tefFiWa, levelEntryPair)%>';
+//var currentSecurityLevel = 'Maximum';
+//var currentRuleList = '7,1,1,TCP,Permit,icmp-host-unreachable,,,,0,0,,,80,80;7,2,1,TCP,Permit,icmp-host-unreachable,,,,0,0,,,443,443;7,3,1,TCP,Permit,icmp-host-unreachable,,,,0,0,,,25,25;7,4,1,TCP,Permit,icmp-host-unreachable,,,,0,0,,,110,110;7,5,1,TCP,Permit,icmp-host-unreachable,,,,0,0,,,143,143;7,6,1,TCP,Permit,icmp-host-unreachable,,,,0,0,,,993,993;7,7,1,UDP,Permit,icmp-host-unreachable,,,,0,0,,,53,53;7,8,1,UDP,Permit,icmp-host-unreachable,,,,0,0,,,67,68;7,9,1,ICMP,Permit,icmp-host-unreachable,any,,,0,0,,,0,0';
+//var currentEntryList = '6,reserved-wan,InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.WANPPPConnection.1,In,4,Permit;7,reserved-lan,InternetGatewayDevice.LANDevice.1.LANHostConfigManagement.IPInterface.1,In,4,Drop';
+//var rawInterfaceList = 'all|;all WAN|WAN;all LAN|LAN;veip0.2|InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.WANIPConnection.1;veip0.3|InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.WANIPConnection.2;ppp0.1|InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.WANPPPConnection.1;WAN device 1|InternetGatewayDevice.WANDevice.1;WAN device 3|InternetGatewayDevice.WANDevice.3;WAN connection 1|InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1;br0|InternetGatewayDevice.LANDevice.1.LANHostConfigManagement.IPInterface.1;br0:0|InternetGatewayDevice.LANDevice.1.LANHostConfigManagement.IPInterface.2;eth0|InternetGatewayDevice.LANDevice.1.LANEthernetInterfaceConfig.1;eth1|InternetGatewayDevice.LANDevice.1.LANEthernetInterfaceConfig.2;eth2|InternetGatewayDevice.LANDevice.1.LANEthernetInterfaceConfig.3;eth3|InternetGatewayDevice.LANDevice.1.LANEthernetInterfaceConfig.4;LAN device 1|InternetGatewayDevice.LANDevice.1;WLAN conf 1|InternetGatewayDevice.LANDevice.1.WLANConfiguration.1;WLAN conf 2|InternetGatewayDevice.LANDevice.1.WLANConfiguration.2;;;';
+//var reservedLevelEntryPair = 'Maximum,IPv4PppIn;Maximum,IPv6PppIn;Maximum,reserved-lan4;Typical,IPv4PppIn;Typical,IPv6PppIn';
+//var currentSecurityLevel = 'Minimum';
+//var currentRuleList = '';
+//var currentEntryList = '';
+//var rawInterfaceList = 'all|;all WAN|WAN;all LAN|LAN;veip0.2|InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.WANIPConnection.1;veip0.3|InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.WANIPConnection.2;ppp0.1|InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.WANPPPConnection.1;WAN device 1|InternetGatewayDevice.WANDevice.1;WAN device 3|InternetGatewayDevice.WANDevice.3;WAN connection 1|InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1;br0|InternetGatewayDevice.LANDevice.1.LANHostConfigManagement.IPInterface.1;br0:0|InternetGatewayDevice.LANDevice.1.LANHostConfigManagement.IPInterface.2;eth0|InternetGatewayDevice.LANDevice.1.LANEthernetInterfaceConfig.1;eth1|InternetGatewayDevice.LANDevice.1.LANEthernetInterfaceConfig.2;eth2|InternetGatewayDevice.LANDevice.1.LANEthernetInterfaceConfig.3;eth3|InternetGatewayDevice.LANDevice.1.LANEthernetInterfaceConfig.4;LAN device 1|InternetGatewayDevice.LANDevice.1;WLAN conf 1|InternetGatewayDevice.LANDevice.1.WLANConfiguration.1;WLAN conf 2|InternetGatewayDevice.LANDevice.1.WLANConfiguration.2';
+//var reservedLevelEntryPair = '';
+
+var INTERFACE_SEPARATOR = ';';
+var INTERFACE_NAME_DESC_SEPARATOR = '|';
+var PARAMETER_SEPARATOR = ",";
+var ENTRY_SEPARATOR = ";";
+var RULE_SEPARATOR = ";";
+var ENTRY_RULE_SEPARATOR = "|";
+
+var VIEWER_OPT_ID="vieweropt";
+var VIEWER_SECURITY_LEVEL_ID="viewersecuritylevel";
+var VIEWER_SECURITY_LEVEL_APPLY_ID="viewersecuritylevelapply";
+var VIEWER_TBL_ID="viewertbl";
+var VIEWER_ROW_ID_PREFIX="viewerrow";
+var VIEWER_RULE_IN_ENTRY_ROW_ID_PREFIX="viewerrruleinentryrow";
+var VIEWER_OPER_ID="vieweroper";
+var VIEWER_OPER_EXECUTION_ADD_ID="vieweroperexecadd";
+var VIEWER_CTRL_ID="viewerctrl";
+var VIEWER_CTRL_ICMPTYPE_ID="viewerctrlicmptype";
+var VIEWER_CTRL_REJECTIONTYPE_ID="viewerctrlrejectiontype";
+var VIEWER_CTRL_SPECIFICACTION_ID="viewerctrlspecificaction";
+var VIEWER_CTRL_SRCSTARTPORT_ID="viewerctrlsrcstartport";
+var VIEWER_CTRL_SRCENDPORT_ID="viewerctrlsrcendport";
+var VIEWER_CTRL_DSTSTARTPORT_ID="viewerctrldststartport";
+var VIEWER_CTRL_DSTENDPORT_ID="viewerctrldstendport";
+var VIEWER_CTRL_EXECUTION_ADD_ID="viewerctrlexecadd";
+var VIEWER_EDIT_ICMPTYPE_ID="viewerediticmptype";
+var VIEWER_EDIT_REJECTIONTYPE_ID="viewereditrejectiontype";
+var VIEWER_EDIT_SPECIFICACTION_ID="viewereditspecificaction";
+var VIEWER_EDIT_SRCSTARTPORT_ID="viewereditsrcstartport";
+var VIEWER_EDIT_SRCENDPORT_ID="viewereditsrcendport";
+var VIEWER_EDIT_DSTSTARTPORT_ID="viewereditdststartport";
+var VIEWER_EDIT_DSTENDPORT_ID="viewereditdstendport";
+var ENABLED_TYPE={'0':'false', '1':'true'};
+var ICMPV4_TYPE=[
+  "any",
+  "echo-reply",
+    "destination-unreachable",
+    "network-unreachable",
+    "host-unreachable",
+    "protocol-unreachable",
+    "port-unreachable",
+    "fragmentation-needed",
+    "source-route-failed",
+    "network-unknown",
+    "host-unknown",
+    "network-prohibited",
+    "host-prohibited",
+    "TOS-network-unreachable",
+    "TOS-host-unreachable",
+    "communication-prohibited",
+    "host-precedence-violation",
+    "precedence-cutoff",
+  "source-quench",
+  "redirect",
+    "network-redirect",
+    "host-redirect",
+    "TOS-network-redirect",
+    "TOS-host-redirect",
+  "echo-request",
+  "router-advertisement",
+  "router-solicitation",
+  "time-exceeded",
+    "ttl-zero-during-transit",
+    "ttl-zero-during-reassembly",
+  "parameter-problem",
+    "ip-header-bad",
+    "required-option-missing",
+  "timestamp-request",
+  "timestamp-reply",
+  "address-mask-request",
+  "address-mask-reply"
+];
+var ICMPV6_TYPE=[
+  "destination-unreachable",
+    "no-route-to-destination",
+    "administratively-prohibited",
+    "beyond-scope-of-source-address",
+    "address-unreachable",
+    "port-unreachable",
+    "source-address-failed",
+    "reject-route-to-destination",
+    "error-source-routing-header",
+  "packet-too-big",
+  "time-exceeded",
+    "hop-limit-exceeded",
+    "fragment-reassembly-time-exceeded",
+  "parameter-problem",
+    "erroneous-header-field",
+    "unrecognized-next-header-type",
+    "unrecognized-ipv6-option",
+  "echo-request",
+  "echo-reply",
+  "multicast-listener-query",
+  "multicast-listener-report",
+  "multicast-listener-done",
+  "router-solicitation",
+  "router-advertisement",
+  "neighbor-solicitation",
+  "neighbor-advertisement",
+  "redirect-message",
+  "router-renumbering",
+    "router-renumbering-command",
+    "router-renumbering-result",
+    "sequence-number-reset",
+  "node-information-query",
+  "node-information-response",
+  "inverse-neighbor-discovery-solicitation",
+  "inverse-neighbor-discovery-advertisement",
+  "version2-multicast-listener-report",
+  "certification-path-solicitation",
+  "certification-path-advertisement",
+  "multicast-router-advertisement",
+  "multicast-router-solicitation",
+  "multicast-router-termination",
+];
+var SHOW_DISABLED_ENTRY=false;
+
+jQuery.fn.extend({
+  isNameAvailable: function(name) {
+    var reserved=[INTERFACE_SEPARATOR, INTERFACE_NAME_DESC_SEPARATOR, PARAMETER_SEPARATOR, ENTRY_SEPARATOR, RULE_SEPARATOR, ENTRY_RULE_SEPARATOR];
+    var available=true;
+    $(reserved).each(function(idx, val){
+      if(name.indexOf(val)>=0)
+      {
+        available=false;
+        return false; //the same as break
+      }
+    });
+    return available;
+  }
+});
+
+jQuery.fn.extend({
+  deserializeLevelEntryPair: function(serializedLevelEntryPair) {
+    var outer={'Minimum':[], 'Typical':[], 'Maximum':[]};
+    var pairs = serializedLevelEntryPair.split(ENTRY_SEPARATOR);
+    for(var i=0; i<pairs.length; i++ )
+    {
+      var pair=pairs[i].split(PARAMETER_SEPARATOR);
+      if( pair[0]!=undefined && outer[pair[0]]!=undefined )
+      {
+        outer[pair[0]].push(pair[1]);
+      }
+    } //end for
+    return outer;
+  }
+});
+
+jQuery.fn.extend({
+  deserializeRuleList: function(serializedRuleList) {
+    var outer=[];
+    var ruleList = serializedRuleList.split(RULE_SEPARATOR);
+    for(var i=0; i<ruleList.length; i++ )
+    {
+      var inner=[];
+      var rule=ruleList[i].split(PARAMETER_SEPARATOR);
+      var found=false;
+      var gotchaIndex=-1;
+      for( var k=0; k<outer.length; k++ )
+      {
+        if(outer[k].length>0 && outer[k][0]==rule[0] )
+        {
+          found=true;
+          gotchaIndex=k;
+          break;
+        }
+      } //end for
+      var last=rule.slice(1, rule.length);
+      if( found==false )
+      {
+        inner[0]=rule[0];
+        inner[1]=[];
+        inner[1].push(last);
+        outer.push(inner);
+      }
+      else
+      {
+        outer[k][1].push(last); 
+      }
+    } //end for
+    return outer;
+  }
+});
+
+jQuery.fn.extend({
+  deserializeEntryList: function(serializedEntryList) {
+    var outer=[];
+    var entryList = serializedEntryList.split(ENTRY_SEPARATOR);
+    for(var i=0; i<entryList.length; i++ )
+    {
+      var inner=[];
+      var entry=entryList[i].split(PARAMETER_SEPARATOR);
+      for(var j=0; j<entry.length; j++)
+      {
+        inner.push(entry[j]);
+      } //end for
+      outer.push(inner);
+    } //end for
+    return outer;
+  }
+});
+
+jQuery.fn.extend({
+  deserializeInterface: function(serializedInterface) {
+    var outer=[];
+    var interfaceList = serializedInterface.split(INTERFACE_SEPARATOR);
+    for(var i=0; i<interfaceList.length; i++ )
+    {
+      var intf=interfaceList[i].split(INTERFACE_NAME_DESC_SEPARATOR);
+      if(intf.length>0 && intf[0]!=undefined && intf[1]!=undefined )
+      {
+        var inner=[intf[0], intf[1]];
+        outer.push(inner);
+      }
+    } //end for
+    return outer;
+  }
+});
+
+jQuery.fn.extend({
+  presetRulePanel: function(entryNameVersionList) {
+    if( entryNameVersionList===undefined ) return;
+
+    var DEFAULT_SELECTED_ENTRY_INDEX=0;
+    var metaValid=true;
+    var ctrlrow=$("#"+VIEWER_CTRL_ID+" tr:last");
+    $(ctrlrow).find("td").each(function(idx, val){
+      switch(idx)
+      {
+        case 0:
+          $(val).find("select").empty();
+          $(entryNameVersionList).each(function(idxInDetail, valInDetail){
+            $(valInDetail).each(function(idxInMoreDetail, valInMoreDetail){
+              if(valInMoreDetail==undefined)
+              {
+                metaValid=false;
+                return true; //the same as continue
+              }
+            });
+            if( metaValid==false ) return true; //the same as continue
+
+            specificEntry=$("<option "+"ipversion="+"\""+valInDetail[2]+"\""+" value="+"\""+valInDetail[0]+"\""+(idxInDetail==DEFAULT_SELECTED_ENTRY_INDEX?"selected":"")+">"+valInDetail[1]+"</option>");
+            $(val).find("select").append(specificEntry);
+          });
+          $(val).find("select").change(function(){$($(val).find("select")).alterEntry();});
+          break;
+        case 1:
+          var ctrlEnabled=$("<select>"+
+            "<option "+"value="+"\""+"0"+"\""+">"+ENABLED_TYPE["0"]+"</option>"+
+            "<option "+"value="+"\""+"1"+"\""+"selected"+">"+ENABLED_TYPE["1"]+"</option>"+
+          "</select>");
+          $(val).append(ctrlEnabled);
+          break;
+        case 2:
+          var ctrlProtocol=$("<select>"+
+            "<option "+"value="+"\""+"UDP"+"\""+">"+"UDP"+"</option>"+
+            "<option "+"value="+"\""+"TCP"+"\""+">"+"TCP"+"</option>"+
+            "<option "+"value="+"\""+"ICMP"+"\""+" selected>"+"ICMP"+"</option>"+
+          "</select>");
+          $(val).append(ctrlProtocol);
+          $(val).find("select").change(function(){$($(val).find("select")).alterProtocol(VIEWER_CTRL_ICMPTYPE_ID, VIEWER_CTRL_SRCSTARTPORT_ID, VIEWER_CTRL_SRCENDPORT_ID, VIEWER_CTRL_DSTSTARTPORT_ID, VIEWER_CTRL_DSTENDPORT_ID);});
+          break;
+        case 3:
+          var ctrlSpecificAction=$("<select "+"id="+"\""+VIEWER_CTRL_SPECIFICACTION_ID+"\""+">"+
+            "<option "+"value="+"\""+"Permit"+"\""+" selected>"+"Permit"+"</option>"+
+            "<option "+"value="+"\""+"Drop"+"\""+">"+"Drop"+"</option>"+
+            "<option "+"value="+"\""+"Reject"+"\""+" disabled>"+"Reject"+"</option>"+
+          "</select>");
+          $(val).append(ctrlSpecificAction);
+          $(val).find("select").change(function(){$($(val).find("select")).alterSpecificAction(VIEWER_CTRL_REJECTIONTYPE_ID);});
+          break;
+        case 4:
+          var ctrlRejectionType=$("<select "+"id="+"\""+VIEWER_CTRL_REJECTIONTYPE_ID+"\""+" disabled "+"/>");
+          $(val).append(ctrlRejectionType);
+          break;
+        case 5:
+          var ver=entryNameVersionList[DEFAULT_SELECTED_ENTRY_INDEX][2];
+          var icmparr=null;
+          if(ver=="6") icmparr=ICMPV6_TYPE;
+          else icmparr=ICMPV4_TYPE;
+          var ctrlIcmpType=$("<select "+"id="+"\""+VIEWER_CTRL_ICMPTYPE_ID+"\""+"/>");
+          $(val).append(ctrlIcmpType);
+          $("#"+VIEWER_CTRL_ICMPTYPE_ID).empty();
+          $(icmparr).each(function(idxInDetail, valInDetail){
+            $("#"+VIEWER_CTRL_ICMPTYPE_ID).append(
+              $("<option "+"value="+"\""+valInDetail+"\""+" >"+valInDetail+"</option>")
+            );
+          });
+          //$("#"+VIEWER_CTRL_ICMPTYPE_ID).width(64);
+          break;
+        case 6:
+        case 10:
+          var ctrlAddr=$("<input type=\"text\" size=\"15\" maxlength=\"48\" />");
+          $(val).append(ctrlAddr);
+          break;
+        case 7:
+        case 11:
+          var ctrlMask=$("<input type=\"text\" size=\"15\" maxlength=\"48\" />");
+          $(val).append(ctrlMask);
+          break;
+        case 8:
+          var ctrlPortStartEnd=$("<input type=\"text\" "+"id="+"\""+VIEWER_CTRL_SRCSTARTPORT_ID+"\""+" size=\"6\" maxlength=\"5\" value=\"0\" disabled>");
+          $(val).append(ctrlPortStartEnd);
+          break;
+        case 9:
+          var ctrlPortStartEnd=$("<input type=\"text\" "+"id="+"\""+VIEWER_CTRL_SRCENDPORT_ID+"\""+" size=\"6\" maxlength=\"5\" value=\"0\" disabled>");
+          $(val).append(ctrlPortStartEnd);
+          break;
+        case 12:
+          var ctrlPortStartEnd=$("<input type=\"text\" "+"id="+"\""+VIEWER_CTRL_DSTSTARTPORT_ID+"\""+" size=\"6\" maxlength=\"5\" value=\"0\" disabled>");
+          $(val).append(ctrlPortStartEnd);
+          break;
+        case 13:
+          var ctrlPortStartEnd=$("<input type=\"text\" "+"id="+"\""+VIEWER_CTRL_DSTENDPORT_ID+"\""+" size=\"6\" maxlength=\"5\" value=\"0\" disabled>");
+          $(val).append(ctrlPortStartEnd);
+          break;
+        case 14:
+          var ctrlExecAdd=$("<input type=\"button\" value=\"Add\" "+"id="+"\""+VIEWER_CTRL_EXECUTION_ADD_ID+"\""+(metaValid==false?" disabled":"")+"/>");
+          $(val).append(ctrlExecAdd);
+          $('#'+VIEWER_CTRL_EXECUTION_ADD_ID).click(function(){ $().addRule(); });
+          break;
+        default:
+          break;
+      } //end switch case
+    });
+  }
+});
+
+jQuery.fn.extend({
+  presetEntryPanel: function(interfaces) {
+    var DEFAULT_SELECTED_INTERFACE_INDEX=0;
+    var operrow=$("#"+VIEWER_OPER_ID+" tr:last");
+    $(operrow).find("td").each(function(idx, val){
+      switch(idx)
+      {
+        case 0:
+          var operName=$("<input type=\"text\" size=\"15\" maxlength=\"15\" />");
+          $(val).append(operName);
+          break;
+        case 1:
+          var operInterface=$("<select "+"/>");
+          $(val).append(operInterface);
+          $(val).find("select").empty();
+          $(interfaces).each(function(idxInDetail, valInDetail){
+            $(val).find("select").append(
+              $("<option "+"value="+"\""+valInDetail[1]+"\""+" >"+"&nbsp;&nbsp;"+valInDetail[0]+"&nbsp;&nbsp;"+"</option>")
+            );
+          });
+          break;
+        case 2:
+          var operType=$("<select>"+
+            "<option "+"value="+"\""+"In"+"\""+" selected>"+"&nbsp;&nbsp;In&nbsp;&nbsp;"+"</option>"+
+            "<option "+"value="+"\""+"Out"+"\""+">"+"&nbsp;&nbsp;Out&nbsp;&nbsp;"+"</option>"+
+          "</select>");
+          $(val).append(operType);
+          break;
+        case 3:
+          var operVer=$("<select>"+
+            "<option "+"value="+"\""+"4"+"\""+" selected>"+"&nbsp;&nbsp;&nbsp;&nbsp;4&nbsp;&nbsp;&nbsp;&nbsp;"+"</option>"+
+            "<option "+"value="+"\""+"6"+"\""+">"+"&nbsp;&nbsp;&nbsp;&nbsp;6&nbsp;&nbsp;&nbsp;&nbsp;"+"</option>"+
+          "</select>");
+          $(val).append(operVer);
+          break;
+        case 4:
+          var operDefaultAction=$("<select>"+
+            "<option "+"value="+"\""+"Permit"+"\""+" selected>"+"&nbsp;&nbsp;&nbsp;&nbsp;Permit&nbsp;&nbsp;&nbsp;&nbsp;"+"</option>"+
+            "<option "+"value="+"\""+"Drop"+"\""+">"+"&nbsp;&nbsp;&nbsp;&nbsp;Drop&nbsp;&nbsp;&nbsp;&nbsp;"+"</option>"+
+          "</select>");
+          $(val).append(operDefaultAction);
+          break;
+        case 5:
+          var operExecAdd=$("<input type=\"button\" value=\"Add\" "+"id="+"\""+VIEWER_OPER_EXECUTION_ADD_ID+"\""+"/>");
+          $(val).append(operExecAdd);
+          $(val).find("input").click(function(){ $().addEntry(); });
+          break;
+        default:
+          break;
+      } //end switch case
+    });
+  }
+});
+
+jQuery.fn.extend({
+  alterEntry: function() {
+    var ver=$(this).find("option"+"["+"value="+$(this).val()+"]").attr("ipversion");
+    var icmparr=null;
+    if(ver=="6") icmparr=ICMPV6_TYPE;
+    else icmparr=ICMPV4_TYPE;
+    $("#"+VIEWER_CTRL_ICMPTYPE_ID).empty();
+    $(icmparr).each(function(idxInDetail, valInDetail){
+      $("#"+VIEWER_CTRL_ICMPTYPE_ID).append(
+        $("<option "+"value="+"\""+valInDetail+"\""+" >"+valInDetail+"</option>")
+      );
+    });    
+  }
+});
+
+jQuery.fn.extend({
+  alterProtocol: function(tagicmptypeid, tagsrcstartportid, tagsrcendportid, tagdststartportid, tagdstendportid) {
+    var prot=$(this).val();
+    if( prot=="ICMP" )
+    {
+      $("#"+tagicmptypeid).removeAttr("disabled");
+      $("#"+tagsrcstartportid).prop("disabled", "disabled");
+      $("#"+tagsrcendportid).prop("disabled", "disabled");
+      $("#"+tagdststartportid).prop("disabled", "disabled");
+      $("#"+tagdstendportid).prop("disabled", "disabled");
+    }
+    else
+    {
+      $("#"+tagicmptypeid).prop("disabled", "disabled");
+      $("#"+tagsrcstartportid).removeAttr("disabled");
+      $("#"+tagsrcendportid).removeAttr("disabled");
+      $("#"+tagdststartportid).removeAttr("disabled");
+      $("#"+tagdstendportid).removeAttr("disabled");
+    }
+  }
+});
+
+jQuery.fn.extend({
+  alterSpecificAction: function(tagrejectiontypeid) {
+    var sa=$(this).val();
+    if( sa=="Reject" )
+    {
+      $("#"+tagrejectiontypeid).removeAttr("disabled");
+    }
+    else
+    {
+      $("#"+tagrejectiontypeid).prop("disabled", "disabled");
+    }
+  }
+});
+
+jQuery.fn.extend({
+  showRulePanel: function(level) {
+    $(this).append($("<br/>"));
+    $(this).append($("<label>"+"<font "/*+(level=="Minimum"?"color=\"Red\"":"")*/+">"+"Add a new rule:"+"</font>"+"</label>"));
+    var tbl=$("<table "+"id="+"\""+VIEWER_CTRL_ID+"\""+"/>");
+    $(this).append(tbl);
+    $('#'+VIEWER_CTRL_ID).attr("border", "1");
+    $('#'+VIEWER_CTRL_ID).attr("cellpadding", "4");
+    $('#'+VIEWER_CTRL_ID).attr("cellspacing", "0");
+    var ruleTitle=$("<tr>"+
+      "<td class='hd'><label>Name</label></td>"+
+      "<td class='hd'><label>Enabled</label></td>"+
+      "<td class='hd'><label>Protocol</label></td>"+
+      "<td class='hd'><label>Specific Action</label></td>"+
+      "<td class='hd' displayLevel='simplified'><label>Rejection Type</label></td>"+
+      "<td class='hd'><label>ICMP Type</label></td>"+
+      "<td class='hd'><label>Originator IP Address</label></td>"+
+      "<td class='hd'><label>Originator Mask</label></td>"+
+      "<td class='hd'><label>Originator Start Port</label></td>"+
+      "<td class='hd'><label>Originator End Port</label></td>"+
+      "<td class='hd'><label>Destination IP Address</label></td>"+
+      "<td class='hd'><label>Destination Mask</label></td>"+
+      "<td class='hd'><label>Destination Start Port</label></td>"+
+      "<td class='hd'><label>Destination End Port</label></td>"+
+      "<td class='hd' align='center'><label>&nbsp;Execution&nbsp;</label></td>"+
+    "</tr>");
+    $('#'+VIEWER_CTRL_ID).append(ruleTitle);
+    var ruleCtrl=$("<tr>"+
+      "<td><select/></td>"+
+      "<td/>"+
+      "<td/>"+
+      "<td/>"+
+      "<td displayLevel='simplified'/>"+
+      "<td/>"+
+      "<td/>"+
+      "<td/>"+
+      "<td/>"+
+      "<td/>"+
+      "<td/>"+
+      "<td/>"+
+      "<td/>"+
+      "<td/>"+
+      "<td displayLevel=\"alignedAdd\"/>"+
+    "</tr>");
+    $('#'+VIEWER_CTRL_ID).append(ruleCtrl);    
+  }
+});
+
+jQuery.fn.extend({
+  showEntryPanel: function(level) {
+    $(this).append($("<br/>"));
+    $(this).append($("<label>"+"<font "/*+(level=="Minimum"?"color=\"Red\"":"")*/+">"+"Add a new entry:"+"</font>"+"</label>"));
+    var tbl=$("<table "+"id="+"\""+VIEWER_OPER_ID+"\""+"/>");
+    $(this).append(tbl);
+    $('#'+VIEWER_OPER_ID).attr("border", "1");
+    $('#'+VIEWER_OPER_ID).attr("cellpadding", "4");
+    $('#'+VIEWER_OPER_ID).attr("cellspacing", "0");
+    var entryTitle=$("<tr>"+
+      "<td class='hd'><label>Name</label></td>"+
+      "<td class='hd'><label>Interface</label></td>"+
+      "<td class='hd'><label>Type</label></td>"+
+      "<td class='hd'><label>IP Version</label></td>"+
+      "<td class='hd'><label>Default Action</label></td>"+
+      "<td class='hd' align='center'><label>&nbsp;Execution&nbsp;</label></td>"+
+    "</tr>");
+    $('#'+VIEWER_OPER_ID).append(entryTitle);
+    var entryOper=$("<tr>"+
+      "<td/>"+
+      "<td/>"+
+      "<td/>"+
+      "<td/>"+
+      "<td/>"+
+      "<td displayLevel=\"alignedAdd\"/>"+
+    "</tr>");
+    $('#'+VIEWER_OPER_ID).append(entryOper);    
+  }
+});
+
+
+jQuery.fn.extend({
+  showRule: function(trid, rule) {
+    var tblintrid=trid+"tbl";
+    var tbl=$("<td><table "+"id="+"\""+tblintrid+"\""+""+"/></td>");
+    $('#'+trid).empty().append(tbl);
+    $('#'+tblintrid).attr("border", "1");
+    $('#'+tblintrid).attr("cellpadding", "4");
+    $('#'+tblintrid).attr("cellspacing", "0");  
+          
+    if( rule.length>0 )
+    {
+      var ruleTitle=$("<tr>"+
+        "<td class='hd'><label>Enabled</label></td>"+
+        "<td class='hd'><label>Protocol</label></td>"+
+        "<td class='hd'><label>Specific Action</label></td>"+
+        "<td class='hd' displayLevel='simplified'><label>Rejection Type</label></td>"+
+        "<td class='hd'><label>ICMP Type</label></td>"+
+        "<td class='hd'><label>Originator IP Address</label></td>"+
+        "<td class='hd'><label>Originator Mask</label></td>"+
+        "<td class='hd'><label>Originator Start Port</label></td>"+
+        "<td class='hd'><label>Originator End Port</label></td>"+
+        "<td class='hd'><label>Destination IP Address</label></td>"+
+        "<td class='hd'><label>Destination Mask</label></td>"+
+        "<td class='hd'><label>Destination Start Port</label></td>"+
+        "<td class='hd'><label>Destination End Port</label></td>"+
+        "<td class='hd' align='center'><label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Execution&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label></td>"+
+      "</tr>");
+      $('#'+tblintrid).append(ruleTitle);
+    }
+    $.each(rule, function( idx, val ) {
+      var paddedRule=['', '', '', '', '', '', '', '', '', '', '', '', '', ''];
+      $.each(val, function( idxInDetail, valInDetail ) {
+        paddedRule[idxInDetail]=valInDetail;
+      });
+      var ruleParam="";
+      ruleParam+="<tr>";
+      var ruleiid=null;
+      $.each(paddedRule, function( idxInDetail, valInDetail ) {
+        switch(idxInDetail)
+        {
+          case 0:
+            ruleiid=valInDetail;
+            return true; //the same as continue
+          case 1:
+            ruleParam+="<td>";
+            ruleParam+="<label "+"ruleiid="+"\""+ruleiid+"\""+">"+ENABLED_TYPE[valInDetail]+"</label>";
+            ruleParam+="</td>";
+            break;
+          case 4:
+            ruleParam+="<td displayLevel='simplified'>";
+            ruleParam+="<label>"+valInDetail+"</label>";
+            ruleParam+="</td>";
+            break;
+          default:
+            ruleParam+="<td>";
+            ruleParam+="<label>"+(valInDetail.length>0?valInDetail:"&nbsp;&nbsp;&nbsp;")+"</label>";
+            ruleParam+="</td>";
+            break;
+        } //end switch case
+      });
+      ruleParam+="</tr>";
+      $('#'+tblintrid).append($(ruleParam));
+      $('#'+tblintrid).find("tr:last").append(
+        $("<td displayLevel=\"alignedEdit\">"+"<input type=\"button\" value=\"Edit"+"\""+"/>"+"<input type=\"button\" value=\"Remove"+"\""+"/>"+"</td>")
+      );
+      $('#'+tblintrid).find("tr:last td:last").find("input[value=\"Remove\"]").click(function(){$($(this)).removeRule();});
+      $('#'+tblintrid).find("tr:last td:last").find("input[value=\"Edit\"]").click(function(){$($(this)).editRule();});
+    });
+  }
+});
+
+jQuery.fn.extend({
+  showEntry: function(entry, specificLevelEntryPair, interfaces) {
+    if( entry.length<5 ) return;
+    var prevent=$.inArray(entry[1], specificLevelEntryPair)>=0?true:false;
+    var readableInterface=null;
+    $(interfaces).each(function(idx, val){
+      if($(val)[1]==entry[2]) readableInterface=$(val)[0];
+    });
+    $(this).append(
+      "<tr "+"id="+"\""+VIEWER_ROW_ID_PREFIX+entry[0]+"\""+">"+
+        "<td><label entryiid="+"\""+entry[0]+"\""+">"+htmlEncode(entry[1])+"</label></td>"+
+        "<td style=\"word-break:keep-all;\"><label operableInterface=\""+entry[2]+"\">"+(readableInterface)+"</label></td>"+
+        "<td "+("displayLevel="+"\""+"simplified"+"\"")+"><label>"+entry[3]+"</label></td>"+
+        "<td "+"><label>"+entry[4]+"</label></td>"+
+        "<td><label>"+entry[5]+"</label></td>"+
+        "<td displayLevel=\"alignedEdit\">"+
+          ((SHOW_DISABLED_ENTRY==true)?("<input type=\"button\" value=\"Edit"+"\""+(prevent==true?" disabled ":"")+"/>"+"<br/>"+"<input type=\"button\" value=\"Remove"+"\""+(prevent==true?" disabled ":"")+"/>"):((prevent==true)?("<label>&nbsp;</label>"):("<input type=\"button\" value=\"Edit"+"\""+"/>"+"<br/>"+"<input type=\"button\" value=\"Remove"+"\""+"/>")))+
+        "</td>"+
+        "<td "+"id="+"\""+VIEWER_RULE_IN_ENTRY_ROW_ID_PREFIX+entry[0]+"\""+">"+("<label>&nbsp;</label>")+"</td>"+
+      "</tr>"
+    );
+    $('#'+VIEWER_ROW_ID_PREFIX+entry[0]).children("td").eq(5).find("input[value=\"Remove\"]").click(function(){$($(this)).removeEntry();});
+    $('#'+VIEWER_ROW_ID_PREFIX+entry[0]).children("td").eq(5).find("input[value=\"Edit\"]").click(function(){$($(this)).editEntry();});
+  }
+});
+
+jQuery.fn.extend({
+  showFrame: function(level) {
+    $(this).append($("<label>"+"<font "/*+(level=="Minimum"?"color=\"Red\"":"")*/+">"+"Firewall entries and rules:"+"</font>"+"</label>"));
+    var tbl=$("<table "+"id="+"\""+VIEWER_TBL_ID+"\""+"/>");
+    $(this).append(tbl);
+    $('#'+VIEWER_TBL_ID).attr("border", "1");
+    $('#'+VIEWER_TBL_ID).attr("cellpadding", "4");
+    $('#'+VIEWER_TBL_ID).attr("cellspacing", "0");
+  }
+});
+
+jQuery.fn.extend({
+  showLevel: function(level) {
+    var opt=$("<div "+"id="+"\""+VIEWER_OPT_ID+"\""+"/>");
+    $(this).prepend(opt);
+    var leveltitle=$("<span><label>"+"Security Level: "+"&nbsp;&nbsp;&nbsp;"+"</label></span>");
+    $('#'+VIEWER_OPT_ID).append(leveltitle);
+    var levelopt=$("<span><select "+"id="+"\""+VIEWER_SECURITY_LEVEL_ID+"\""+">"+
+      "<option value=\"Maximum\""+(level=="Maximum"?" selected":"")+">&nbsp;&nbsp;Maximum&nbsp;&nbsp;</option>"+
+      "<option value=\"Typical\""+(level=="Typical"?" selected":"")+">&nbsp;&nbsp;Typical&nbsp;&nbsp;</option>"+
+      "<option value=\"Minimum\""+(level=="Minimum"?" selected":"")+">&nbsp;&nbsp;Minimum&nbsp;&nbsp;</option>"+
+    "</select></span>");
+    $('#'+VIEWER_OPT_ID).append(levelopt);
+    //$('#'+VIEWER_SECURITY_LEVEL_ID).change(function(){/**/});
+    var levelapply=$("<span>&nbsp;&nbsp;&nbsp;<input type=\"button\" value=\"Apply\""+"id="+"\""+VIEWER_SECURITY_LEVEL_APPLY_ID+"\""+"/></span>");
+    $('#'+VIEWER_OPT_ID).append(levelapply);
+    $('#'+VIEWER_SECURITY_LEVEL_APPLY_ID).click(function(){ $().configureLevel(); });
+    $('#'+VIEWER_OPT_ID).append($("<br/><br/>"));
+  }
+});
+
+jQuery.fn.extend({
+  removeRule: function() {
+    var parenttr=$(this).parent("td").parent("tr");
+    var ruleiid=$($(parenttr).children("td")).eq(0).find("label").attr("ruleiid");
+    var grandparenttr=$(parenttr).closest("table").closest("td").closest("tr");
+    var entryiid=null;
+    entryiid=$($(grandparenttr).children("td")).eq(0).find("input").attr("entryiid");
+    if(entryiid==undefined) entryiid=$(grandparenttr).children("td").eq(0).find("label").attr("entryiid");
+    var loc = 'scbidirectionalflt.cmd';
+    loc += '?action=remove';
+    loc += '&item='+entryiid+ENTRY_RULE_SEPARATOR+ruleiid;
+    loc += '&sessionKey='+sessionKey;                
+    var code = 'location="' + loc + '"';
+    //alert( code + "\t" + code.length );
+    eval(code);
+  }
+});
+
+jQuery.fn.extend({
+  editRule: function() {
+    var parenttd=$(this).parent("td");
+    var parenttr=$(this).parent("td").parent("tr");
+    $(parenttr).css("background-color","Tomato");
+    var grandparenttr=$(parenttr).closest("table").closest("td").closest("tr");
+    //disable adjacent remove button
+    parenttd.find("input[value=\"Remove\"]").prop("disabled", "disabled");
+    //disable other edit button
+    var greatgrandparenttbl=$(grandparenttr).parent();
+    $(greatgrandparenttbl).children("tr").each(function(idx, val){
+      if( idx==0 )
+      {
+        return true; //the same as continue
+      }
+      if($(val).is(grandparenttr))
+      {
+        $(val).children("td").last().find("table").children().each(function(idxInDetail, valInDetail){
+          $(valInDetail).children().each(function(idxInMoreDetail, valInMoreDetail){
+            if(idxInMoreDetail==0)
+            {
+              return true; //the same as continue
+            }
+            else if($(valInMoreDetail).is($(parenttr)))
+            {
+              return true; //the same as continue
+            }
+            else
+            {
+              $(valInMoreDetail).children("td:last").find("input[value=\"Edit\"]").prop("disabled", "disabled");
+            }
+          });
+        });
+      }
+      else
+      {
+        $(val).children("td").last().find("table").children().each(function(idxInDetail, valInDetail){
+          $(valInDetail).children().each(function(idxInMoreDetail, valInMoreDetail){
+            if(idxInMoreDetail==0)
+            {
+              return true; //the same as continue
+            }
+            $(valInMoreDetail).children("td:last").find("input[value=\"Edit\"]").prop("disabled", "disabled");
+          });
+        });
+      }
+    });
+    //enable and load existing value to each field for edit
+    var ipversion=$($(grandparenttr).children("td")).eq(3).find("label").text();
+    var isIcmp=false;
+    var isRejection=false;
+    $(parenttr).children("td").each(function(idx, val){
+      switch(idx)
+      {
+        case 0:
+          var currentEnabled=$(val).find("label").text();
+          var ruleiid=$(val).find("label").attr("ruleiid");
+          var editEnabled=$("<select "+"ruleiid="+"\""+ruleiid+"\""+">"+
+            "<option "+"value="+"\""+"0"+"\""+(currentEnabled==ENABLED_TYPE["0"]?"selected":"")+">"+ENABLED_TYPE["0"]+"</option>"+
+            "<option "+"value="+"\""+"1"+"\""+(currentEnabled==ENABLED_TYPE["1"]?"selected":"")+">"+ENABLED_TYPE["1"]+"</option>"+
+          "</select>");
+          $(val).empty().append(editEnabled);
+          break;
+        case 1:
+          var currentProtocol=$(val).find("label").text();
+          isIcmp=(currentProtocol=="ICMP"?true:false);
+          var editProtocol=$("<select>"+
+            "<option "+"value="+"\""+"UDP"+"\""+(currentProtocol=="UDP"?" selected":"")+">"+"UDP"+"</option>"+
+            "<option "+"value="+"\""+"TCP"+"\""+(currentProtocol=="TCP"?" selected":"")+">"+"TCP"+"</option>"+
+            "<option "+"value="+"\""+"ICMP"+"\""+(currentProtocol=="ICMP"?" selected":"")+">"+"ICMP"+"</option>"+
+          "</select>");
+          $(val).empty().append(editProtocol);
+          $(val).find("select").change(function(){$($(val).find("select")).alterProtocol(VIEWER_EDIT_ICMPTYPE_ID, VIEWER_EDIT_SRCSTARTPORT_ID, VIEWER_EDIT_SRCENDPORT_ID, VIEWER_EDIT_DSTSTARTPORT_ID, VIEWER_EDIT_DSTENDPORT_ID);});
+          break;
+        case 2:
+          var currentSpecificAction=$(val).find("label").text();
+          isRejection=(currentSpecificAction=="Reject"?true:false);
+          var editSpecificAction=$("<select "+"id="+"\""+VIEWER_EDIT_SPECIFICACTION_ID+"\""+">"+
+            "<option "+"value="+"\""+"Permit"+"\""+(currentSpecificAction=="Permit"?" selected":"")+">"+"Permit"+"</option>"+
+            "<option "+"value="+"\""+"Drop"+"\""+(currentSpecificAction=="Drop"?" selected":"")+">"+"Drop"+"</option>"+
+            "<option "+"value="+"\""+"Reject"+"\""+(currentSpecificAction=="Reject"?" selected":"")+" disabled>"+"Reject"+"</option>"+
+          "</select>");
+          $(val).empty().append(editSpecificAction);
+          $(val).find("select").change(function(){$($(val).find("select")).alterSpecificAction(VIEWER_EDIT_REJECTIONTYPE_ID);});
+          break;
+        case 3:
+          var editRejectionType=$("<select "+"id="+"\""+VIEWER_EDIT_REJECTIONTYPE_ID+"\""+(isRejection==false?" disabled ":"")+"/>");
+          $(val).empty().append(editRejectionType);
+          break;
+        case 4:
+          var currentIcmpType=$(val).find("label").text();
+          var ver=ipversion;
+          var icmparr=null;
+          if(ver=="6") icmparr=ICMPV6_TYPE;
+          else icmparr=ICMPV4_TYPE;
+          var editIcmpType=$("<select "+"id="+"\""+VIEWER_EDIT_ICMPTYPE_ID+"\""+(isIcmp==false?" disabled ":"")+"/>");
+          $(val).empty().append(editIcmpType);
+          $("#"+VIEWER_EDIT_ICMPTYPE_ID).empty();
+          $(icmparr).each(function(idxInDetail, valInDetail){
+            $("#"+VIEWER_EDIT_ICMPTYPE_ID).append(
+              $("<option "+"value="+"\""+valInDetail+"\""+(currentIcmpType==valInDetail?" selected":"")+" >"+valInDetail+"</option>")
+            );
+          });
+          //$("#"+VIEWER_EDIT_ICMPTYPE_ID).width(64);
+          break;
+        case 5:
+        case 9:
+          var currentAddr=$.trim($(val).find("label").text());
+          var editAddr=$("<input type=\"text\" size=\"15\" maxlength=\"48\""+"value="+"\""+currentAddr+"\""+" />");
+          $(val).empty().append(editAddr);
+          break;
+        case 6:
+        case 10:
+          var currentMask=$.trim($(val).find("label").text());
+          var editMask=$("<input type=\"text\" size=\"15\" maxlength=\"48\""+"value="+"\""+currentMask+"\""+" />");
+          $(val).empty().append(editMask);
+          break;
+        case 7:
+          var currenttPortStartEnd=$(val).find("label").text();
+          var editPortStartEnd=$("<input type=\"text\" "+"id="+"\""+VIEWER_EDIT_SRCSTARTPORT_ID+"\""+" size=\"6\" maxlength=\"5\" value=\""+currenttPortStartEnd+"\">");
+          $(val).empty().append(editPortStartEnd);
+          break;
+        case 8:
+          var currenttPortStartEnd=$(val).find("label").text();
+          var ctrlPortStartEnd=$("<input type=\"text\" "+"id="+"\""+VIEWER_EDIT_SRCENDPORT_ID+"\""+" size=\"6\" maxlength=\"5\" value=\""+currenttPortStartEnd+"\">");
+          $(val).empty().append(ctrlPortStartEnd);
+          break;
+        case 11:
+          var currenttPortStartEnd=$(val).find("label").text();
+          var ctrlPortStartEnd=$("<input type=\"text\" "+"id="+"\""+VIEWER_EDIT_DSTSTARTPORT_ID+"\""+" size=\"6\" maxlength=\"5\" value=\""+currenttPortStartEnd+"\">");
+          $(val).empty().append(ctrlPortStartEnd);
+          break;
+        case 12:
+          var currenttPortStartEnd=$(val).find("label").text();
+          var ctrlPortStartEnd=$("<input type=\"text\" "+"id="+"\""+VIEWER_EDIT_DSTENDPORT_ID+"\""+" size=\"6\" maxlength=\"5\" value=\""+currenttPortStartEnd+"\">");
+          $(val).empty().append(ctrlPortStartEnd);
+          break;
+        default:
+          break;
+      } //end switch case
+    });
+    $(this).unbind("click");
+    $(this).click(function(){$($(this)).updateRule();});
+    $(this).val("Save");
+  }
+});
+
+jQuery.fn.extend({
+  updateRule: function() {
+    var entryIid=null;
+    var entryVer=null;
+    var ruleIid=null;
+    var ruleEnabled=null;
+    var ruleProtocol=null;
+    var ruleSpecificAction=null;
+    var ruleRejectionType=null;
+    var ruleIcmpType=null;
+    var ruleSrcaddr=null;
+    var ruleSrcmask=null;
+    var ruleSrcstartport=null;
+    var ruleSrcendport=null;
+    var ruleDstaddr=null;
+    var ruleDstmask=null;
+    var ruleDststartport=null;
+    var ruleDstendport=null;
+    var parenttr=$(this).parent("td").parent("tr");
+    $(parenttr).children("td").each(function(idx, val){
+      switch(idx)
+      {
+        case 0:
+          ruleIid=$(val).find("select").attr("ruleiid");
+          ruleEnabled=$(val).find("select").val();
+          break;
+        case 1:
+          ruleProtocol=$(val).find("select").val();
+          break;
+        case 2:
+          ruleSpecificAction=$(val).find("select").val();
+          break;
+        case 3:
+          ruleRejectionType=$(val).find("select").val();
+          break;
+        case 4:
+          ruleIcmpType=$(val).find("select").val();
+          break;
+        case 5:
+          ruleSrcaddr=$(val).find("input").val();
+          break;
+        case 6:
+          ruleSrcmask=$(val).find("input").val();
+          break;
+        case 7:
+          ruleSrcstartport=$(val).find("input").val();
+          break;
+        case 8:
+          ruleSrcendport=$(val).find("input").val();
+          break;
+        case 9:
+          ruleDstaddr=$(val).find("input").val();
+          break;
+        case 10:
+          ruleDstmask=$(val).find("input").val();
+          break;
+        case 11:
+          ruleDststartport=$(val).find("input").val();
+          break;
+        case 12:
+          ruleDstendport=$(val).find("input").val();
+          break;
+        default:
+          break;
+      } //end switch case
+    });
+    var grandparenttr=$(parenttr).closest("table").closest("td").closest("tr");
+    entryVer=$($(grandparenttr).children("td")).eq(3).find("label").text();
+    entryIid=$($(grandparenttr).children("td")).eq(0).find("label").attr("entryiid");
+
+    var fmterr=false;
+    switch(entryVer)
+    {
+      case '6':
+        if((ruleSrcaddr.length>0 && test_ipv6(ruleSrcaddr)==false) ||
+          (ruleDstaddr.length>0 && test_ipv6(ruleDstaddr.value)==false) ||
+          (ruleSrcaddr.length>0 && ruleSrcmask.length>0 && isValidPrefixLength(ruleSrcmask)==false) ||
+          (ruleDstaddr.length>0 && ruleDstmask.length>0 && isValidPrefixLength(ruleDstmask)==false) ||
+          (ruleSrcaddr.length==0 && ruleSrcmask.length>0) ||
+          (ruleDstaddr.length==0 && ruleDstmask.length>0) )
+        {
+          fmterr=true;
+        }
+        break;
+      case '4':
+      default:
+        if((ruleSrcaddr.length>0 && isValidIpAddress(ruleSrcaddr)==false) ||
+          (ruleDstaddr.length>0 && isValidIpAddress(ruleDstaddr)==false) ||
+          (ruleSrcaddr.length>0 && ruleSrcmask.length>0 && isValidSubnetMask(ruleSrcmask)==false) ||
+          (ruleDstaddr.length>0 && ruleDstmask.length>0 && isValidSubnetMask(ruleDstmask)==false) ||
+          (ruleSrcaddr.length==0 && ruleSrcmask.length>0) ||
+          (ruleDstaddr.length==0 && ruleDstmask.length>0) )
+        {
+          fmterr=true;
+        }
+        break;
+    } //end switch case
+    if( fmterr==true )
+    {
+      alert("format error !");
+      return;
+    }
+    var loc = 'scbidirectionalflt.cmd';
+    loc += '?action=modify';
+    loc+='&target=rule';
+    switch( entryVer )
+    {
+      case '6':
+        if( ruleSrcaddr.length>0 && ruleSrcmask.length==0 ) ruleSrcmask='128';
+        if( ruleDstaddr.length>0 && ruleDstmask.length==0 ) ruleDstmask='128';
+        break;
+      case '4':
+      default:
+        if( ruleSrcaddr.length>0 && ruleSrcmask.length==0 ) ruleSrcmask='255.255.255.255';
+        if( ruleDstaddr.length>0 && ruleDstmask.length==0 ) ruleDstmask='255.255.255.255';
+        break;
+    } //end switch case
+    loc+='&belong='+entryIid; //i.e. entry id
+    loc+='&id='+ruleIid;
+    loc+='&enabled='+ENABLED_TYPE[ruleEnabled];
+    loc+='&protocol='+ruleProtocol;
+    loc+='&specificAction='+ruleSpecificAction;
+    if(ruleSpecificAction=="Reject")                             loc+='&rejectType='+ruleRejectionType;
+    if(ruleProtocol=="ICMP")                                     loc+='&icmpType='+ruleIcmpType;
+    if(ruleSrcaddr.length>0) loc+='&srcaddr='+ruleSrcaddr;
+    if(ruleSrcmask.length>0) loc+='&srcmask='+ruleSrcmask;
+    if(ruleProtocol!="ICMP" && ruleSrcstartport.length>0)  loc+='&srcportstart='+ruleSrcstartport;
+    if(ruleProtocol!="ICMP" && ruleSrcendport.length>0)    loc+='&srcportend='+ruleSrcendport;
+    if(ruleDstaddr.length>0) loc+='&dstaddr='+ruleDstaddr;
+    if(ruleDstmask.length>0) loc+='&dstmask='+ruleDstmask;
+    if(ruleProtocol!="ICMP" && ruleDststartport.length>0)  loc+='&dstportstart='+ruleDststartport;
+    if(ruleProtocol!="ICMP" && ruleDstendport.length>0)    loc+='&dstportend='+ruleDstendport;
+    
+    loc += '&sessionKey='+sessionKey;
+    var code = 'location="' + loc + '"';
+    //alert( code + "\t" + code.length );
+    eval(code);
+  }
+});
+
+jQuery.fn.extend({
+  addRule: function() {
+    var entryIid=null;
+    var entryVer=null;
+    var ruleEnabled=null;
+    var ruleProtocol=null;
+    var ruleSpecificAction=null;
+    var ruleRejectionType=null;
+    var ruleIcmpType=null;
+    var ruleSrcaddr=null;
+    var ruleSrcmask=null;
+    var ruleSrcstartport=null;
+    var ruleSrcendport=null;
+    var ruleDstaddr=null;
+    var ruleDstmask=null;
+    var ruleDststartport=null;
+    var ruleDstendport=null;
+    var ctrlrow=$("#"+VIEWER_CTRL_ID+" tr:last");
+    $(ctrlrow).children("td").each(function(idx, val){
+      switch(idx)
+      {
+        case 0:
+          entryIid=$(val).find("select").val();
+          entryVer=$(val).find("select option"+"["+"value="+entryIid+"]").attr("ipversion");
+          break;
+        case 1:
+          ruleEnabled=$(val).find("select").val();
+          break;
+        case 2:
+          ruleProtocol=$(val).find("select").val();
+          break;
+        case 3:
+          ruleSpecificAction=$(val).find("select").val();
+          break;
+        case 4:
+          ruleRejectionType=$(val).find("select").val();
+          break;
+        case 5:
+          ruleIcmpType=$(val).find("select").val();
+          break;
+        case 6:
+          ruleSrcaddr=$(val).find("input").val();
+          break;
+        case 7:
+          ruleSrcmask=$(val).find("input").val();
+          break;
+        case 8:
+          ruleSrcstartport=$(val).find("input").val();
+          break;
+        case 9:
+          ruleSrcendport=$(val).find("input").val();
+          break;
+        case 10:
+          ruleDstaddr=$(val).find("input").val();
+          break;
+        case 11:
+          ruleDstmask=$(val).find("input").val();
+          break;
+        case 12:
+          ruleDststartport=$(val).find("input").val();
+          break;
+        case 13:
+          ruleDstendport=$(val).find("input").val();
+          break;
+        default:
+          break;
+      } //end switch case
+    });
+
+    var fmterr=false;
+    switch(entryVer)
+    {
+      case '6':
+        if((ruleSrcaddr.length>0 && test_ipv6(ruleSrcaddr)==false) ||
+          (ruleDstaddr.length>0 && test_ipv6(ruleDstaddr.value)==false) ||
+          (ruleSrcaddr.length>0 && ruleSrcmask.length>0 && isValidPrefixLength(ruleSrcmask)==false) ||
+          (ruleDstaddr.length>0 && ruleDstmask.length>0 && isValidPrefixLength(ruleDstmask)==false) ||
+          (ruleSrcaddr.length==0 && ruleSrcmask.length>0) ||
+          (ruleDstaddr.length==0 && ruleDstmask.length>0) )
+        {
+          fmterr=true;
+        }
+        break;
+      case '4':
+      default:
+        if((ruleSrcaddr.length>0 && isValidIpAddress(ruleSrcaddr)==false) ||
+          (ruleDstaddr.length>0 && isValidIpAddress(ruleDstaddr)==false) ||
+          (ruleSrcaddr.length>0 && ruleSrcmask.length>0 && isValidSubnetMask(ruleSrcmask)==false) ||
+          (ruleDstaddr.length>0 && ruleDstmask.length>0 && isValidSubnetMask(ruleDstmask)==false) ||
+          (ruleSrcaddr.length==0 && ruleSrcmask.length>0) ||
+          (ruleDstaddr.length==0 && ruleDstmask.length>0) )
+        {
+          fmterr=true;
+        }
+        break;
+    } //end switch case
+    if( fmterr==true )
+    {
+      alert("format error !");
+      return;
+    }
+    var loc = 'scbidirectionalflt.cmd';
+    loc += '?action=add';
+    loc+='&target=rule';
+    switch( entryVer )
+    {
+      case '6':
+        if( ruleSrcaddr.length>0 && ruleSrcmask.length==0 ) ruleSrcmask='128';
+        if( ruleDstaddr.length>0 && ruleDstmask.length==0 ) ruleDstmask='128';
+        break;
+      case '4':
+      default:
+        if( ruleSrcaddr.length>0 && ruleSrcmask.length==0 ) ruleSrcmask='255.255.255.255';
+        if( ruleDstaddr.length>0 && ruleDstmask.length==0 ) ruleDstmask='255.255.255.255';
+        break;
+    } //end switch case
+    loc+='&belong='+entryIid; //i.e. entry id
+    loc+='&enabled='+ENABLED_TYPE[ruleEnabled];
+    loc+='&protocol='+ruleProtocol;
+    loc+='&specificAction='+ruleSpecificAction;
+    if(ruleSpecificAction=="Reject")                             loc+='&rejectType='+ruleRejectionType;
+    if(ruleProtocol=="ICMP")                                     loc+='&icmpType='+ruleIcmpType;
+    if(ruleSrcaddr.length>0) loc+='&srcaddr='+ruleSrcaddr;
+    if(ruleSrcmask.length>0) loc+='&srcmask='+ruleSrcmask;
+    if(ruleProtocol!="ICMP" && ruleSrcstartport.length>0)  loc+='&srcportstart='+ruleSrcstartport;
+    if(ruleProtocol!="ICMP" && ruleSrcendport.length>0)    loc+='&srcportend='+ruleSrcendport;
+    if(ruleDstaddr.length>0) loc+='&dstaddr='+ruleDstaddr;
+    if(ruleDstmask.length>0) loc+='&dstmask='+ruleDstmask;
+    if(ruleProtocol!="ICMP" && ruleDststartport.length>0)  loc+='&dstportstart='+ruleDststartport;
+    if(ruleProtocol!="ICMP" && ruleDstendport.length>0)    loc+='&dstportend='+ruleDstendport;
+    
+    loc += '&sessionKey='+sessionKey;
+    var code = 'location="' + loc + '"';
+    //alert( code + "\t" + code.length );
+    eval(code);
+  }
+});
+
+jQuery.fn.extend({
+  removeEntry: function() {
+    var entryIid=null;
+    var parenttr=$(this).parent("td").parent("tr");
+    entryIid=$(parenttr).children("td").eq(0).find("input").attr("entryiid");
+    if(entryIid==undefined) entryIid=$(parenttr).children("td").eq(0).find("label").attr("entryiid");
+    var loc = 'scbidirectionalflt.cmd';
+    loc += '?action=remove';
+    loc += '&item='+entryIid;
+    loc += '&sessionKey='+sessionKey;
+    var code = 'location="' + loc + '"';
+    //alert( code + "\t" + code.length );
+    eval(code);
+  }
+});
+
+jQuery.fn.extend({
+  editEntry: function() {
+    var parenttd=$(this).parent("td");
+    var parenttr=$(this).parent("td").parent("tr");
+    $(parenttr).css("background-color","Orange");
+    var grandparenttr=$(parenttr).parent();
+    //disable adjacent remove button
+    parenttd.find("input[value=\"Remove\"]").prop("disabled", "disabled");
+    //disable other edit button    
+    $(grandparenttr).children("tr").each(function(idx, val){
+      if( idx==0 )
+      {
+        return true; //the same as continue
+      }
+      else if($(val).is(parenttr))
+      {
+        $(val).children("td").last().find("input[value=\"Edit\"]").prop("disabled", "disabled");
+        $(val).children("td").last().find("input[value=\"Save\"]").prop("disabled", "disabled");
+      }
+      else
+      {
+        $(val).find("input[value=\"Edit\"]").prop("disabled", "disabled");
+      }
+    });
+    //enable and load existing value to each field for edit
+    $(parenttr).children("td").each(function(idx, val){
+      switch(idx)
+      {
+        case 0:
+          var currentName=$(val).find("label").text();
+          var currentIid=$(val).find("label").attr("entryiid");
+          var editName=$("<input type=\"text\" size=\"22\" maxlength=\"15\""+" value="+"\""+currentName+"\""+" entryiid="+"\""+currentIid+"\""+" />");
+          $(val).empty().append(editName);
+          break;
+        case 1:
+          var currentOperableInterface=$(val).find("label").attr("operableInterface");
+          var currentReadableInterface=$(val).find("label").text();
+          var operInterface=$("#"+VIEWER_OPER_ID+" tr:last").children("td").eq(1).find("select").children("option").clone();
+          var editInterface=$("<select "+"/>");
+          $(val).empty().append(editInterface);
+          $(val).find("select").append(operInterface); //copy from another place, second-hand information
+          $(val).find("select option[value=\""+currentOperableInterface+"\"]").prop('selected', true);
+          break;
+        case 2:
+        case 3:
+        case 4:
+          var currentItem=$(val).find("label").text();
+          var operItem=$("#"+VIEWER_OPER_ID+" tr:last").children("td").eq(idx).find("select").children("option").clone();
+          var editItem=$("<select "+"/>");
+          $(val).empty().append(editItem);
+          $(val).find("select").append(operItem); //copy from another place, second-hand information
+          $(val).find("select option[value=\""+currentItem+"\"]").prop('selected', true);
+          break;
+        default:
+          break;
+      } //end switch case
+    });
+
+    $(this).unbind("click");
+    $(this).click(function(){$($(this)).updateEntry();});
+    $(this).val("Save");
+  }
+});
+
+jQuery.fn.extend({
+  updateEntry: function() {
+    var entryIid=null;
+    var entryName=null;
+    var entryIntf=null;
+    var entryType=null;
+    var entryVer=null;
+    var entryDftAct=null;
+    var parenttr=$(this).parent("td").parent("tr");
+    entryIid=$(parenttr).children("td").eq(0).find("input").attr("entryiid");
+    entryName=$(parenttr).children("td").eq(0).find("input").val();
+    entryIntf=$(parenttr).children("td").eq(1).find("select").val();
+    entryType=$(parenttr).children("td").eq(2).find("select").val();
+    entryVer=$(parenttr).children("td").eq(3).find("select").val();
+    entryDftAct=$(parenttr).children("td").eq(4).find("select").val();
+    var fmterr=(true==$().isNameAvailable(entryName))?false:true;
+    if( fmterr==true )
+    {
+      alert("format error !");
+      return;
+    }
+
+    var loc = 'scbidirectionalflt.cmd';
+    loc += '?action=modify';
+    loc+='&target=entry';
+    loc+='&id='+entryIid;
+    loc+='&name='+(entryName.length>0?entryName:"not-assigned");
+    loc+='&interface='+entryIntf;
+    loc+='&type='+entryType;
+    loc+='&version='+entryVer;
+    loc+='&default='+entryDftAct;
+
+    loc += '&sessionKey='+sessionKey;
+    var code = 'location="' + loc + '"';
+    //alert( code + "\t" + code.length );
+    eval(code);
+  }
+});
+
+jQuery.fn.extend({
+  addEntry: function() {
+    var entryName=null;
+    var entryIntf=null;
+    var entryType=null;
+    var entryVer=null;
+    var entryDftAct=null;
+    var operrow=$("#"+VIEWER_OPER_ID+" tr:last");
+    entryName=$($(operrow).children("td")).eq(0).find("input").val();
+    entryIntf=$($(operrow).children("td")).eq(1).find("select").val();
+    entryType=$($(operrow).children("td")).eq(2).find("select").val();
+    entryVer=$($(operrow).children("td")).eq(3).find("select").val();
+    entryDftAct=$($(operrow).children("td")).eq(4).find("select").val();
+    var fmterr=(true==$().isNameAvailable(entryName))?false:true;
+    if( fmterr==true )
+    {
+      alert("format error !");
+      return;
+    }
+
+    var loc = 'scbidirectionalflt.cmd';
+    loc += '?action=add';
+    loc+='&target=entry';
+    loc+='&name='+(entryName.length>0?entryName:"not-assigned");
+    loc+='&interface='+entryIntf;
+    loc+='&type='+entryType;
+    loc+='&version='+entryVer;
+    loc+='&default='+entryDftAct;
+
+    loc += '&sessionKey='+sessionKey;
+    var code = 'location="' + loc + '"';
+    //alert( code + "\t" + code.length );
+    eval(code);
+  }
+});
+
+jQuery.fn.extend({
+  configureLevel: function() {
+    var newLevel=$("#"+VIEWER_SECURITY_LEVEL_ID).val(); //i.e. Maximum, Typical, or Minimal 
+    var loc = 'scbidirectionalflt.cmd';
+    loc += '?action=setlevel';
+    loc += '&level='+newLevel;
+    loc += '&sessionKey='+sessionKey;
+    var code = 'location="' + loc + '"';
+    //alert( code + "\t" + code.length );
+    eval(code);
+  }
+});
+
+$(function() //i.e. .ready
+{
+  var levelEntryPair=$().deserializeLevelEntryPair(reservedLevelEntryPair);
+  var level=currentSecurityLevel;
+  var interfaces=$().deserializeInterface(rawInterfaceList);
+  var entries=$().deserializeEntryList(currentEntryList);
+  var rules=$().deserializeRuleList(currentRuleList);
+  if( false ) //test only, default disabled
+  {
+    //levelEntryPair={'Minimum':[], 'Typical':[], 'Maximum':[]};
+    level="Minimum";
+    interfaces=[['all WAN', 'WAN'],['all LAN', 'LAN'],['br0', 'InternetGatewayDevice.LANDevice.1.LANHostConfigManagement.IPInterface.1'],[]];
+    entries=[['iidA', 'nameA', 'WAN', 'In', '4', 'Drop'], ['iidB', 'nameB', 'LAN', 'Out', '6', 'Permit'], ['iidC', 'nameC', 'intfC', 'In', '4', 'Drop'], ['iidD', 'nameD', 'InternetGatewayDevice.LANDevice.1.LANHostConfigManagement.IPInterface.1', 'In', '6', 'Drop']];
+    rules=[["iidA", [['0x123', '1', 'UDP', 'Permit', '', '', '192.168.135.1', '255.255.255.0', '0', '0', '', '', '69', '69'],['0x456', '0','TCP','Reject', 'tcp-reset'],['0x457', '1','TCP','Reject', 'tcp-reset']]], ['iidB', []], ['iidC', [['0x789', '0']]], ['iidD', [['0xabc', '1', 'ICMP', 'Drop', '', 'multicast-router-termination', '2001:db8:a19::1', '64', '20', '21', '2001:db8:a19::2', '64', '20', '21']]]];  
+  }
+  //display security level
+  $('#anchorRoot').showLevel(level);
+  //display firewall entry
+  $('#anchorRoot').showFrame(level);
+  $.each(entries, function( idx, val ) {
+    if( idx==0 )
+    {
+      var entryTitle=$("<tr>"+
+        "<td class='hd'><label>Name</label></td>"+
+        "<td class='hd' style=\"word-break:keep-all;\"><label>Interface</label></td>"+
+        "<td class='hd' displayLevel='simplified'><label>Type</label></td>"+
+        "<td class='hd'><label>IP Version</label></td>"+
+        "<td class='hd'><label>Default Action</label></td>"+
+        "<td class='hd' align='center'><label>Execution</label></td>"+
+        "<td class='hd'><label>Rules</label></td>"+
+      "</tr>");
+      $($('#'+VIEWER_TBL_ID)).append(entryTitle);
+    }
+
+    $('#'+VIEWER_TBL_ID).showEntry(val, levelEntryPair[level], interfaces);
+  });
+  //display firewall rule
+  $.each(rules, function( idx, val ) {
+    if(val.length<2) return;
+    $((VIEWER_RULE_IN_ENTRY_ROW_ID_PREFIX+val[0])).showRule((VIEWER_RULE_IN_ENTRY_ROW_ID_PREFIX+val[0]), val[1]);
+  });
+  //display firewall control panel
+  var entryNameVersionList=[];
+  $.each(entries, function( idx, val ) {
+    var l=[];
+    l.push(val[0]); //i.e. instance identifier
+    l.push(val[1]); //i.e. Name
+    l.push(val[4]); //i.e. IP Version
+    entryNameVersionList.push(l);
+  });
+  $('#anchorRoot').showRulePanel(level);
+  $().presetRulePanel(entryNameVersionList);
+  $('#anchorRoot').showEntryPanel(level, interfaces);
+  $().presetEntryPanel(interfaces);
+
+  $('#anchorRoot').append("<br/>").append($("<a>Previous Style</a>").prop("href", "scbidirectionalflt.cmd?action=view"));
+
+  //to be extended
+  $("[displayLevel=\""+"alignedAdd"+"\"]").prop("align", "center");
+  $("[displayLevel=\""+"alignedEdit"+"\"]").prop("align", "right");
+  $("[displayLevel=\""+"simplified"+"\"]").hide();
+});
+
+// done hiding -->
+      </script>
+   </head>
+   <body topmargin="0" leftmargin="0">
+         <blockquote>
+         <b>Incoming/Outgoing IP Filtering Setup</b><br/><br/>
+         <label>System has default firewall configuration which have pre-defined entries and rules.</label><br/>
+         <label>User can select the <font color='black'>Security Level</font> to load pre-defined entries and rules.</label><br/>
+         <label>When <font color='blue'>Minimum</font> of <font color='black'>Security Level</font> is selected, all entries and rules will be cleared, and self-defined entry/rule could be added into firewall, and removed from firewall.</label><br/>
+         <label>When <font color='blue'>Typical</font> of <font color='black'>Security Level</font> is selected, all entries and rules will be cleared, and a pre-defined WAN entry will be added. This entry could not be removed, but rule can be added into it.</label><br/>
+         <label>When <font color='blue'>Maximum</font> of <font color='black'>Security Level</font> is selected, all entries and rules will be cleared, and pre-defined WAN and LAN entries will be added. Those entries could not be removed, but rule can be added into it.</label><br/><br/>
+
+         <form style="padding:15px;">
+            <div id="anchorRoot" />
+         </form>
+
+         </blockquote>
+         <br/>
+   </body>
+</html>
+
+
+
+
+
+
+
+
+
+

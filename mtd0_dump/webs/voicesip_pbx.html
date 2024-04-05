@@ -1,0 +1,38 @@
+<html>
+   <head>
+      <meta name="robots" content="noindex">
+      <style type="text/css">
+      ul#tabs { list-style-type: none; margin: 30px 0 0 0; padding: 0 0 0.3em 0; }
+      ul#tabs li { display: inline; }
+      ul#tabs li a { color: #42454a; background-color: #f1f0ee; border: 1px solid #c9c3ba; border-bottom: none; padding: 0.3em; text-decoration: none; }
+      ul#tabs li a:hover { background-color: #f1f0ee; }
+      ul#tabs li a.selected { color: #000; background-color: #f1f0ee; font-weight: bold; padding: 0.7em 0.3em 0.38em 0.3em; }
+      div.tabContent { border: 1px solid #c9c3ba; padding: 0.5em; background-color: #f1f0ee; }
+      div.tabContent.hide { display: none; }
+      </style>
+	  <link rel="stylesheet" href='stylemain.css' type='text/css'>
+      <link rel="stylesheet" href='colors.css' type='text/css'>
+      <meta http-equiv="Pragma" content="no-cache">
+	  <script language="javascript" src="util.js"></script>
+   </head>
+   <body>
+      <blockquote>
+         <ul id='tabs'>
+		 <li><a href='#" + -1 + "'>Extension List</a></li>
+		 <div class='tabContent'>
+         <br/><br/>
+         <table border="1" cellpadding="5" cellspacing="0">
+            <tr>
+               <td class="hd">Status</td>
+               <td class="hd">Registration status</td>
+               <td class="hd">Extension number</td>
+               <td class="hd">Host IP</td>
+               <td class="hd">Hostname</td>
+			   <td class="hd">dhcp_option_60</td>               
+	        </tr>
+            <%ejGet(pbxInfo)%>
+         </table>
+		 </div>
+      </blockquote>
+   </body>
+</html>

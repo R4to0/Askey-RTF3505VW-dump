@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<%ejGetOther(webLang, head)%>
+<script>
+function btnaAgree() {
+	var loc = 'ajax_setvar.cmd?sessionKey=<%ejGetOther(sessionKey)%>';
+	loc += '&varName=wanMode&varValue='+parent.$('#wan_mode').val();
+	parent.$.get(loc, function(ret) {
+		if (ret != 'OK') {
+			parent.$('#btnCancel').trigger('click');
+			invalidMsg(parent.$('#wan_mode'), '<%ejGetOther(webLang, 0272)%>');
+		}
+		else
+			invalidMsg(parent.$('#wan_mode'), '');
+
+		btnaCancel();
+	});
+}
+
+function btnaCancel() {
+	parent.$.fancybox.close();
+}
+</script>
+</head>
+<body class="no-bg">
+	<div class="page-popup">
+		<table class="setupWifiTable">
+			<tr>
+				<td class="text-left"><%ejGetOther(webLang, 0262)%></td>
+			</tr>
+			<tr>
+				<td class="text-left"> <span class="red">
+				<%ejGetOther(webLang, 0263)%></br>
+				<%ejGetOther(webLang, 0264)%></span></td>
+			</tr>
+			<tr>
+				<td>
+					<a  onClick="btnaAgree()"  href="#" class="btn-default-orange-small left"><span><%ejGetOther(webLang, 0265)%></span></a>
+					<a  onClick="btnaCancel()" href="#" class="btn-default-orange-small left"><span><%ejGetOther(webLang, 0067)%></span></a>
+				</td>
+			</tr>
+		</table>
+	</div>
+</body>
+
+</html>

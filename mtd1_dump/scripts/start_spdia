@@ -1,0 +1,80 @@
+#!/bin/sh
+#
+# Start spdia
+#
+
+base_scripts="/scripts"
+. $base_scripts/start-helpers.sh
+[ -f /bin/import_qtnenv ] && . import_qtnenv
+
+kill_process()
+{
+	pid_name=$1
+	pid=`ps | grep "$pid_name" | grep -v "grep $pid_name" | awk '{print $1}'`
+	# Checking pid is empty
+	if [ -n "$pid" ]; then
+		kill $pid
+	fi
+}
+
+setup_backbone()
+{
+	wifi_mode=`get_wifi_config wifi0 mode`
+	if [ "$wifi_mode" != "repeater" ]; then
+		return
+	fi
+	wl_mac_file=${security_path}/wifi_mac_addrs
+	if [ -f $wl_mac_file ]; then
+		mac0addr=`cat $wl_mac_file | head -1`
+	else
+		echo "file $wl_mac_file does't exsit, setup backbone failed !"
+		return
+	fi
+	sleep 1
+	qcomm_cli set_backbone $mac0addr
+}
+
+start()
+{
+	echo "Starting csmd..."
+	security_path=`call_qcsapi get_file_path security`
+	config_file=${security_path}/SPDIA.csmd.json
+	if [ ! -f $config_file ]; then
+		cp -f /etc/SPDIA.csmd.json $config_file
+	fi
+	rm -f /tmp/qsl_*.playback
+	/scripts/cmdloop /usr/sbin/csmd -c $config_file &
+
+	# setup backbone for repeater mode
+	setup_backbone
+}
+
+stop()
+{
+		echo "Stopping csmd..."
+		kill_process "/bin/sh /scripts/cmdloop /usr/sbin/csmd"
+		killall -9 csmd 2>/dev/null
+}
+
+restart()
+{
+	stop
+	start
+}
+
+case "$1" in
+	start)
+	start
+	;;
+	stop)
+	stop
+	;;
+	restart|reload)
+	restart
+	;;
+	*)
+	echo $"Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+exit $?

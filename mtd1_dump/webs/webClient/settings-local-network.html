@@ -1,0 +1,510 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<%ejGetOther(webLang, head)%>
+
+<script language="javascript" src="../assets/_js/settings-local-network.js"> </script>
+
+<script nonce="VGVsZWZvbmljYS1jc3Atbm9uY2U=">
+
+
+var sessionKey = '<%ejGetOther(sessionKey)%>';
+var accessClass = 'service02';
+var lanIp = '<%ejGet(ethIpAddress)%>';
+var lanMask = '<%ejGet(ethSubnetMask)%>';
+var dhcpEnbl = '<%ejGet(enblDhcpSrv)%>';
+var dhcpStart = '<%ejGet(dhcpEthStart)%>';
+var dhcpEnd = '<%ejGet(dhcpEthEnd)%>';
+var dhcpDns = '<%ejGet(lanHostDns)%>';
+var leaseTime = parseInt(<%ejGet(dhcpLeasedTime)%>/60);
+
+var virtualHostList = '<%ejGetOther(devInfo, virtualDevToHostList)%>';
+var mngHostList = '<%ejGetOther(devInfo, mngDevToHostList)%>';
+var manageableDeviceList='<%ejGetOther(MamageableDeviceList)%>';
+
+var pppPortMappingList='<%ejGetOther(PppPortMappingList)%>';
+var pppPortMappingIntf='<%ejGetOther(tefPppIntf)%>';
+var numOfPortMappingForUpnp='<%ejGetOther(numOfPortMappingForUpnp)%>';
+var numOfPortMappingForStatic='<%ejGetOther(numOfPortMappingForStatic)%>';
+var PPP_PORT_MAPPING_PREPENDED_DESCRIPTION="CPE-";
+var GAMES_PREPENDED_DESCRIPTION="CPE-GA-";
+
+var dmzHostAddress='<%ejGetOther(dmzHost)%>';
+var dmzHostEnable='<%ejGetOther(dmzEnable)%>';
+
+var uPNP = '<%ejGet(enblUpnp)%>';
+
+var	ddnsInfo = '<%ejGetOther(ddnsConf)%>';
+
+var gvtMode = '<%ejGetOther(devInfo, gvtMode)%>';
+
+var _0166 = '<%ejGetOther(webLang, 0166)%>';
+var _0143 = '<%ejGetOther(webLang, 0143)%>';
+var _0167 = '<%ejGetOther(webLang, 0167)%>';
+var _0168 = '<%ejGetOther(webLang, 0168)%>';
+var _0169 = '<%ejGetOther(webLang, 0169)%>';
+var _0170 = '<%ejGetOther(webLang, 0170)%>';
+var _0171 = '<%ejGetOther(webLang, 0171)%>';
+var _0172 = '<%ejGetOther(webLang, 0172)%>';
+var _0173 = '<%ejGetOther(webLang, 0173)%>';
+var _0223 = '<%ejGetOther(webLang, 0223)%>';
+var _0174 = '<%ejGetOther(webLang, 0174)%>';
+var _0292 = '<%ejGetOther(webLang, 0292)%>';
+var _0293 = '<%ejGetOther(webLang, 0293)%>';
+var _0294 = '<%ejGetOther(webLang, 0294)%>';
+var _0295 = '<%ejGetOther(webLang, 0295)%>';
+
+var _0176 = '<%ejGetOther(webLang, 0176)%>';
+var _0177 = '<%ejGetOther(webLang, 0177)%>';
+var _0114 = '<%ejGetOther(webLang, 0114)%>';
+var _0068 = '<%ejGetOther(webLang, 0068)%>';
+var _0178 = '<%ejGetOther(webLang, 0178)%>';
+var _0179 = '<%ejGetOther(webLang, 0179)%>';
+var _0180 = '<%ejGetOther(webLang, 0180)%>';
+
+
+</script>
+</head>
+
+<body>
+
+<%ejGetOther(webLang, header-gateway)%>
+
+<script nonce="VGVsZWZvbmljYS1jc3Atbm9uY2U=">
+$(document).ready(function() {
+	var tab = '#tab-01';
+	var name = window.top.name.split(':');
+
+	if (name[0] == 'LAN') tab = name[1];
+	$('.tab').slideUp();
+	$(tab).slideDown();
+	$('#menu-loc-net a[rel="'+ tab.split('-')[1] +'"]').addClass('active');
+
+	$('#menu-loc-net li a').click(function() {
+		var i = $(this).attr('rel');
+		$('#menu-loc-net li a').removeClass('active');
+		$(this).addClass('active');
+		$('.tab').slideUp();
+		$('#tab-'+i).slideDown();
+		window.top.name = 'LAN:#tab-'+i;
+		return false;
+	});
+});
+</script>
+
+<div id="content">
+
+	<div class="wrap">
+
+		<div id="conteudo-gateway">
+
+<%ejGetOther(webLang, menu)%>
+
+			<div class="col-722 left">
+			
+				<h3 class="text-up"><%ejGetOther(webLang, 0033)%></h3>
+				
+				<div id="menu-loc-net">
+					<ul>
+						<li><a href="#" rel="01">DHCP</a></li>
+						<li><a href="#" rel="02"><%ejGetOther(webLang, 0181)%></a></li>
+						<li><a href="#" rel="03">DMZ</a></li>
+						<li><a href="#" rel="04">UPNP</a></li>
+						<li><a href="#" rel="05" class="no-border">DDNS</a></li>
+					</ul>
+				</div><!--menu-loc-net-->
+				
+				<div class="clear"></div>
+				
+				<div id="tab-01" class="tab">
+					<table class="setupWifiTable">
+						<thead>
+							<th id="thDhcp" colspan="2">DHCP <img src="../assets/_images/gateway/busy.gif"/></th>
+						</thead>
+						<tbody>
+							<tr>
+								<td colspan="2"><%ejGetOther(webLang, 0182)%></td>
+							</tr>
+							<tr>
+								<td><%ejGetOther(webLang, 0183)%></td>
+								<td>
+									<input type="radio" name="radDhcpEn" id="radDhcpEn1" /> <%ejGetOther(webLang, 0101)%> &nbsp;&nbsp; 
+									<input type="radio" name="radDhcpEn" id="radDhcpEn0" /> <%ejGetOther(webLang, 0102)%>
+								</td>
+							</tr>
+							<tr>
+								<td><%ejGetOther(webLang, 0184)%></td>
+								<td>
+									<input name="" class="router txtLanIp" maxlength="3"/> . 
+									<input name="" class="router txtLanIp" maxlength="3"/> . 
+									<input name="" class="router txtLanIp" maxlength="3"/> . 
+									<input name="" class="router txtLanIp" maxlength="3"/>
+								</td>
+							</tr>
+							<tr>
+								<td><%ejGetOther(webLang, 0185)%></td>
+								<td>
+									<input name="" class="router txtLanMask" maxlength="3"/> . 
+									<input name="" class="router txtLanMask" maxlength="3"/> . 
+									<input name="" class="router txtLanMask" maxlength="3"/> . 
+									<input name="" class="router txtLanMask" maxlength="3"/>
+								</td>
+							</tr>
+							<tr class="tr_dhcp">
+								<td rowspan="2"><%ejGetOther(webLang, 0186)%></td>
+								<td>
+									<input name="" class="router txtDhcpStart" maxlength="3"/> . 
+									<input name="" class="router txtDhcpStart" maxlength="3"/> . 
+									<input name="" class="router txtDhcpStart" maxlength="3"/> . 
+									<input name="" class="router txtDhcpStart" maxlength="3"/>
+								</td>
+							</tr>
+							<tr class="tr_dhcp">
+								<td class="csp_second" >
+									<input name="" class="router txtDhcpEnd" maxlength="3"/> . 
+									<input name="" class="router txtDhcpEnd" maxlength="3"/> . 
+									<input name="" class="router txtDhcpEnd" maxlength="3"/> . 
+									<input name="" class="router txtDhcpEnd" maxlength="3"/>
+								</td>
+							</tr>
+							<tr class="tr_dhcp" id="tr_dns">
+								<td><%ejGetOther(webLang, 0187)%></td>
+								<td>
+									<input type="radio" name="input_dns" id="radDhcpDnsEn1"/> <%ejGetOther(webLang, 0101)%> &nbsp;&nbsp;
+									<input type="radio" name="input_dns" id="radDhcpDnsEn0"/> <%ejGetOther(webLang, 0102)%>
+								</td>
+							</tr>
+							<tr class="tr_dhcp tr_custom_dns">
+								<td><%ejGetOther(webLang, 0296)%></td>
+								<td>
+									<input name="" class="router txtDhcpDns1" maxlength="3"/> . 
+									<input name="" class="router txtDhcpDns1" maxlength="3"/> . 
+									<input name="" class="router txtDhcpDns1" maxlength="3"/> . 
+									<input name="" class="router txtDhcpDns1" maxlength="3"/>
+								</td>
+							</tr>
+							<tr class="tr_dhcp tr_custom_dns">
+								<td><%ejGetOther(webLang, 0297)%></td>
+								<td>
+									<input name="" class="router txtDhcpDns2" maxlength="3"/> . 
+									<input name="" class="router txtDhcpDns2" maxlength="3"/> . 
+									<input name="" class="router txtDhcpDns2" maxlength="3"/> . 
+									<input name="" class="router txtDhcpDns2" maxlength="3"/>
+								</td>
+							</tr>
+							<tr class="tr_dhcp">
+								<td><%ejGetOther(webLang, 0188)%></td>
+								<td><input name="" id="txtLeaseTime" class="router2 service02" maxlength="7"/> <%ejGetOther(webLang, 0189)%></td>
+							</tr>
+							<tr>
+								<td><input type="hidden" id="txtWarning" /></td>
+								<td>
+									<a id="btnDhcpCancel" class="btn-default-orange-small right service02"><span><%ejGetOther(webLang, 0067)%></span></a>
+									<a id="btnDhcpSave"   class="btn-default-orange-small right service02"><span><%ejGetOther(webLang, 0068)%></span></a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					
+					<table class="setupWifiTable tbl_dhcp service02">
+						<thead>
+							<tr>
+								<th id="thDhcpStatic" colspan="3"><%ejGetOther(webLang, 0169)%> <img src="../assets/_images/gateway/busy.gif"/></th>
+							</tr>
+							<tr>
+								<th>Hostname</th>
+								<th><%ejGetOther(webLang, 0089)%></th>
+								<th><%ejGetOther(webLang, 0090)%></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td><select name="" id="selStaticHost"></select></td>
+								<td class="textaligncenter"><input name="" type="text" id="txtStaticMac" maxlength="17">
+								</td>
+								<td class="textaligncenter">
+									<input name="" class="router txtStaticIp" maxlength="3"/> .
+									<input name="" class="router txtStaticIp" maxlength="3"/> . 
+									<input name="" class="router txtStaticIp" maxlength="3"/> . 
+									<input name="" class="router txtStaticIp" maxlength="3"/>
+								</td>
+						
+							</tr>
+							<tr>
+								<td colspan="3">
+								<a id="btnDhcpReserve" class="btn-default-orange-small right"><span id="spnDhcpReserve" iid=""><%ejGetOther(webLang, 0168)%></span></a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					
+					<table class="setupWifiTable tbl_dhcp" id="tblDhcpStatic">
+						<thead>
+							<tr>
+								<th colspan="4"><%ejGetOther(webLang, 0190)%></th>
+							</tr>
+							<tr>
+								<th>Hostname</th>
+								<th><%ejGetOther(webLang, 0089)%></th>
+								<th><%ejGetOther(webLang, 0090)%></th>
+								<th><%ejGetOther(webLang, 0191)%></th>
+							</tr>
+						</thead>
+						<tbody></tbody>
+					</table>
+					
+					<table class="setupWifiTable tbl_dhcp" id="tblDhcpLease">
+						<thead>
+							<tr>
+								<th id="thDhcpLease" colspan="4"><%ejGetOther(webLang, 0192)%> <img src="../assets/_images/gateway/busy.gif"/></th>
+							</tr>
+							<tr>
+								<th>Hostname</th>
+								<th><%ejGetOther(webLang, 0089)%></th>
+								<th><%ejGetOther(webLang, 0090)%></th>
+								<th><%ejGetOther(webLang, 0193)%></th>
+							</tr>
+						</thead>
+						<tbody></tbody>
+					</table>
+				</div><!--tab-01-->
+				
+				<div id="tab-02" class="tab">
+					<table class="setupWifiTable">
+						<thead>
+							<th colspan="4"><%ejGetOther(webLang, 0181)%></th>
+						</thead>
+						<tbody>
+							<tr class="tr_custom_portForwarding">
+								<td colspan="4" class="red" id="warningPortMapping"><strong></strong></td>
+							</tr>
+							<tr>
+								<td colspan="4" id="ttlPortMapping"><%ejGetOther(webLang, 0194)%></td>
+							</tr>
+							<tr>
+								<td class="td_header"><%ejGetOther(webLang, 0125)%></td>
+								<td><input type="text" name="textfield" id="txtPortMappingDescription" maxlength="20"/></td>
+								<td class="fontweightbold"><%ejGetOther(webLang, 0126)%></td>
+								<td><select id="selPortMappingProtocol">
+								<option value="TCP">TCP</option>
+								<option value="UDP">UDP</option>
+								<option value="All">TCP / UDP</option>
+								</select></td>
+							</tr>
+							<tr>
+								<td class="td_header"><%ejGetOther(webLang, 0195)%></td>
+								<td><input type="text" name="textfield" id="txtPortMappingExternalPort" maxlength="11"/></td>
+								<td class="fontweightbold"><%ejGetOther(webLang, 0196)%></td>
+								<td><input type="text" name="textfield" id="txtPortMappingInternalPort" maxlength="11"/></td>
+							</tr>
+							<tr>
+								<td class="td_header"><%ejGetOther(webLang, 0197)%></td>
+								<td><input type="text" name="textfield" id="txtPortMappingRemoteHost" maxlength="15"/></td>
+								<td class="fontweightbold"><%ejGetOther(webLang, 0198)%></td>
+								<td><input type="text" name="textfield" id="txtPortMappingInternalClient" maxlength="15"/></td>
+							</tr>
+							<tr>
+								<td colspan="4" class="red" id="lblPortMappingFormat"><strong><%ejGetOther(webLang, 0176)%></strong></td>
+							</tr>
+							<tr>
+								<td colspan="4">
+									<a href="#" class="btn-default-orange-small right" id="aPortMappingCancel"><span><%ejGetOther(webLang, 0140)%></span></a>
+									<a href="#" class="btn-default-orange-small right" id="aPortMappingApply"><span><%ejGetOther(webLang, 0114)%></span></a>
+								</td>
+							</tr>
+							</tr>
+						</tbody>
+					</table>
+
+					
+					<table class="setupWifiTable" id="tblPortMapping">
+						<thead>
+							<tr>
+								<th colspan="8"><%ejGetOther(webLang, 0199)%></th>
+							</tr>
+							<tr>
+								<th colspan="2"><%ejGetOther(webLang, 0142)%></th>
+								<th colspan="2"><%ejGetOther(webLang, 0146)%></th>
+								<th colspan="2">IP</th>
+								<th colspan="2"><%ejGetOther(webLang, 0131)%></th>
+							</tr>
+							<tr>
+								<th><%ejGetOther(webLang, 0144)%></th>
+								<th><%ejGetOther(webLang, 0145)%></th>
+								<th><%ejGetOther(webLang, 0200)%></th>
+								<th><%ejGetOther(webLang, 0201)%></th>
+								<th><%ejGetOther(webLang, 0289)%></th>
+								<th><%ejGetOther(webLang, 0290)%></th>
+								<th colspan="2"><%ejGetOther(webLang, 0191)%></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="cinza">RuleName1</td>
+								<td class="center">TCP</td>
+								<td class="center">21</td>
+								<td class="center">21</td>
+								<td class="center"></td>
+								<td class="center">192.168.15.2</td>
+								<td class="center">
+									<div class="actions">
+									<a class="action edit"><img class="img-actions" src="../assets/_images/gateway/edit2.png"</a> 
+									<a class="action delete"><img class="img-actions" src="../assets/_images/gateway/trash.png"</a> 
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td class="cinza2">RuleName2</td>
+								<td class="cinza2 center">UDP</td>
+								<td class="cinza2 center">8080</td>
+								<td class="cinza2 center">8080</td>
+								<td class="cinza2 center"></td>
+								<td class="cinza2 center">192.168.15.2</td>
+								<td class="cinza2 center">
+									<div class="actions">
+									<a class="action edit"><img class="img-actions" src="../assets/_images/gateway/edit2.png"</a> 
+									<a class="action delete"><img class="img-actions" src="../assets/_images/gateway/trash.png"</a> 
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td class="cinza">RuleName3</td>
+								<td class="center">TCP / UDP</td>
+								<td class="center">70</td>
+								<td class="center">21</td>
+								<td class="center"></td>
+								<td class="center">192.168.15.4</td>
+								<td class="center">
+									<div class="actions">
+									<a class="action edit"><img class="img-actions" src="../assets/_images/gateway/edit2.png"</a> 
+									<a class="action delete"><img class="img-actions" src="../assets/_images/gateway/trash.png"</a> 
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div><!--tab-02-->
+				
+				<div id="tab-03" class="tab">
+					<table class="setupWifiTable">
+						<thead>
+							<th colspan="2">DMZ</th>
+						</thead>
+						<tbody>
+							<tr>
+								<td colspan="2"><%ejGetOther(webLang, 0202)%></td>
+							</tr>
+							<tr>
+								<td><%ejGetOther(webLang, 0203)%></td>
+								<td>
+									<input name="dmzHostState" type="radio" value="on"  /> <%ejGetOther(webLang, 0101)%> &nbsp; &nbsp;
+									<input name="dmzHostState" type="radio" value="off" /> <%ejGetOther(webLang, 0102)%>
+								</td>
+							</tr>
+							<tr>
+								<td><%ejGetOther(webLang, 0204)%></td>
+								<td><input type="text" name="textfield" id="txtDmzHostAddress" maxlength="15"/></td>
+							</tr>
+							<tr>
+								<td colspan="2">
+									<a href="#" class="btn-default-orange-small right" id="aDmzHostCancel"><span><%ejGetOther(webLang, 0067)%></span></a>
+									<a href="#" class="btn-default-orange-small right" id="aDmzHostSave"><span><%ejGetOther(webLang, 0068)%></span></a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div><!--tab-03-->
+				
+				<div id="tab-04" class="tab">
+					<table class="setupWifiTable">
+						<thead>
+							<th colspan="4">UPNP</th>
+						</thead>
+						<tbody>
+							<tr>
+								<td colspan="4">
+									<%ejGetOther(webLang, 0205)%>
+								</td>
+							</tr>
+							<tr>
+								<td><%ejGetOther(webLang, 0206)%></td>
+								<td>
+									<input name="radUpnp" type="radio" id="radUpnpEn1" /> <%ejGetOther(webLang, 0101)%> &nbsp; &nbsp;
+									<input name="radUpnp" type="radio" id="radUpnpEn0" /> <%ejGetOther(webLang, 0102)%>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="4">
+									<a id="btnUpnpCancel" class="btn-default-orange-small right"><span><%ejGetOther(webLang, 0067)%></span></a>
+									<a id="btnUpnpSave"   class="btn-default-orange-small right"><span><%ejGetOther(webLang, 0068)%></span></a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div><!--tab-04-->
+				
+				<div id="tab-05" class="tab">
+					<table class="setupWifiTable">
+						<thead>
+							<th colspan="2">DDNS</th>
+						</thead>
+						<tbody>
+						    	<tr>
+								<td colspan="4">
+									<%ejGetOther(webLang, 0207)%>
+								</td>
+							</tr>
+							<tr>
+								<td>DDNS:</td>
+								<td>
+									<input name="ddnsState" id="idDdnsState" type="radio" value="1" /> <%ejGetOther(webLang, 0101)%> &nbsp; &nbsp;
+									<input name="ddnsState" id="idDdnsState" type="radio" value="0" /> <%ejGetOther(webLang, 0102)%>
+								</td>
+							</tr>
+							<tr>
+								<td><%ejGetOther(webLang, 0208)%></td>
+								<td><select name="ddnsProvider" id="idDdnsProvider">
+								<option value="no-ip">No-IP</option>
+								<option value="dyndns">DynDNS</option>
+								</select></td>
+							</tr>
+							<tr>
+								<td><%ejGetOther(webLang, 0045)%></td>
+								<td><input type="text" name="txtDdnsUsername" id="idDdnsUsername" maxlength='40'/></td>
+							</tr>
+							<tr>
+								<td><%ejGetOther(webLang, 0046)%></td>
+								<td><input type="password" class="invalid" name="txtDdnsPwd" id="idDdnsPwd" maxlength="24"/></td>
+							</tr>
+							<tr>
+								<td>Hostname:</td>
+								<td><input type="text" name="txtDdnsHostName" id="idDdnsHostName" maxlength="40"/></td>
+							</tr>
+							<tr>
+								<td colspan="4">
+									<a href="#" class="btn-default-orange-small right" id="aDdnsCancel"><span><%ejGetOther(webLang, 0067)%></span></a>
+									<a href="#" class="btn-default-orange-small right" id="aDdnsSave"><span><%ejGetOther(webLang, 0068)%></span></a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div><!--tab-05-->
+					
+			</div><!--col-722-->
+		
+			<div class="clear"></div>
+			
+			<p>&nbsp;</p>
+			
+		</div><!--conteudo-->
+		
+		<div class="clear"></div>
+		
+	</div><!--wrap-->
+	
+</div><!--content-->
+
+</body>
+</html>

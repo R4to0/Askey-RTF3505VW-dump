@@ -1,0 +1,165 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta name="robots" content="noindex">
+<%ejGetOther(webLang, head)%>
+
+<script nonce="VGVsZWZvbmljYS1jc3Atbm9uY2U=">
+$(document).ready(function () {
+    $('a[rel="02"]').hide();
+    
+	$('#accordion a.item').click(function () {
+		window.top.name = '';
+		$('#accordion li').children('ul').slideUp('fast');
+		$('#accordion a').removeClass('active');
+		$(this).addClass('active');
+		$(this).siblings('ul').slideDown('fast');
+		return false;
+	});
+
+	var mode;
+	$.get('ajax_getvar.cmd?varName=gvtMode', function(ret) {
+		mode = ret.split('|'); // accessClass|wanMode|bridgedMode
+
+		var tab = '#tab-02';
+
+        //20220816-Watson-RM#27077-[QC32004] [RTF3505VW - S40]Access Class Change - Service 02 Failed
+        var gvtMode = '<%ejGetOther(devInfo, gvtMode)%>';
+        var accessClass = gvtMode.split('|')[0];
+        if (accessClass == 'service02') 
+        {
+            $('a[rel="02"]').hide();
+        }
+        else
+        {
+		    $('.tab').slideUp();
+		    $(tab).slideDown();
+		    $('#menu-wan-mode a[rel="02"]').addClass('active');
+		    $('a[rel="02"]').show();
+        }
+
+		loadSetting();
+	});
+	
+	function loadSetting() {
+		$('#op_mode').val(mode[2]);
+	}
+});
+
+$(window).load(function() {
+    //firewall
+    var gvtMode = '<%ejGetOther(devInfo, gvtMode)%>';
+    var accessClass = gvtMode.split('|')[0];
+    /*if (accessClass == 'service02') {
+        var firewall = document.getElementById("firewall");
+        firewall.style.display = "none";
+    }*/	//RM11739
+
+	$('.configuracoes').trigger('click');
+});
+</script>
+</head>
+
+<body>
+
+<%ejGetOther(webLang, header-gateway)%>
+
+<script nonce="VGVsZWZvbmljYS1jc3Atbm9uY2U=">
+	<!--POP-UP-->
+	$("#btn-clicktocall, .btn-clicktocall").fancybox({
+		width: 580,
+		height: 180,
+		fitToView: true,
+		autoSize: true,
+		closeClick: false,
+		openEffect: 'elastic',
+		closeEffect: 'fade',
+		padding: 30,
+		scrolling: "no"
+	});
+	<!--POP-UP-->
+</script>
+
+<script nonce="VGVsZWZvbmljYS1jc3Atbm9uY2U=">
+$(document).ready(function() {
+	$('#menu-wan-mode li a').click(function() {
+		var i = $(this).attr('rel');
+		$('#menu-wan-mode li a').removeClass('active');
+		$(this).addClass('active');
+		$('.tab').slideUp();
+		$('#tab-'+i).slideDown();
+		window.top.name = 'WAN:#tab-'+i;
+		return false;
+	});
+});
+</script>
+
+<div id="content">
+
+	<div class="wrap">
+
+		<div id="conteudo-gateway">
+
+<%ejGetOther(webLang, menu)%>
+
+			<div class="col-722 left">
+			
+			<h3 class="text-up"><%ejGetOther(webLang, 0209)%></h3>
+			<div class="clear"></div>
+			
+				<div id="menu-wan-mode">
+					<ul>
+						<li><a href="#" rel="02" class="displaynone"><%ejGetOther(webLang, 0211)%></a></li>
+					</ul>
+				</div><!--menu-wan-mode-->
+				
+				<div id="tab-02" class="tab">
+				<form action="" method="POST" name="form_op_mode">
+				<table class="setupWifiTable">
+						<thead>
+						<tr>
+							<th colspan="2">Router - Bridge</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td class="firstChild"><%ejGetOther(webLang, 0086)%></td>
+							<td>
+								<select name="op_mode" id="op_mode">
+								<option value="0"><%ejGetOther(webLang, 0217)%></option>
+								<option value="1">Bridge</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2" class="strong red">
+							<%ejGetOther(webLang, 0218)%></br></br>
+							</td>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr>
+							<td colspan="2">
+								<a href="popup-op-mode.html" id="btn-clicktocall" data-fancybox-type="iframe" class="btn-default-orange-small right"><span><%ejGetOther(webLang, 0219)%></span></a>
+							</td>
+						</tr>
+					</tfoot>
+					</table>
+			</form>
+			</div>
+			
+			</div><!--col-722-->
+		
+			<div class="clear"></div>
+				
+		</div><!--conteudo-->
+		
+		<div class="clear"></div>
+		
+	</div><!--wrap-->
+	
+</div><!--content-->
+
+</body>
+</html>

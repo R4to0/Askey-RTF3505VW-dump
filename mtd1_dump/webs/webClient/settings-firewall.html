@@ -1,0 +1,252 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<%ejGetOther(webLang, head)%>
+
+<script language="javascript" src="../assets/_js/settings-firewall.js"> </script>
+
+<script nonce="VGVsZWZvbmljYS1jc3Atbm9uY2U=">
+
+
+
+
+var sessionKey = '<%ejGetOther(sessionKey)%>';
+var firewallEchoEnable='<%ejGetOther(FirewallEchoEnable)%>';
+var firewallDefaultPolicy='<%ejGetOther(FirewallDefaultPolicy)%>';
+var firewallRuleList=''; //deprecated
+var firewallRuleIndexList='<%ejGetOther(FirewallRuleIndexList)%>';
+var firewallInterfaceList='<%ejGetOther(FirewallInterfaceList)%>';
+var gFirewallRuleList=null;
+var gFirewallInterfaceList=null;
+//var FIREWALL_PREPENDED_DESCRIPTION="CPE-";
+var hiddenViewableAction=[{"img":"acptBoth", "str":"Accept in both way"}, {"img":"rjctBoth", "str":"Reject in both way"}];
+
+var gvtMode = '<%ejGetOther(devInfo, gvtMode)%>';
+
+var _0068 = '<%ejGetOther(webLang, 0068)%>';
+var _0114 = '<%ejGetOther(webLang, 0114)%>';
+var _0115 = '<%ejGetOther(webLang, 0115)%>';
+var _0116 = '<%ejGetOther(webLang, 0116)%>';
+var _0117 = '<%ejGetOther(webLang, 0117)%>';
+var _0118 = '<%ejGetOther(webLang, 0118)%>';
+var _0119 = '<%ejGetOther(webLang, 0119)%>';
+
+var lanIp = '<%ejGet(ethIpAddress)%>';
+var lanMask = '<%ejGet(ethSubnetMask)%>';
+
+</script>
+</head>
+
+<body>
+
+<%ejGetOther(webLang, header-gateway)%>
+
+<div id="content">
+
+	<div class="wrap">
+
+		<div id="conteudo-gateway">
+
+<%ejGetOther(webLang, menu)%>
+
+			<div class="col-722 left">
+					
+					<h3 class="text-up">Firewall</h3>
+					<table class="setupWifiTable" id="tblProgress">
+						<thead>
+							<th id="thProgress" colspan="2"><img src="../assets/_images/gateway/busy.gif"/></th>
+						</thead>
+						<tbody/>
+					</table>
+
+					<table class="setupWifiTable">
+						<thead>
+							<th colspan="4"><%ejGetOther(webLang, 0120)%></th>
+						</thead>
+						<tbody>
+							<tr>
+								<td ><%ejGetOther(webLang, 0093)%></td>
+								<td colspan="3">
+									<input type="radio" name="rdoDefaultPolicy" id="input" value="Accept" /> <%ejGetOther(webLang, 0121)%> &nbsp;&nbsp; 
+									<input type="radio" name="rdoDefaultPolicy" id="input" value="Drop" /> <%ejGetOther(webLang, 0122)%>
+								</td>
+							</tr>
+                        </tbody>
+						<thead>
+							<th colspan="4"><%ejGetOther(webLang, 0123)%></th>
+						</thead>
+						<tbody>
+							<tr>
+								<td><%ejGetOther(webLang, 0093)%></td>
+								<td colspan="3">
+									<input type="radio" name="rdoEchoEnable" id="input" value="1" /> <%ejGetOther(webLang, 0121)%> &nbsp;&nbsp; 
+									<input type="radio" name="rdoEchoEnable" id="input" value="0" /> <%ejGetOther(webLang, 0122)%>
+								</td>
+							</tr>
+						</tbody>
+						<thead>
+							<th colspan="4"><label id="lblFirewallOperation"><%ejGetOther(webLang, 0115)%></lable></th>
+						</thead>
+						<tbody>
+							<tr>
+								<td colspan="4" id="ttlFirewall"><%ejGetOther(webLang, 0124)%></td>
+							</tr>
+							<tr>
+								<td class="td_header"><%ejGetOther(webLang, 0125)%></td>
+								<td><input type="text" name="textfield" id="txtFirewallName" maxlength="20"/></td>
+								<td class="fontweightbold"><%ejGetOther(webLang, 0126)%></td>
+								<td><select id="selFirewallProtocol">
+								<!--<option value="ICMP">ICMP</option>-->
+								<option value="TCP">TCP</option>
+								<option value="UDP">UDP</option>
+								<option value="All">TCP / UDP</option>
+								</select></td>
+							</tr>
+							<tr>
+								<td class="td_header"><%ejGetOther(webLang, 0127)%></td>
+								<td><input type="text" name="textfield" id="txtFirewallLocalPort" maxlength="11"/></td>
+								<td class="fontweightbold"><%ejGetOther(webLang, 0128)%></td>
+								<td><input type="text" name="textfield" id="txtFirewallRemotePort" maxlength="11"/></td>
+							</tr>
+							<tr>
+								<td class="td_header"><%ejGetOther(webLang, 0129)%></td>
+								<td><input type="text" name="textfield" id="txtFirewallLocalAddress" maxlength="46"/></td>
+								<td class="fontweightbold"><%ejGetOther(webLang, 0130)%></td>
+								<td><input type="text" name="textfield" id="txtFirewallRemoteAddress" maxlength="46"/></td>
+							</tr>
+								<tr>
+								<td class="td_header"><%ejGetOther(webLang, 0131)%></td>
+								<td>
+								<select id="selFirewallAction">
+								<option value="rjctLocal"><%ejGetOther(webLang, 0132)%></option>
+								<option value="rjctRemote"><%ejGetOther(webLang, 0133)%></option>
+								<!--<option value="rjctBoth" disabled><%ejGetOther(webLang, 0134)%></option>-->
+								<option value="acptLocal"><%ejGetOther(webLang, 0135)%></option>
+								<option value="acptRemote"><%ejGetOther(webLang, 0136)%></option>
+								<!--<option value="acptBoth" disabled><%ejGetOther(webLang, 0137)%></option>-->
+								</select>
+								</td>
+								<td colspan="2"><div class="policystatus"><strong><%ejGetOther(webLang, 0138)%></strong></div><div id="imgAction" class="policystatus"><img src="../assets/_images/gateway/accept.png"></div><div class="policystatus"><strong><%ejGetOther(webLang, 0139)%></strong></div></td>
+							</tr>
+							<tr>
+								<td colspan="4">
+									<a href="#" class="btn-default-orange-small right" id="aFirewallCancel"><span><%ejGetOther(webLang, 0140)%></span></a>
+									<a href="#" class="btn-default-orange-small right" id="aFirewallApply"><span><%ejGetOther(webLang, 0114)%></span></a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					
+					<table class="setupWifiTable" id="tblFirewallRule">
+						<thead>
+							<tr>
+								<th colspan="8"><div id="divFirewallQuantity"><%ejGetOther(webLang, 0141)%></div></th>
+							</tr>
+							<tr>
+								<th colspan="2"><%ejGetOther(webLang, 0142)%></th>
+								<th colspan="2">Local</th>
+                                <th><%ejGetOther(webLang, 0131)%></th>
+								<th colspan="2"><%ejGetOther(webLang, 0139)%></th>
+								<th><%ejGetOther(webLang, 0143)%></th>
+							</tr>
+							<tr>
+								<th><%ejGetOther(webLang, 0144)%></th>
+								<th><%ejGetOther(webLang, 0145)%></th>
+								<th><%ejGetOther(webLang, 0146)%></th>
+								<th>IP</th>
+								<th><%ejGetOther(webLang, 0147)%></th>
+								<th>IP</th>
+								<th><%ejGetOther(webLang, 0146)%></th>
+								<th><%ejGetOther(webLang, 0148)%></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="cinza">RuleName1</td>
+								<td class="center">TCP</td>
+								<td class="center">21</td>
+								<td class="center">192.168.15.66</td>
+								<td class="center"><img class="" src="../assets/_images/gateway/accept.png"></td>
+								<td class="center">192.168.15.3</td>
+								<td class="center">21</td>
+								<td class="center">
+									<div class="actions">
+									<a class="action edit"><img class="img-actions" src="../assets/_images/gateway/edit2.png"</a> 
+									<a class="action delete"><img class="img-actions" src="../assets/_images/gateway/trash.png"</a>
+									<a class="action up"><img class="img-actions-arrow"src="../assets/_images/gateway/arrow_up.png"</a>
+									<a class="action down"><img class="img-actions-arrow"src="../assets/_images/gateway/arrow_down.png"</a>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td class="cinza2">RuleName2</td>
+								<td class="cinza2 center">UDP</td>
+								<td class="cinza2 center">8080</td>
+								<td class="cinza2 center">192.168.15.2</td>
+								<td class="cinza2 center"><img class="" src="../assets/_images/gateway/reject.png"></td>
+								<td class="cinza2 center">*</td>
+								<td class="cinza2 center">8080</td>
+								<td class="cinza2 center">
+									<div class="actions">
+									<a class="action edit"><img class="img-actions" src="../assets/_images/gateway/edit2.png"</a> 
+									<a class="action delete"><img class="img-actions" src="../assets/_images/gateway/trash.png"</a>
+									<a class="action up"><img class="img-actions-arrow"src="../assets/_images/gateway/arrow_up.png"</a>
+									<a class="action down"><img class="img-actions-arrow"src="../assets/_images/gateway/arrow_down.png"</a>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td class="cinza2">RuleNameB</td>
+								<td class="cinza2 center">TCP</td>
+								<td class="cinza2 center">*</td>
+								<td class="cinza2 center">192.168.15.2</td>
+								<td class="cinza2 center"><img class="" src="../assets/_images/gateway/reject.png"></td>
+								<td class="cinza2 center">192.168.15.27</td>
+								<td class="cinza2 center">*</td>
+								<td class="cinza2 center">
+									<div class="actions">
+									<a class="action edit"><img class="img-actions" src="../assets/_images/gateway/edit2.png"</a> 
+									<a class="action delete"><img class="img-actions" src="../assets/_images/gateway/trash.png"</a>
+									<a class="action"><img class="img-actions-arrow"src="../assets/_images/gateway/arrow_up.png"</a>
+									<a class="action"><img class="img-actions-arrow"src="../assets/_images/gateway/arrow_down.png"</a>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td class="cinza">RuleName3</td>
+								<td class="center">TCP / UDP</td>
+								<td class="center">*</td>
+								<td class="center">192.168.15.66</td>
+								<td class="center"><img class="" src="../assets/_images/gateway/rejectSym.png"></td>
+								<td class="center">*</td>
+								<td class="center">*</td>
+								<td class="center">
+									<div class="actions">
+									<a class="action edit"><img class="img-actions" src="../assets/_images/gateway/edit2.png"</a> 
+									<a class="action delete"><img class="img-actions" src="../assets/_images/gateway/trash.png"</a>
+									<a class="action up"><img class="img-actions-arrow"src="../assets/_images/gateway/arrow_up.png"</a>
+									<a class="action down"><img class="img-actions-arrow"src="../assets/_images/gateway/arrow_down.png"</a>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					
+			</div><!--col-722-->
+		
+			<div class="clear"></div>
+			
+			<p>&nbsp;</p>
+			
+		</div><!--conteudo-->
+		
+		<div class="clear"></div>
+		
+	</div><!--wrap-->
+	
+</div><!--content-->
+
+</body>
+</html>

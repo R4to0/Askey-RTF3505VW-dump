@@ -1,0 +1,214 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<%ejGetOther(webLang, head)%>
+
+<script nonce="VGVsZWZvbmljYS1jc3Atbm9uY2U=">
+$(document).ready(function () {
+	$('#accordion a.item').click(function () {
+		window.top.name = '';
+		$('#accordion li').children('ul').slideUp('fast');
+		$('#accordion a').removeClass('active');
+		$(this).addClass('active');
+		$(this).siblings('ul').slideDown('fast');
+		return false;
+	});
+});
+
+var sessionKey = '<%ejGetOther(sessionKey)%>';
+var wanPpp = '<%ejGetOther(WanPpp)%>';
+var ppp = wanPpp.split(',');
+var pppUser = '';
+var pppPass = '';
+var connStatus = '';
+var lastError = '';
+var applyWanPpp = 0;
+if (ppp.length>1 && ppp[1]!='(null)') pppUser = htmlDecode(ppp[1]);
+if (ppp.length>2 && ppp[2]!='(null)') pppPass = htmlDecode(ppp[2]);
+if (ppp.length>3 && ppp[3]!='(null)') connStatus = ppp[3];
+if (ppp.length>4 && ppp[4]!='(null)') lastError = ppp[4];
+if (ppp.length>6 && ppp[6]!='(null)') applyWanPpp = parseInt(ppp[6]);
+
+$(window).load(function() {
+    //firewall
+    var gvtMode = '<%ejGetOther(devInfo, gvtMode)%>';
+    var accessClass = gvtMode.split('|')[0];
+    /*if (accessClass == 'service02') {
+        var firewall = document.getElementById("firewall");
+        firewall.style.display = "none";
+    }*/	//RM11739
+
+	$('.configuracoes').trigger('click');
+	$('#txtUsername').val(pppUser).select().focus();
+	$('#txtPassword').val(pppPass);
+
+	var cid;
+	if (applyWanPpp) {
+		$('#tr_msg').show();
+		$('#lbl_msg').html('<%ejGetOther(webLang, 0273)%>');
+		cid = setInterval(checkWanPpp, 3000);
+	}
+
+	var cnt = 0;
+	var errProvider = '<%ejGetOther(webLang, 0274)%>';
+	var errNetwork  = '<%ejGetOther(webLang, 0275)%>';
+	function checkWanPpp() {
+		$.ajaxSetup({async:false, cache:false});
+		$.get('settings-internet.html', function(data, status) {
+			var key = data.match(/var sessionKey = '(.*?)';/);
+			if (key.length > 1) sessionKey = key[1];
+
+			ppp = data.match(/var wanPpp = '(.*?)';/);
+			if (ppp.length > 1) ppp = ppp[1].split(',');
+			if (ppp.length > 3) connStatus = ppp[3];
+			if (ppp.length > 4) lastError = ppp[4];
+
+			var failed = false;
+			if (connStatus == 'Disconnected') {
+				if (lastError == 'ERROR_AUTHENTICATION_FAILURE') {
+					clearInterval(cid);
+					$('#lbl_msg').html(errProvider);
+					failed = true;
+				}
+				else if (lastError == 'ERROR_NONE') {
+					clearInterval(cid);
+					$('#lbl_msg').html(errNetwork);
+					failed = true;
+				}
+			}
+			else if (connStatus == 'Connected') {
+				clearInterval(cid);
+				$('#lbl_msg').html('<%ejGetOther(webLang, 0276)%>');
+			}
+			else {
+				$('#lbl_msg').html($('#lbl_msg').html() + '.');
+				if (++cnt > 5) {
+					clearInterval(cid);
+					$('#lbl_msg').html(errNetwork);
+					failed = true;
+				}
+			}
+
+			if (failed) {
+				alert('<%ejGetOther(webLang, 0277)%>');
+				$('#txtUsername').val('cliente@cliente');
+				$('#txtPassword').val('cliente');
+				$('#btnSave').trigger('click');
+			}
+		});
+	}
+
+	$('#txtUsername,#txtPassword').keypress(function(e) {
+		if (e.which == 13) $('#btnSave').trigger('click');
+	});
+
+	$('#btnSave').on('click', function() {
+		var ng = false;
+		var chk = /^[\x21-\x7e]{1,64}$/;
+
+		var user = $('#txtUsername').val();
+		if (!chk.test(user) || isXSS(user)) {
+			ng = true;
+			invalidMsg($('#txtUsername'), '<%ejGetOther(webLang, 0159)%>');
+		}
+		else {
+			invalidMsg($('#txtUsername'), '');
+		}
+
+		var pass = $('#txtPassword').val();
+		if (!chk.test(pass) || isXSS(pass)) {
+			ng = true;
+			invalidMsg($('#txtPassword'), '<%ejGetOther(webLang, 0160)%>');
+		}
+		else {
+			invalidMsg($('#txtPassword'), '');
+		}
+
+		if (ng) return false;
+		var loc = 'te_mm.cmd?sessionKey='+ sessionKey;
+		loc += '&action=Apply&userselection=M';
+		loc += '&PPPoEUsername='+ encodeURIComponent(user);
+		loc += '&PPPoEPassword='+ encodeURIComponent(pass);
+		//alert(loc);
+		window.location = loc;
+	});
+
+	$('#btnCancel').on('click', function() {
+		$('.invalid').next('span').remove();
+		$('.invalid').removeClass('invalid');
+		$('#txtUsername').val(pppUser);
+		$('#txtPassword').val(pppPass);
+	});
+});
+</script>
+</head>
+
+<body>
+
+<%ejGetOther(webLang, header-gateway)%>
+
+<div id="content">
+
+	<div class="wrap">
+
+		<div id="conteudo-gateway">
+
+<%ejGetOther(webLang, menu)%>
+
+			<div class="col-722 left">
+			
+				<h3 class="text-up">Internet</h3>
+			
+				<table class="setupWifiTable" cellspacing="0" cellpadding="0">
+					<thead>
+						<tr>
+							<th colspan="2"><%ejGetOther(webLang, 0161)%></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr class="header">
+							<td colspan="2" class="strong">
+								<%ejGetOther(webLang, 0162)%><br /><br />
+								<%ejGetOther(webLang, 0163)%><br />
+								<%ejGetOther(webLang, 0164)%><br />
+								<br /><span class="description"><%ejGetOther(webLang, 0165)%></span>
+							</td>
+						</tr>
+						<tr>
+							<td class="firstChild"><%ejGetOther(webLang, 0045)%></td>
+							<td><input id="txtUsername" name="ID" type="text" maxlength="64" /></td>
+						</tr>
+						<tr>
+							<td class="firstChild"><%ejGetOther(webLang, 0046)%></td>
+							<td><input id="txtPassword" name="Password" type="text" maxlength="64"/></td>
+						</tr>
+						<tr class="header" id="tr_msg">
+							<td colspan="2"><label id="lbl_msg"><label></td>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr>
+							<td colspan="2">
+								<a id="btnCancel" class="btn-default-orange-small right"><span><%ejGetOther(webLang, 0067)%></span></a>
+								<a id="btnSave"   class="btn-default-orange-small right"><span><%ejGetOther(webLang, 0068)%></span></a>
+							</td>
+						</tr>
+					</tfoot>
+				</table>
+			
+			</div><!--col-722-->
+		
+			<div class="clear"></div>
+				
+		</div><!--conteudo-->
+		
+		<div class="clear"></div>
+		
+	</div><!--wrap-->
+	
+</div><!--content-->
+
+</body>
+</html>

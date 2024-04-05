@@ -1,0 +1,248 @@
+<html>
+   <head>
+      <meta HTTP-EQUIV='Pragma' CONTENT='no-cache'>
+      <meta name="viewport" content="width=device-width, maximum-scale=1.0, minimum-scale=1.0" />
+      <link rel="stylesheet" href='stylemain.css' type='text/css'>
+      <link rel="stylesheet" href='colors.css' type='text/css'>
+      <script language="javascript" src="util.js"></script>
+      <script language="javascript" src="te_util.js"></script>
+      <script language="javascript" src="assets/_js/jquery-1.11.3.min.js"></script>
+      <script language="javascript" src="assets/_js/jquery-migrate-1.2.1.min.js"></script>
+      <script language="javascript">
+<!-- hide
+
+var sessionKey='<%ejGetOther(sessionKey)%>';
+
+var currentAllowedSubnet = '<%ejGetOther(TefRmgt, allowedSourceSubnet)%>';
+
+var currentHttplanEnable = '<%ejGetOther(TefRmgtHttp, lanEnable)%>';
+var currentHttpwanEnable = '<%ejGetOther(TefRmgtHttp, wanEnable)%>';
+var currentHttpallowedSourceSubnetEnable = '<%ejGetOther(TefRmgtHttp, allowedSourceSubnetEnable)%>';
+var currentHttpWanPort = '<%ejGetOther(TefRmgtHttp, wanHttpPort)%>';
+
+var currentSshlanEnable = '<%ejGetOther(TefRmgtSsh, lanEnable)%>';
+var currentSshwanEnable = '<%ejGetOther(TefRmgtSsh, wanEnable)%>';
+var currentSshallowedSourceSubnetEnable = '<%ejGetOther(TefRmgtSsh, allowedSourceSubnetEnable)%>';
+var currentSshWanPort = '<%ejGetOther(TefRmgtSsh, wanSshPort)%>';
+
+var currentIcmplanEnable = '<%ejGetOther(TefRmgtIcmp, lanEnable)%>';
+var currentIcmpwanEnable = '<%ejGetOther(TefRmgtIcmp, wanEnable)%>';
+var currentIcmpallowedSourceSubnetEnable = '<%ejGetOther(TefRmgtIcmp, allowedSourceSubnetEnable)%>';
+
+function frmLoad()
+{
+  with (document.forms[0])
+  {
+    rmgtAllowedSubnet.value = currentAllowedSubnet;
+
+    httpWanPort.value=currentHttpWanPort;
+	httpLanEnable.checked = (currentHttplanEnable == '1');
+	httpWanEnable.checked = (currentHttpwanEnable == '1');
+	httpAllowedSourceSubnetEnable.checked = (currentHttpallowedSourceSubnetEnable == '1');
+
+    sshWanPort.value=currentSshWanPort;
+	sshLanEnable.checked = (currentSshlanEnable == '1');
+	sshWanEnable.checked = (currentSshwanEnable == '1');
+	sshAllowedSourceSubnetEnable.checked = (currentSshallowedSourceSubnetEnable == '1');
+       
+	icmpLanEnable.checked = (currentIcmplanEnable == '1');
+	icmpWanEnable.checked = (currentIcmpwanEnable == '1');
+	icmpAllowedSourceSubnetEnable.checked = (currentIcmpallowedSourceSubnetEnable == '1');
+  }
+}
+
+function btnCancel()
+{
+  with (document.forms[0])
+  {
+    rmgtAllowedSubnet.value = currentAllowedSubnet;
+
+    httpWanPort.value=currentHttpWanPort;
+	httpLanEnable.checked = (currentHttplanEnable == '1');
+	httpWanEnable.checked = (currentHttpwanEnable == '1');
+	httpAllowedSourceSubnetEnable.checked = (currentHttpallowedSourceSubnetEnable == '1');
+
+    sshWanPort.value=currentSshWanPort;
+	sshLanEnable.checked = (currentSshlanEnable == '1');
+	sshWanEnable.checked = (currentSshwanEnable == '1');
+	sshAllowedSourceSubnetEnable.checked = (currentSshallowedSourceSubnetEnable == '1');
+       
+	icmpLanEnable.checked = (currentIcmplanEnable == '1');
+	icmpWanEnable.checked = (currentIcmpwanEnable == '1');
+	icmpAllowedSourceSubnetEnable.checked = (currentIcmpallowedSourceSubnetEnable == '1');
+  }
+}
+
+function btnApply()
+{
+  with ( document.forms[0] )
+  {
+    var fmterr=false;
+    if(rmgtAllowedSubnet.value!="" && !checkAllowedSubnet(rmgtAllowedSubnet.value))
+    {
+      fmterr=true;
+    }
+    else if(isNaN(httpWanPort.value)==true||(parseInt(httpWanPort.value)<0||parseInt(httpWanPort.value)>65535))
+    {
+      fmterr=true;
+    }
+    else if(isNaN(sshWanPort.value)==true||(parseInt(sshWanPort.value)<0||parseInt(sshWanPort.value)>65535))
+    {
+      fmterr=true;
+    }
+
+    if( fmterr==true )
+    {
+      alert("format error !");
+      return;
+    }
+
+    var _rmgtAllowedSubnet=rmgtAllowedSubnet.value;
+    var _httpWanPort=httpWanPort.value;
+    var _sshWanPort=sshWanPort.value;    
+    var loc = 'te_rmgt.cmd';
+    loc += '?action=modify';
+    loc += '&allowedsubnet='+_rmgtAllowedSubnet;
+    loc += '&httpwanport='+_httpWanPort;
+	if ( httpLanEnable.checked == true )
+        loc += '&httplanenable=1';
+    else
+        loc += '&httplanenable=0';
+	if ( httpWanEnable.checked == true )
+        loc += '&httpwanenable=1';
+    else
+        loc += '&httpwanenable=0';
+	if ( httpAllowedSourceSubnetEnable.checked == true )
+        loc += '&httpallowedSourceSubnetEnable=1';
+    else
+        loc += '&httpallowedSourceSubnetEnable=0';
+    loc += '&sshwanport='+_sshWanPort;
+	if ( sshLanEnable.checked == true )
+        loc += '&sshlanenable=1';
+    else
+        loc += '&sshlanenable=0';
+	if ( sshWanEnable.checked == true )
+        loc += '&sshwanenable=1';
+    else
+        loc += '&sshwanenable=0';
+	if ( sshAllowedSourceSubnetEnable.checked == true )
+        loc += '&sshallowedSourceSubnetEnable=1';
+    else
+        loc += '&sshallowedSourceSubnetEnable=0';
+	if ( icmpLanEnable.checked == true )
+        loc += '&icmplanenable=1';
+    else
+        loc += '&icmplanenable=0';
+	if ( icmpWanEnable.checked == true )
+        loc += '&icmpwanenable=1';
+    else
+        loc += '&icmpwanenable=0';
+	if ( icmpAllowedSourceSubnetEnable.checked == true )
+        loc += '&icmpallowedSourceSubnetEnable=1';
+    else
+        loc += '&icmpallowedSourceSubnetEnable=0';
+    loc += '&sessionKey='+sessionKey;
+    var code = 'location="' + loc + '"';
+    eval(code);
+  }
+}
+
+function checkAllowedSubnet(subnet)
+{
+  var net = subnet.split(',');
+  for (var i=0; i<net.length; i++)
+  {
+    if (!isValidIpAddress(net[i])) return false;
+  }
+  return true;
+}
+
+function chbSshdCfgCheck(cb)
+{
+  //do nothing
+}
+
+function chbHttpdCfgCheck(cb)
+{
+  if (cb.name=='httpLanEnable' && !cb.checked)
+  {
+    if (!confirm('Disable HTTP on LAN side will cause Web unavailable! Are you sure?'))
+      cb.checked = true;
+  }
+}
+
+function chbIcmpCfgCheck(cb)
+{
+  //do nothing
+}
+// done hiding -->
+      </script>
+   </head>
+   <body topmargin="0" leftmargin="0" onLoad="frmLoad(true)">
+		<blockquote>
+		 <form style="padding-left:15px;padding-top:15px;">
+		 <b>Trust Domain</b><br/><br/>
+		 Remote MGMT enables various approaches to access this device remotely from a WAN and/or LAN connection.<br/><br/>
+         <table style="border:4px #AAAAAA none;" rules="all" cellpadding='5'; id='tblRmgt'>
+		 <tr>
+            <td style="border:4px #FFFFFF none">Allowed IP Subnets:&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td style="border:4px #FFFFFF none" colspan="3"><input style="border-radius:4px;background-color:#fcfcfc;" type="text" name="rmgtAllowedSubnet" maxlength="255" size="40" /><br>
+            Example: 172.16.123.0/24,8.0.0.0/8,1.2.3.4 (Empty means no limit)</td>
+         </tr>
+		 <tr>
+            <td style="font-weight:bold;">Services</td>
+            <td style="font-weight:bold;">LAN/WLAN</td>
+            <td style="font-weight:bold;">WAN</td>
+            <td style="font-weight:bold;">Trust Domain</td>
+            <td style="font-weight:bold;">Port</td>
+         </tr>
+         <tr>
+            <td>HTTP:</td>
+            <td><input type='checkbox' onClick='chbHttpdCfgCheck(this)' name="httpLanEnable" />&nbsp;&nbsp;Enable</td>
+            <td><input type='checkbox' onClick='chbHttpdCfgCheck(this)' name="httpWanEnable" />&nbsp;&nbsp;Enable</td>
+			<td><input type='checkbox' onClick='chbHttpdCfgCheck(this)' name="httpAllowedSourceSubnetEnable" />&nbsp;&nbsp;Enable</td>
+            <td><input type='text' size="5" maxlength=='5' name="httpWanPort"/></td>
+         </tr>
+         <tr>
+            <td>SSH:</td>
+            <td><input type='checkbox' onClick='chbSshdCfgCheck(this)' name="sshLanEnable" />&nbsp;&nbsp;Enable</td>
+            <td><input type='checkbox' onClick='chbSshdCfgCheck(this)' name="sshWanEnable" />&nbsp;&nbsp;Enable</td>
+			<td><input type='checkbox' onClick='chbSshdCfgCheck(this)' name="sshAllowedSourceSubnetEnable" />&nbsp;&nbsp;Enable</td>
+            <td><input type='text' size="5" maxlength=='5' name="sshWanPort"/></td>
+         </tr>
+         <tr>
+            <td>ICMP:</td>
+            <td><input type='checkbox' onClick='chbIcmpCfgCheck(this)' name="icmpLanEnable" />&nbsp;&nbsp;Enable</td>
+            <td><input type='checkbox' onClick='chbIcmpCfgCheck(this)' name="icmpWanEnable" />&nbsp;&nbsp;Enable</td>
+			<td><input type='checkbox' onClick='chbIcmpCfgCheck(this)' name="icmpAllowedSourceSubnetEnable" />&nbsp;&nbsp;Enable</td>
+            <td></td>
+         </tr>
+		 <tr>
+			<td style="border:4px #FFFFFF none"></td>
+			<td style="border:4px #FFFFFF none"></td>
+			<td style="border:4px #FFFFFF none"></td>
+			<td style="border:4px #FFFFFF none"></td>
+			<td style="border:4px #FFFFFF none"></td>
+		 </tr>
+		 <tr>
+			<td style="border:4px #FFFFFF none"></td>
+			<td style="border:4px #FFFFFF none"></td>
+			<td style="border:4px #FFFFFF none"></td>
+			<td style="border:4px #FFFFFF none" align="right"><input type='button' name='apply' onClick='btnApply()' value='Apply'  /></td>
+			<td style="border:4px #FFFFFF none" align="center"><input type='button' name='cancel' onClick='btnCancel()' value='Cancel' /></td>
+		 </tr>
+         </table><br/><br/>
+         </form>
+		 </blockquote>
+   </body>
+</html>
+
+
+
+
+
+
+
+
+
+

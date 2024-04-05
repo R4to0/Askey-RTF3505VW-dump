@@ -1,0 +1,11 @@
+prefix=/home/Public/_Build/release/BRCMGPON/RTF35XX/414L04A_gvt/targets/RTF3505VW_NV/fs.install
+exec_prefix=${prefix}
+libdir=/home/Public/_Build/release/BRCMGPON/RTF35XX/414L04A_gvt/targets/RTF3505VW_NV/fs.install/lib/gpl
+includedir=${prefix}/include
+
+Name: uuid
+Description: Universally unique id library
+Version: 1.0.3
+Requires:
+Cflags: -I${includedir}/uuid
+Libs: -L${libdir} -luuid

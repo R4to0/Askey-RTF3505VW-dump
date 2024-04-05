@@ -1,0 +1,41 @@
+{
+	"logging":
+	{
+		"level":"warn",
+		"output":"syslog"
+	},
+	"database":
+	{
+		"max_stadb_size":128,
+	},
+	"networks": [
+		{
+			"MDID": "00:00",
+			"logics": [
+				{
+					"name": "spdia.qtn",
+					"parameters":
+					{
+						"stations": [
+							{"mac":"00:26:86:f0:86:04", "period":50, "mode":"ndp", "reorder":1, "ng":1},
+                                                        {"mac":"00:26:86:f0:84:12", "period":50, "mode":"data", "reorder":1, "ng":0},
+						],
+						"dump_level":2,
+						"dump_interval":1000,
+						"dump_burst":1,
+						"dump_kbytes":500,
+						"dump_port":50005,
+						"log_level":"warn",
+					}
+				}
+			]
+		},
+	],
+	"drivers": [
+		{"_comments": "leave drivers blank or * indicates support all drivers"},
+		{"name": "*"},
+	],
+	"miscs": [
+		{"name": "misc.qtn.csmdcli"}
+	],
+}

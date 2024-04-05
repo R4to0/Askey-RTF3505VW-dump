@@ -1,0 +1,95 @@
+<html>
+   <head>
+      <meta HTTP-EQUIV='Pragma' CONTENT='no-cache'>
+      <link rel="stylesheet" href='stylemain.css' type='text/css'>
+         <link rel="stylesheet" href='colors.css' type='text/css'>
+            <script language="javascript" src="util.js"></script>
+            <script language="javascript">
+<!-- hide
+var nat = '<%ejGetOther(sysInfo, enblNat)%>';
+var dmzHostAddress = '<%ejGetOther(dmzHost)%>';
+var dmzHostEnable='<%ejGetOther(dmzEnable)%>';	//RM11359
+var sessionKey = '<%ejGetOther(sessionKey)%>';	//RM11359
+
+//RM11359
+function displayDmzEnable()
+{
+	with ( document.forms[0] ) {
+		var dmzHostEnableState=(dmzHostEnable=='GVT')?((dmzHostAddress=='')?false:true):((dmzHostEnable=='on')?true:false);
+
+		if(dmzHostEnableState==true)
+		{
+			dmzHostState[0].checked=true;
+		}
+		else
+		{
+			dmzHostState[1].checked=true;
+		}
+	}
+}
+
+function frmLoad() {
+   
+   with ( document.forms[0] ) {
+      if (nat == '1')
+         dmzAddr.value = dmzHostAddress;
+
+	   //RM11359
+	   displayDmzEnable();
+   }
+}
+
+function btnApply() {
+   var loc = 'scdmz.cmd?';
+
+	with ( document.forms[0] ) {
+		var addr = dmzAddr.value;
+		var currentDmzHostState=(dmzHostState[0].checked)?"on":"off";
+		
+		loc += 'address=' + dmzAddr.value;
+		loc += '&enable=' + currentDmzHostState;
+	}
+	loc += '&sessionKey=' + sessionKey;
+	var code = 'location="' + loc + '"';
+	eval(code);
+}
+//RM11359 End
+
+// done hiding -->
+</script>
+   </head>
+   <body onLoad='frmLoad()'>
+      <blockquote>
+         <form>
+ <script language="javascript">
+<!-- hide
+   if (nat != '1') {
+     document.writeln("<b>NAT is not enabled. A routed WAN service with NAT enabled is needed to configure this service.</b><br><br>");
+   }	
+   else {
+     document.writeln("<b>NAT -- DMZ Host</b><br><br>");
+     document.writeln("The Broadband Router will forward IP packets from the WAN that do not belong to any");
+     document.writeln("of the applications configured in the Virtual Servers table to the DMZ host computer.<br><br>");
+     document.writeln("Enter the computer's IP address and click 'Apply' to activate the DMZ host.<br><br>");
+     document.writeln("Clear the IP address field and click 'Apply' to deactivate the DMZ host.<br><br>");
+     document.writeln("<table border='0' cellpadding='0' cellspacing='0'>");
+	 document.writeln("<tr>");
+	 document.writeln("<td width='140'>Enable DMZ:</td>"); 			//RM11359
+	 document.writeln("<td>");
+	 document.writeln("<input name=\"dmzHostState\" type=\"radio\" value=\"on\"  /> Enable &nbsp; &nbsp;");
+	 document.writeln("<input name=\"dmzHostState\" type=\"radio\" value=\"off\"  /> Disable");
+	 document.writeln("</td>"); 									//RM11359 End
+	 document.writeln("</tr>");
+     document.writeln("<tr>");
+     document.writeln("<td width='140'>DMZ Host IP Address:</td>");
+     document.writeln("<td><input type='text' name='dmzAddr'></td>");
+     document.writeln("</tr>");
+     document.writeln("</table><br>");
+     document.writeln("<center><input type='button' onClick='btnApply()' value='Save/Apply'></center>");
+   }	  
+// done hiding -->
+</script>            
+         </form>
+      </blockquote>
+   </body>
+</html>

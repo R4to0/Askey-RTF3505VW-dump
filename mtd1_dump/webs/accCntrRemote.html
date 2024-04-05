@@ -1,0 +1,267 @@
+<html>
+   <head>
+      <meta HTTP-EQUIV='Pragma' CONTENT='no-cache'>
+      <meta name="viewport" content="width=device-width, maximum-scale=1.0, minimum-scale=1.0" />
+      <link rel="stylesheet" href='stylemain.css' type='text/css'>
+      <link rel="stylesheet" href='colors.css' type='text/css'>
+      <script language="javascript" src="util.js"></script>
+      <script language="javascript" src="te_util.js"></script>
+      <script language="javascript" src="assets/_js/jquery-1.11.3.min.js"></script>
+      <script language="javascript" src="assets/_js/jquery-migrate-1.2.1.min.js"></script>
+      <script language="javascript">
+<!-- hide
+
+var sessionKey='<%ejGetOther(sessionKey)%>';
+var currentRemoteManagementAddress = '<%ejGetOther(AppCfg, remoteAddress)%>';
+var currentHttpdNetworkAccess = '<%ejGetOther(AppCfgHttpd, networkAccess)%>';
+var currentHttpdWanHttpPort = '<%ejGetOther(AppCfgHttpd, wanHttpPort)%>';
+var currentHttpdWanHttpsPort = '<%ejGetOther(AppCfgHttpd, wanHttpsPort)%>';
+var currentHttpPortRegionSpecific = '<%ejGetOther(AppCfgHttpd, wanHttpPortRegionSpecific)%>';
+var currentHttpdWanHttpEnabled = '<%ejGetOther(AppCfgHttpd, wanHttpEnabled)%>';
+var currentHttpdWanHttpsEnabled = '<%ejGetOther(AppCfgHttpd, wanHttpsEnabled)%>';
+var currentHttpdWanHttpRegionSpecificEnabled = '<%ejGetOther(AppCfgHttpd, wanHttpRegionSpecificEnabled)%>';
+var currentSshdNetworkAccess = '<%ejGetOther(AppCfgSshd, networkAccess)%>';
+var currentSshdWanSshPort = '<%ejGetOther(AppCfgSshd, wanSshPort)%>';
+//var currentRemoteManagementAddress = '192.168.135.254';
+//var currentHttpdNetworkAccess = 'lan';
+//var currentHttpdWanHttpPort = '80';
+//var currentHttpdWanHttpsPort = '443';
+//var currentHttpPortRegionSpecific = '8000';
+//var currentHttpdWanHttpEnabled = 'false';
+//var currentHttpdWanHttpsEnabled = 'true';
+//var currentHttpdWanHttpRegionSpecificEnabled = 'true';
+//var currentSshdNetworkAccess = 'both';
+//var currentSshdWanSshPort = '22';
+
+function frmLoad()
+{
+  with (document.forms[0])
+  {
+    remoteManagementIpAddress.value=currentRemoteManagementAddress;
+    httpWanPort.value=currentHttpdWanHttpPort;
+    httpsWanPort.value=currentHttpdWanHttpsPort;
+    httpRegionSpecificWanPort.value=currentHttpPortRegionSpecific;
+    switch(currentHttpdNetworkAccess)
+    {
+      case 'lan':
+        httpWanEnabled.checked=false;
+        httpsWanEnabled.checked=false;
+        httpRegionSpecificWanEnabled.checked=false;
+        break;
+      case 'both':
+      default:
+        httpWanEnabled.checked=true;
+        httpsWanEnabled.checked=true;
+        httpRegionSpecificWanEnabled.checked=true;
+        break;
+    } //end switch case
+    if(currentHttpdWanHttpEnabled=='false')
+    {
+      document.getElementById("ctrlWanHttp").style.display='none';
+    }
+    if(currentHttpdWanHttpsEnabled=='false')
+    {
+      document.getElementById("ctrlWanHttps").style.display='none';
+    }
+    if(currentHttpdWanHttpRegionSpecificEnabled=='false')
+    {
+      document.getElementById("ctrlWanHttpRegionSpecific").style.display='none';
+    }
+    sshWanPort.value=currentSshdWanSshPort;
+    switch(currentSshdNetworkAccess)
+    {
+      case 'lan':
+        sshLanEnabled.checked=true;
+        sshWanEnabled.checked=false;
+        break;
+      case 'wan':
+        sshLanEnabled.checked=false;
+        sshWanEnabled.checked=true;
+        break;
+      case 'both':
+        sshLanEnabled.checked=true;
+        sshWanEnabled.checked=true;
+        break;
+      case 'none':
+      default:
+        sshLanEnabled.checked=false;
+        sshWanEnabled.checked=false;
+        break;
+    } //end switch case    
+  }
+}
+
+function btnApply()
+{
+  with ( document.forms[0] )
+  {
+    var fmterr=false;
+    if(remoteManagementIpAddress.value.length>0&&isValidIpAddress(remoteManagementIpAddress.value)==false)
+    {
+      fmterr=true;
+    }
+    else if(isNaN(httpWanPort.value)==true||(parseInt(httpWanPort.value)<1||parseInt(httpWanPort.value)>65535))
+    {
+      fmterr=true;
+    }
+    else if(isNaN(httpsWanPort.value)==true||(parseInt(httpsWanPort.value)<1||parseInt(httpsWanPort.value)>65535))
+    {
+      fmterr=true;
+    }
+    else if(isNaN(httpRegionSpecificWanPort.value)==true||(parseInt(httpRegionSpecificWanPort.value)<1||parseInt(httpRegionSpecificWanPort.value)>65535))
+    {
+      fmterr=true;
+    }
+    else if(isNaN(sshWanPort.value)==true||(parseInt(sshWanPort.value)<1||parseInt(sshWanPort.value)>65535))
+    {
+      fmterr=true;
+    }
+    
+    if( fmterr==true )
+    {
+      alert("format error !");
+      return;
+    }
+    
+    var _remoteManagementIpAddress=remoteManagementIpAddress.value;
+    var _httpWanPort=httpWanPort.value;
+    var _httpsWanPort=httpsWanPort.value;
+    var _httpsRegionSpecificWanPort=httpRegionSpecificWanPort.value;
+    var _sshWanPort=sshWanPort.value;
+    var _httpNetworkAccess=null;
+    if(httpWanEnabled.checked==true)
+    {
+      _httpNetworkAccess='both';
+    }
+    else
+    {
+      _httpNetworkAccess='lan';
+    }
+    var _sshNetworkAccess=null;
+    if(sshLanEnabled.checked==true&&sshWanEnabled.checked==true)
+    {
+      _sshNetworkAccess='both';
+    }
+    else if(sshLanEnabled.checked==true)
+    {
+      _sshNetworkAccess='lan';
+    }
+    else if(sshWanEnabled.checked==true)
+    {
+      _sshNetworkAccess='wan';
+    }
+    else
+    {
+      _sshNetworkAccess='none';
+    }
+    var loc = 'te_appcfg.cmd';
+    loc += '?action=modify';
+    loc += '&mgmtaddr='+_remoteManagementIpAddress;
+    loc += '&httpwanport='+_httpWanPort;
+    loc += '&httpswanport='+_httpsWanPort;
+    loc += '&httpregionspecificwanport='+_httpsRegionSpecificWanPort;
+    loc += '&httpnwkacc='+_httpNetworkAccess;
+    loc += '&sshwanport='+_sshWanPort;
+    loc += '&sshnwkacc='+_sshNetworkAccess;
+    loc += '&sessionKey='+sessionKey;
+    var code = 'location="' + loc + '"';
+    //alert( code + "\t" + code.length );
+    eval(code);
+  }
+}
+
+function chbSshdCfgCheck(cb)
+{
+  //do nothing
+}
+
+function chbHttpdCfgCheck(cb)
+{
+  switch( cb.name )
+  {
+    case "httpWanEnabled":
+      with ( document.forms[0] )
+      {
+        httpsWanEnabled.checked=(cb.checked);
+        httpRegionSpecificWanEnabled.checked=(cb.checked);
+      }
+      break;
+    case "httpsWanEnabled":
+      with ( document.forms[0] )
+      {
+        httpWanEnabled.checked=(cb.checked);
+        httpRegionSpecificWanEnabled.checked=(cb.checked);
+      }
+    case "httpRegionSpecificWanEnabled":
+      with ( document.forms[0] )
+      {
+        httpWanEnabled.checked=(cb.checked);
+        httpsWanEnabled.checked=(cb.checked);
+      }
+    default:
+      break;
+  } //end switch case
+}
+
+// done hiding -->
+      </script>
+   </head>
+   <body topmargin="0" leftmargin="0" onLoad="frmLoad()">
+         <blockquote>
+         <b>Remote Administration</b><br/>
+
+         <form style="padding:15px;">
+         <table border='0' cellpadding='5' cellspacing='5'>
+         <tr>
+            <td class='hd'><label>Remote Management IP Address:&nbsp;&nbsp;</label></td>
+            <td colspan='4'>&nbsp;&nbsp;<input type='text' size="48" maxlength=='15' name="remoteManagementIpAddress"/></td>
+         </tr>
+         <tr id="ctrlWanHttp">
+            <td class='hd'><label>Allowed HTTP Ingress:&nbsp;&nbsp;</label></td>
+            <td><label>&nbsp;&nbsp;<input type='checkbox' name="httpLanEnabled" disabled checked/>LAN</label></td>
+            <td><label>&nbsp;&nbsp;<input type='checkbox' onClick='chbHttpdCfgCheck(this)' name="httpWanEnabled" />WAN</label></td>
+            <td><label>&nbsp;&nbsp;WAN Port:&nbsp;&nbsp;<input type='text' size="5" maxlength=='5' name="httpWanPort"/></label></td>
+            <td><label>&nbsp;</label></td>
+         </tr>
+         <tr id="ctrlWanHttps">
+            <td class='hd'><label>Allowed HTTPS Ingress:&nbsp;&nbsp;</label></td>
+            <td><label>&nbsp;&nbsp;<input type='checkbox' name="httpsLanEnabled" disabled checked/>LAN</label></td>
+            <td><label>&nbsp;&nbsp;<input type='checkbox' onClick='chbHttpdCfgCheck(this)' name="httpsWanEnabled" />WAN</label></td>
+            <td><label>&nbsp;&nbsp;WAN Port:&nbsp;&nbsp;<input type='text' size="5" maxlength=='5' name="httpsWanPort"/></label></td>
+            <td><label>&nbsp;</label></td>
+         </tr>
+         <tr id="ctrlWanHttpRegionSpecific">
+            <td class='hd'><label>Allowed HTTP Region Specific Ingress:&nbsp;&nbsp;</label></td>
+            <td><label>&nbsp;&nbsp;<input type='checkbox' name="httpRegionSpecificLanEnabled" disabled checked/>LAN</label></td>
+            <td><label>&nbsp;&nbsp;<input type='checkbox' onClick='chbHttpdCfgCheck(this)' name="httpRegionSpecificWanEnabled" />WAN</label></td>
+            <td><label>&nbsp;&nbsp;WAN Port:&nbsp;&nbsp;<input type='text' size="5" maxlength=='5' name="httpRegionSpecificWanPort"/></label></td>
+            <td><label>&nbsp;</label></td>
+         </tr>
+         <tr>
+            <td class='hd'><label>Allowed SSH Ingress:&nbsp;&nbsp;</label></td>
+            <td><label>&nbsp;&nbsp;<input type='checkbox' onClick='chbSshdCfgCheck(this)' name="sshLanEnabled" />LAN</label></td>
+            <td><label>&nbsp;&nbsp;<input type='checkbox' onClick='chbSshdCfgCheck(this)' name="sshWanEnabled" />WAN</label></td>
+            <td><label>&nbsp;&nbsp;WAN Port:&nbsp;&nbsp;<input type='text' size="5" maxlength=='5' name="sshWanPort"/></label></td>
+            <td><label>&nbsp;</label></td>
+         </tr>
+         <tr>
+            <td colspan='4'><label>&nbsp;</label></td>
+            <td align='right'><input type='button' name='apply' onClick='btnApply()' value='Apply/Save'/></td>
+         </tr>
+         </table><br/>
+         </form>
+
+         </blockquote>
+         <br/>
+   </body>
+</html>
+
+
+
+
+
+
+
+
+
+

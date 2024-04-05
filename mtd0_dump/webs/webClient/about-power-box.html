@@ -1,0 +1,140 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta name="robots" content="noindex">
+<%ejGetOther(webLang, head)%>
+
+<style nonce="VGVsZWZvbmljYS1jc3Atbm9uY2U=">
+	/* LED, #14734 */
+	li.led {
+		border-bottom: 1px solid rgba(255, 255, 255, .4);
+		-webkit-background-clip: padding-box; /* for Safari */
+		background-clip: padding-box; /* for IE9+, Firefox 4+, Opera, Chrome */
+		margin-top:7px;
+	}
+	
+	svg.led{
+		margin-right: 10px;
+		width: 10px;
+		height: 10px;
+		display: none;
+	}
+   
+	.gatewayTable {
+		width: 690px !important;
+	}
+	.w690 {
+		width: 690px !important;
+	}
+	.w190 {
+		width: 190px !important;
+	}
+	.w590 {
+		width: 590px !important;
+	}
+	.w135 {
+		width: 135px !important;
+	}
+
+</style>
+		 
+<script nonce="VGVsZWZvbmljYS1jc3Atbm9uY2U=">
+
+$(document).ready(function () {
+	if ('<%ejGet(curUserName)%>' == '') $('#divLogout').hide();
+
+	$('#accordion a:last').addClass('menuactive');
+	$('#accordion a.item').click(function () {
+		window.top.name = '';
+		$('#accordion li').children('ul').slideUp('fast');
+		$("#accordion a").removeClass("active");
+		$(this).addClass("active");
+		$(this).siblings('ul').slideDown('fast');
+		return false;
+	});
+	
+	//LED, #14734
+	$('li.led').hover(
+	  function() { $( this ).find( "svg" ).show();},
+	  function() { $( this ).find( "svg" ).hide(); }
+	);
+});
+
+$(window).load(function() {
+    //firewall
+    var gvtMode = '<%ejGetOther(devInfo, gvtMode)%>';
+    var accessClass = gvtMode.split('|')[0];
+    /*if (accessClass == 'service02') {
+        var firewall = document.getElementById("firewall");
+        firewall.style.display = "none";
+    }*/	//RM11739
+});
+</script>
+</head>
+
+<body>
+
+<%ejGetOther(webLang, header-gateway)%>
+
+<div id="content">
+
+	<div class="wrap">
+
+		<div id="conteudo-gateway">
+
+<%ejGetOther(webLang, menu)%>
+
+			<div class="col-722 left">
+			
+				<h3 class="azul-2 text-up"><%ejGetOther(webLang, 0048)%></h3>
+				
+					<table class="gatewayTable" id="table_model" cellpadding="0" cellspacing="0">
+					<thead>
+						<tr>
+							<th colspan="4" class="firstChild"><%ejGetOther(webLang, 0049)%></th>
+						</tr>
+					</thead>
+				<tbody>
+					<tr class="odd">
+					<td class="firstChild"><strong><%ejGetOther(webLang, 0050)%></strong></td><td><%ejGet(teamName)%></td>
+					<td class="firstChild"><strong><%ejGetOther(webLang, 0051)%></strong></td><td><%ejGet(modelName)%></td>
+					</tr>    
+					<tr class="even">
+					<td class="firstChild"><strong><%ejGetOther(webLang, 0052)%></strong></td><td><%ejGet(sysVersion)%></td>
+					<td class="firstChild"><strong><%ejGetOther(webLang, 0053)%></strong></td><td><%ejGet(hardwareVersion)%></td>
+					</tr>
+					<tr class="odd">
+					<td class="firstChild"><strong><%ejGetOther(webLang, 0054)%></strong></td><td><%ejGet(serialNumber)%></td>
+					<td class="firstChild"><strong><%ejGetOther(webLang, 0055)%></strong></td><td><%ejGet(gponSerial)%></td>
+					</tr>
+					<tr class="even">
+					<td class="firstChild"><strong><%ejGetOther(webLang, 0056)%></strong></td><td><%ejGetOther(devInfo, mac_veip0.1)%></td>
+					<td class="firstChild"><strong><%ejGetOther(webLang, 0057)%></strong></td><td><%ejGetOther(devInfo, mac_br0)%></td>
+					</tr>
+				</tbody>
+					</table>
+					
+				<div class="clear"></div>
+				<br>
+				<img src="../assets/_images/gateway/hgu.jpg" alt="Vivo Box" class="center" width="710">
+				<br>
+				<br>
+				<div class="clear"></div>
+
+<%ejGetOther(webLang, about)%>
+
+			</div><!--col-722-->
+			
+			<div class="clear"></div>
+			
+		</div><!--conteudo-->
+		
+		<div class="clear"></div>
+		
+	</div><!--wrap-->
+	
+</div><!--content-->
+
+</body>
+</html>

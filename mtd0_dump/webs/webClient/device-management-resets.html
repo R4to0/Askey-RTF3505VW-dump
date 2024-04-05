@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta name="robots" content="noindex">
+<%ejGetOther(webLang, head)%>
+
+<script nonce="VGVsZWZvbmljYS1jc3Atbm9uY2U=">
+$(document).ready(function () {
+	$('#accordion a.item').click(function () {
+		window.top.name = '';
+		$('#accordion li').children('ul').slideUp('fast');
+		$('#accordion a').removeClass('active');
+		$(this).addClass('active');
+		$(this).siblings('ul').slideDown('fast');
+		return false;
+	});
+});
+
+$(window).load(function() {
+    //firewall
+    var gvtMode = '<%ejGetOther(devInfo, gvtMode)%>';
+    var accessClass = gvtMode.split('|')[0];
+    /*if (accessClass == 'service02') {
+        var firewall = document.getElementById("firewall");
+        firewall.style.display = "none";
+    }*/	//RM11739
+
+	$('.gerenciamento').trigger('click');
+});
+</script>
+</head>
+
+<body>
+
+<%ejGetOther(webLang, header-gateway)%>
+
+<script nonce="VGVsZWZvbmljYS1jc3Atbm9uY2U=">
+	<!--POP-UP-->
+	$("#btn-clicktocall, .btn-clicktocall").fancybox({
+		width: 580,
+		height: 180,
+		fitToView: true,
+		autoSize: true,
+		closeClick: false,
+		openEffect: 'elastic',
+		closeEffect: 'fade',
+		padding: 25,
+		scrolling: "no"
+	});
+	<!--POP-UP-->
+</script>
+
+<div id="content">
+
+	<div class="wrap">
+
+		<div id="conteudo-gateway">
+
+<%ejGetOther(webLang, menu)%>
+
+			<div class="col-722 left">
+			
+				<h3 class="text-up"><%ejGetOther(webLang, 0071)%></h3>
+			
+				
+				<table class="setupWifiTable">
+					<thead>
+						<th colspan="2"><%ejGetOther(webLang, 0072)%></th>
+					</thead>
+					<tbody>
+						<tr>
+							<td>
+								<div class="clear"></div>
+								<a href="popup-reboot.html" id="btn-clicktocall" data-fancybox-type="iframe" class="btn-default-orange-small left"><span><%ejGetOther(webLang, 0073)%></span></a>
+							</td>
+							<td id="td_description"><%ejGetOther(webLang, 0074)%></td>
+						</tr>
+						<tr>
+							<td>
+								<div class="clear"></div>
+								<a href="popup-resets.html" id="btn-clicktocall" data-fancybox-type="iframe" class="btn-default-orange-small left"><span><%ejGetOther(webLang, 0075)%></span></a>
+							</td>
+							<td id="td_description"><%ejGetOther(webLang, 0076)%></td>
+						</tr>
+						
+					</tbody>
+				</table>
+			
+			</div><!--col-722-->
+		
+			<div class="clear"></div>
+				
+		</div><!--conteudo-->
+		
+		<div class="clear"></div>
+		
+	</div><!--wrap-->
+	
+</div><!--content-->
+
+</body>
+</html>

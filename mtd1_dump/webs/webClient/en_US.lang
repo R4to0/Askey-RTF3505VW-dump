@@ -1,0 +1,864 @@
+# Notice: maximum bytes of each block are 6000
+
+<!--head_begin-->
+<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+<meta name="description" content="" />
+<meta name="keywords" content="" />
+<title>Vivo</title>
+
+<link rel="stylesheet" type="text/css" href="../assets/_css/gateway.css"/>
+<link rel="stylesheet" type="text/css" href="../assets/_js/fancybox/jquery.fancybox.css" />
+
+<script type="text/javascript" src="../assets/_js/tools.js"></script>
+<script type="text/javascript" src="../assets/_js/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../assets/_js/jquery-migrate-1.2.1.min.js"></script>
+<script type="text/javascript" src="../assets/_js/fancybox/jquery.fancybox.pack.js"></script>
+<script nonce="VGVsZWZvbmljYS1jc3Atbm9uY2U=">$.ajaxSetup({ cache: false });</script>
+<!--head_end-->
+
+<!--header-gateway_begin-->
+<div id="header-gateway">
+	<div class="wrap text-right">
+		<a href="http://www.vivo.com.br/"><img src="../assets/_images/gateway/logo-gvt.png" alt="Vivo" class="left" border="0"></a>
+		<div class="top-menu-language">English | <a href="?webLang=pt_BR" class="top-menu-language">Português</a></div>
+		<div class="top-menu-language" id="divLogout"><a href="?Logout=1" class="top-menu-language">Logout</a></div>
+	</div>
+	<div class="clear"></div>
+</div>
+<!--header-gateway_end-->
+
+<!--menu_begin-->
+<div class="col-192 left">
+<ul id="accordion">
+	<li>
+		<a href="index.html">Status</a>
+	</li>
+
+	<li>
+		<a href="#" class="item configuracoes" rel="category">Settings</a>
+		<ul>
+			<li><a href="settings-internet.html">Internet</a></li>
+			<li><a href="settings-local-network.html">Local Network</a></li>
+			<li><a href="settings-wireless-network.html">Wireless 2,4 GHz</a></li>
+			<li><a href="settings-wireless-network-5g.html">Wireless 5 GHz</a></li>
+			<li><a href="settings-games.html">Games & Applications</a></li>
+			<li id="firewall"><a href="settings-firewall.html">Firewall</a></li>
+			<li><a href="settings-wan-mode.html">WAN Mode</a></li>
+		</ul>
+	</li>
+
+	<li>
+		<a href="#" class="item gerenciamento" rel="gerenciamento">Management</a>
+		<ul>
+			<li><a href="device-management-language.html">Language</a></li>
+			<li><a href="device-management-account-settings.html">Account Settings</a></li>
+			<li><a href="device-management-resets.html">Resets</a></li>
+			<li><a href="device-management-statistics.html">Statistic</a></li>
+			<li><a href="device-management-system-logs.html">System Logs</a></li>
+			<li><a href="device-management-utilities-internet.html">Utilities</a></li>
+		</ul>
+	</li>
+
+	<li>
+		<a href="about-power-box.html">About Device</a>
+	</li>
+</ul>
+</div>
+<!--menu_end-->
+
+<!--about_begin-->
+<table class="gatewayTable w690" cellpadding="0" cellspacing="0">
+	<thead>
+		<tr>
+			<th class='w190'>LED</th>
+			<th class="lastChild w590">What do the lights mean?</th>
+		</tr>
+	</thead>
+<tbody>
+	<tr class="odd">
+	<td><img src="../assets/_images/gateway/icon-phone.png" alt="Phone" /><br>Phone</td>
+	<td>
+		<ul>
+			<li class="led">
+				<svg class="led"> 
+					<circle r="50%" cx="50%" cy="50%" 
+							fill="darkblue"
+							stroke="darkblue"
+							fill-opacity="0.5"
+							stroke-width="5%"
+							stroke-opacity="0.3">
+					</circle>
+				</svg>
+				<strong>Solid Blue:</strong> Phone line is registered, you are able to make and receive calls.
+			</li>
+			<li class="led">
+				<svg class="led"> 
+					<circle r="50%" cx="50%" cy="50%" 
+							fill="darkblue"
+							stroke="darkblue"
+							fill-opacity="0.5"
+							stroke-width="5%"
+							stroke-opacity="0.3">
+					  <animate attributeName="fill" 
+					  values="white;darkblue;white"       
+					  dur="0.5s" repeatCount="indefinite"
+					  />
+					</circle>
+				</svg>
+				<strong>Blinking Blue:</strong> Phone is off-hook or a call is on-going.
+			</li>
+			<li class="led">
+				<svg class="led"> 
+					<circle r="50%" cx="50%" cy="50%"  
+							fill="darkblue"
+							stroke="darkblue"
+							fill-opacity="0.5"
+							stroke-width="5%"
+							stroke-opacity="0.3">
+					  <animate attributeName="fill" 
+					  values="white;darkblue;white"       
+					  dur="0.2s" repeatCount="indefinite"
+					  calcMode="discrete"
+					  />
+					</circle>
+				</svg>
+				<strong>Blinking Blue Faster:</strong> Message not read on the voicemail.
+			</li>
+			<li class="led">
+				<svg class="led"> 
+					<circle r="50%" cx="50%" cy="50%" 
+							fill="darkblue"
+							stroke="darkblue"
+							fill-opacity="0.5" 
+							stroke-width="5%"
+							stroke-opacity="0.3">
+					  <animate attributeName="fill" 
+					  values="white;darkblue;white;darkblue;white;darkblue;white;white;white;white"   
+					  dur="2.5s" repeatCount="indefinite"
+					  />
+					</circle>
+				</svg>
+				<strong>Blinking Blue Faster 3 Times:</strong> Phone line configured, but no IP on VoIP interface.
+			</li>
+			<li class="led">
+				<svg class="led" id="blink-red"> 
+					<circle r="50%" cx="50%" cy="50%"  
+							fill="darkred"
+							stroke="darkred"
+							fill-opacity="0.5" 
+							stroke-width="5%"
+							stroke-opacity="0.3">
+					  <animate attributeName="fill" 
+					  values="white;red;white"       
+					  dur="0.5s" repeatCount="indefinite"
+					  />
+					</circle>
+				</svg>
+				<strong>Blinking Red:</strong> Phone line is configured, but not registered.
+			</li>
+			<li class="led lastChild">
+				<svg class="led"> 
+					<circle r="50%" cx="50%" cy="50%"  
+							fill="#f9f9f9"
+							stroke="darkblue"
+							fill-opacity="0.5" 
+							stroke-width="7%"
+							stroke-opacity="0.3">
+					</circle>
+				</svg>
+				<strong>Off:</strong> Phone line is not configured.
+			</li>
+		</ul>
+	</td>
+	</tr>    
+	<tr class="even">
+		<td><img src="../assets/_images/gateway/wifi-locked2.png" alt="REDE WI-FI"/><br>Wi-Fi 2,4 GHz</td>
+		<td>
+			<ul>
+			<li class="led">
+				<svg class="led"> 
+					<circle r="50%" cx="50%" cy="50%" 
+							fill="darkblue"
+							stroke="darkblue"
+							fill-opacity="0.5"
+							stroke-width="5%"
+							stroke-opacity="0.3">
+					</circle>
+				</svg>
+				<strong>Solid Blue:</strong> Wireless interface is activated.
+			</li>
+			<li class="led">
+				<svg class="led"> 
+					<circle r="50%" cx="50%" cy="50%" 
+							fill="darkblue"
+							stroke="darkblue"
+							fill-opacity="0.5"
+							stroke-width="5%"
+							stroke-opacity="0.3">
+					  <animate attributeName="fill" 
+					  values="white;darkblue;white"       
+					  dur="0.5s" repeatCount="indefinite"
+					  />
+					</circle>
+				</svg>
+				<strong>Blinking Blue:</strong> WPS negotiation is activated.
+			</li>
+			<li class="led lastChild">
+				<svg class="led"> 
+					<circle r="50%" cx="50%" cy="50%"  
+							fill="#f9f9f9"
+							stroke="darkblue"
+							fill-opacity="0.5" 
+							stroke-width="7%"
+							stroke-opacity="0.3">
+					</circle>
+				</svg>
+				<strong>Off:</strong> Wireless interface is disabled.
+			</li>
+			</ul>
+		</td>
+	</tr>  
+	<tr class="odd">
+		<td><img src="../assets/_images/gateway/wifi-locked2.png" alt="REDE WI-FI"/><br>Wi-Fi 5 GHz</td>
+		<td>
+			<ul>
+			<li class="led">
+				<svg class="led"> 
+					<circle r="50%" cx="50%" cy="50%" 
+							fill="darkblue"
+							stroke="darkblue"
+							fill-opacity="0.5"
+							stroke-width="5%"
+							stroke-opacity="0.3">
+					</circle>
+				</svg>
+				<strong>Solid Blue:</strong> Wireless interface is activated.
+			</li>
+			<li class="led">
+				<svg class="led"> 
+					<circle r="50%" cx="50%" cy="50%" 
+							fill="darkblue"
+							stroke="darkblue"
+							fill-opacity="0.5"
+							stroke-width="5%"
+							stroke-opacity="0.3">
+					  <animate attributeName="fill" 
+					  values="white;darkblue;white"       
+					  dur="0.5s" repeatCount="indefinite"
+					  />
+					</circle>
+				</svg>
+				<strong>Blinking Blue:</strong> WPS negotiation is activated.
+			</li>
+			<li class="led lastChild">
+				<svg class="led"> 
+					<circle r="50%" cx="50%" cy="50%"  
+							fill="#f9f9f9"
+							stroke="darkblue"
+							fill-opacity="0.5" 
+							stroke-width="7%"
+							stroke-opacity="0.3">
+					</circle>
+				</svg>
+				<strong>Off:</strong> Wireless interface is disabled.
+			</li>
+			</ul>
+		</td>
+	</tr>  
+	<tr class="even">
+		<td><img src="../assets/_images/gateway/icon-internet.png" alt="Internet" /></td>
+		<td>
+			<ul>
+			<li class="led">
+				<svg class="led"> 
+					<circle r="50%" cx="50%" cy="50%" 
+							fill="darkblue"
+							stroke="darkblue"
+							fill-opacity="0.5"
+							stroke-width="5%"
+							stroke-opacity="0.3">
+					</circle>
+				</svg>
+				<strong>Solid Blue:</strong> Vivo Box received an IP address and can browse to the Internet.
+			</li>
+			<li class="led">
+				<svg class="led"> 
+					<circle r="50%" cx="50%" cy="50%" 
+							fill="darkblue"
+							stroke="darkblue"
+							fill-opacity="0.5"
+							stroke-width="5%"
+							stroke-opacity="0.3">
+					  <animate attributeName="fill" 
+					  values="white;darkblue;white"       
+					  dur="0.5s" repeatCount="indefinite"
+					  />
+					</circle>
+				</svg>
+				<strong>Blinking Blue:</strong> Vivo Box is trying to authenticate.
+			</li>
+			<li class="led">
+				<svg class="led"> 
+					<circle r="50%" cx="50%" cy="50%" 
+							fill="darkblue"
+							stroke="darkblue"
+							fill-opacity="0.5"
+							stroke-width="5%"
+							stroke-opacity="0.3">
+					  <animate attributeName="fill" 
+					  values="white;darkblue;white"       
+					  dur="0.8s" repeatCount="indefinite"
+					  />
+					</circle>
+				</svg>
+				<strong>Blinking Blue Slower:</strong> Vivo Box is GPON associated.
+			</li>
+			<li class="led">
+				<svg class="led"> 
+					<circle r="50%" cx="50%" cy="50%"  
+							fill="darkblue"
+							stroke="darkblue"
+							fill-opacity="0.5"
+							stroke-width="5%"
+							stroke-opacity="0.3">
+					  <animate attributeName="fill" 
+					  values="white;darkblue;white"       
+					  dur="0.2s" repeatCount="indefinite"
+					  calcMode="discrete"
+					  />
+					</circle>
+				</svg>
+				<strong>Blinking Blue Faster:</strong> Vivo Box is not GPON associated.
+			</li>
+			<li class="led">
+				<svg class="led"> 
+					<circle r="50%" cx="50%" cy="50%"  
+							fill="red"
+							stroke="red"
+							fill-opacity="0.5" 
+							stroke-width="5%"
+							stroke-opacity="0.3">
+					</circle>
+				</svg>
+				<strong>Solid Red:</strong> Vivo Box is not authenticated.
+			</li>
+			<li class="led">
+				<svg class="led"> 
+					<<circle r="50%" cx="50%" cy="50%"  
+							fill="darkred"
+							stroke="darkred"
+							fill-opacity="0.5" 
+							stroke-width="5%"
+							stroke-opacity="0.3">
+					  <animate attributeName="fill" 
+					  values="white;red;white"       
+					  dur="0.5s" repeatCount="indefinite"
+					  />
+					</circle>
+				</svg>
+				<strong>Blinking Red:</strong> Optical signal level is not in the appropriate range.
+			</li>
+			<li class="led lastChild">
+				<svg class="led"> 
+					<circle r="50%" cx="50%" cy="50%"  
+							fill="#f9f9f9"
+							stroke="darkblue"
+							fill-opacity="0.5" 
+							stroke-width="7%"
+							stroke-opacity="0.3">
+					</circle>
+				</svg>
+				<strong>Off:</strong> Vivo Box is power off.
+			</li>
+			</ul>
+		</td>
+	</tr>
+	<tr class="odd">
+		<td>Special Cases</td>
+		<td>
+			<ul>
+			<li>
+				<strong>Firmware Upgrade:</strong> LEDs blinking sequentially from left to right while firmware is downloading and all solid blue while firmware is writing to the flash memory.
+			</li>
+			<li class="lastChild">
+				<strong>Reset to factory default:</strong> All LEDs blinking blue at the same time.
+			</li>
+			</ul>
+		</td>
+	</tr>
+</tbody>
+</table>
+<table class="gatewayTable right w690" cellpadding="0" cellspacing="0">
+	<thead>
+		<tr>
+			<th class='w135'>Button</th>
+			<th class="lastChild" width="396">What do the buttons mean?</th>
+		</tr>
+	</thead>
+	<tbody>
+	  <tr class="odd">
+		<td>WPS</td>
+		<td class="lastChild">
+		When you press this button, it will enable the WPS feature for a short moment.
+		<br>This allow new Wi-Fi devices to join in to your network without type the password.
+		</td>
+	  </tr> 
+	  <tr class="even">
+		<td>Reconfigurar</td>
+		<td class="lastChild">
+		When you keep this button pressed, it will restore the original configuration of the Power Box. 
+		<br>This will erase all customized settings, including your SSID and Wi-Fi password.
+		</td>
+	  </tr>
+	  <tr class="odd">
+		<td>ON/OFF</td>
+		<td class="lastChild">
+		Turn on/off the device.
+		</td>
+	  </tr>
+	</tbody>
+</table>
+<!--about_end-->
+
+<!--index.html-->
+<!--0001-->Up
+<!--0002-->Down
+<!--0003-->Connected
+<!--0004-->Not connected
+<!--0005-->Visible
+<!--0006-->Hidden
+<!--0007-->There is no connected devices.
+<!--0008-->Disconnected
+<!--0009-->Available
+<!--0010-->Not Available
+<!--0011-->Not Registered
+<!--0012-->Hide
+<!--0013-->Details
+<!--0014-->Rx Power:
+<!--0015-->Tx Power:
+<!--0016-->PPP Session:
+<!--0017-->Connection Details
+<!--0018-->Local IPv4 Address:
+<!--0019-->Public IPv4 Address:
+<!--0020-->Default Gateway:
+<!--0021-->Primary DNS Server:
+<!--0022-->Secondary DNS Server:
+<!--0023-->Delegated Prefix:
+<!--0024-->Link-Local IPv6 Address - LAN:
+<!--0025-->Global IPv6 Address - WAN:
+<!--0026-->Wireless 2.4 GHz
+<!--0027-->Security:
+<!--0028-->On
+<!--0029-->Broadcast SSID:
+<!--0030-->Yes
+<!--0031-->Channel:
+<!--0032-->Wireless 5 GHz
+<!--0033-->Local Network
+<!--0034-->VoD IP Address:
+<!--0035-->Telephone
+<!--0036-->Network:
+<!--0037-->Telephone:
+<!--0300-->VoIP IP address:
+
+<!--login.html-->
+<!--0038-->Login failed! Invalid Username or Password.
+<!--0039-->Please wait
+<!--0040-->second
+<!--0041-->to access.
+<!--0042-->Authentication
+<!--0043-->You are not logged in
+<!--0044-->To access the configuration, you must login.
+<!--0045-->Username:
+<!--0046-->Password:
+<!--0047-->Login
+
+<!--about-power-box.html-->
+<!--0048-->About Vivo Box
+<!--0049-->Device Information
+<!--0050-->Vendor:
+<!--0051-->Model:
+<!--0052-->Software Version:
+<!--0053-->Hardware Version:
+<!--0054-->Serial Number:
+<!--0055-->GPON Serial Number:
+<!--0056-->WAN MAC Address:
+<!--0057-->LAN MAC Address:
+
+<!--device-management-account-settings.html-->
+<!--0058-->The passwords do not match.
+<!--0059-->Invalid password.
+<!--0060-->Password change failed.
+<!--0061-->Account settings
+<!--0062-->Modify the password of your Vivo Box, typing the current password once and your new password twice.<br>
+<!--0063-->We suggest that you write down your new password after you change it.
+<!--0064-->Current Password:
+<!--0065-->New Password:
+<!--0066-->New Password:<br>(confirm)
+<!--0067-->Cancel
+<!--0068-->Save
+
+<!--device-management-language.html-->
+<!--0069-->Language
+<!--0070-->Choose the language of the Vivo Box user interface:
+
+<!--device-management-resets.html-->
+<!--0071-->Resets
+<!--0072-->Options
+<!--0073-->Reboot
+<!--0074-->This button will reboot the Vivo Box. When you click here, your Internet, telephone and TV may not be available until the inicialization has finished. All the Vivo Box configuration will be preserved.
+<!--0075-->Reconfigure
+<!--0076-->This button will reconfigure the Vivo Box. When you click here, your Internet, telephone and TV may not be available until the inicialization has finished. All the Vivo Box configuration will be lost, including the customized name of your Wi-Fi network and the password.
+
+<!--device-management-statistics.html-->
+<!--0077-->Connected Devices
+<!--0078-->Statistic
+<!--0079-->Received
+<!--0080-->Packets:
+<!--0081-->Errors:
+<!--0082-->Discards:
+<!--0083-->Percentage of Errors [%]:
+<!--0084-->Sent
+<!--0085-->Discards
+<!--0086-->Mode:
+<!--0087-->Power [%]:
+<!--0088-->Value
+<!--0089-->MAC Address
+<!--0090-->IP Address
+<!--0091-->Connected Time
+<!--0092-->GPON Link:
+<!--0093-->State:
+<!--0094-->Downstream
+<!--0095-->Power [dBm]:
+<!--0096-->Upstream
+
+<!--device-management-system-logs.html-->
+<!--0097-->System Logs
+<!--0098-->View System Logs
+<!--0099-->This page allows you to view system logs and filter them according to modules and severity.
+<!--0100-->System Log:
+<!--0101-->Enabled
+<!--0102-->Disabled
+<!--0103-->Event:
+<!--0104-->All
+<!--0105-->Apply
+
+<!--device-management-utilities-internet.html-->
+<!--0106-->Please, type a valid destination.
+<!--0107-->Please, type a valid number.
+<!--0108-->Utilities
+<!--0109-->Configuration
+<!--0110-->Tool:
+<!--0111-->Destination:
+<!--0112-->Number of pings:
+<!--0113-->Execute
+<!--0291-->Test
+
+<!--settings-firewall.html-->
+<!--0114-->Add
+<!--0115-->Add a new rule
+<!--0116-->Please, type a valid description.
+<!--0117-->Please, type a valid address.
+<!--0118-->Please, type a valid port or range.
+<!--0119-->Please, type a consistent address.
+<!--0120-->Set default policy
+<!--0121-->Accept
+<!--0122-->Reject
+<!--0123-->Ping WAN interface
+<!--0124-->Configure the traffic policies to the Vivo Box.
+<!--0125-->Rule Name:
+<!--0126-->Protocol:
+<!--0127-->Local Port: <span class="description">Single Port or Range, <br>E.g. 8080:9090</span>
+<!--0128-->Remote Port:<span class="description">Single Port or Range, <br>E.g. 8080:9090</span>
+<!--0129-->Local IP: <span class="description">* means all IPs</span>
+<!--0130-->Remote IP:<span class="description">* means all IPs</span>
+<!--0131-->Action
+<!--0132-->Reject from local
+<!--0133-->Reject from remote
+<!--0134-->Reject in both way
+<!--0135-->Accept from local
+<!--0136-->Accept from remote
+<!--0137-->Accept in both way
+<!--0138-->Local
+<!--0139-->Remote
+<!--0140-->Clear
+<!--0141-->Rules List
+<!--0142-->Rule
+<!--0143-->Modify
+<!--0144-->Name
+<!--0145-->Protocol
+<!--0146-->Port
+<!--0147-->Policy
+<!--0148-->Edit
+
+<!--settings-games.html-->
+<!--0149-->Overlapped port
+<!--0150-->Invalid address
+<!--0151-->Games & Applications
+<!--0152-->Configure port forwarding automatically providing only the application and the device.
+<!--0153-->Games or Applications
+<!--0154-->Please, choose a game/application before press "save".
+<!--0155-->Please, type an IP address before press "save".
+<!--0156-->My Selection
+<!--0157-->Game / Application
+<!--0158-->Remove
+
+<!--settings-internet.html-->
+<!--0159-->Invalid Username
+<!--0160-->Invalid Password
+<!--0161-->Account Settings - PPPoE
+<!--0162-->You can use the Vivo default username and password:
+<!--0163-->Username: cliente@cliente
+<!--0164-->Password: cliente
+<!--0165-->If you use another Internet Service Provider,<br>enter your own username and password.
+
+<!--settings-local-network.html-->
+<!--0166-->Warning: Port Forwarding rules added via UPnP has exceeded maximum number.
+<!--0167-->Modify an IP reservation
+<!--0168-->Reserve
+<!--0169-->Create an IP reservation
+<!--0170-->Invalid host name
+<!--0171-->Please, type a valid MAC address.
+<!--0172-->Please, type a valid IP address.
+<!--0173-->IP is not in address range.
+<!--0174-->Virtural Server rules has exceed to maximum number 80.
+<!--0175-->Please change Internal IP because this IP is used by manageable device.
+<!--0176-->Invalid hostname or IP address
+<!--0177-->Duplicated name or overlapped port
+<!--0178-->Please, type a valid username.
+<!--0179-->Please, type a valid password.
+<!--0180-->Please, type a valid hostname.
+<!--0181-->Port Forwarding
+<!--0182-->Configure how the IPs will be automatically distributed in your network.
+<!--0183-->DHCP Server:
+<!--0184-->Router IP Address:
+<!--0185-->Net Mask:
+<!--0186-->Address Range:
+<!--0187-->Specific DNS Server:
+<!--0188-->Lease Time:
+<!--0189-->Minutes
+<!--0190-->Reservation List
+<!--0191-->Modify / Remove
+<!--0192-->Lease Table
+<!--0193-->Time Remaining
+<!--0194-->Configure how the ports of the Vivo Box can be redirected to your device.
+<!--0195-->External Port: <span class='description'>Single Port or Range,<br> E.g. 8080:9090</span>
+<!--0196-->Internal Port: <span class='description'>If the Source is a Range,<br> this is optional.</span>
+<!--0197-->External IP:
+<!--0198-->Internal IP:
+<!--0199-->Forwarding Table
+<!--0200-->External
+<!--0201-->Internal
+<!--0202-->Allow a device from local network to be accessible from the Internet.
+<!--0203-->DMZ State:
+<!--0204-->IP Address:
+<!--0205-->Allow devices that supports UPnP to connect and communicate with other devices on your network.
+<!--0206-->UPNP State:
+<!--0207-->Configure a Dynamic DNS Server account to point to the Vivo Box automatically.
+<!--0208-->Provider:
+<!--0289-->External
+<!--0290-->Internal
+<!--0292-->Invalid IP address or port.
+<!--0293-->Please, type a valid subnet mask.
+<!--0294-->Invalid lease time.
+<!--0295-->Please, complete all fields before saving.
+<!--0296-->Primary DNS server:
+<!--0297-->Secondary DNS Server:
+
+<!--settings-wan-mode.html-->
+<!--0209-->WAN Mode
+<!--0210-->Connection Type
+<!--0211-->Operation Mode
+<!--0212-->Physical Connection
+<!--0213-->Link Type:
+<!--0214-->Automatic
+<!--0215-->Warning: Changes to this page must be performed by a Vivo Technician.
+<!--0216-->Configuration changes can disrupt Internet, telephony and TV services.
+<!--0217-->Router (Default)
+<!--0218-->Warning: Changing the operation mode to bridge will disable telephony services, as well as deny any software update.
+<!--0219-->Proceed
+
+<!--settings-wireless-network.html-->
+<!--0220-->Invalid SSID
+<!--0221-->(Empty Mac Filter is enabled)
+<!--0222-->Please, provide a valid MAC Address
+<!--0223-->Duplicate MAC Address
+<!--0224-->Maximum number of Mac Filter: 32
+<!--0225-->Allow
+<!--For menu using-->
+<!--0226-->Wireless Network 2,4 GHz
+<!--0227-->Basic
+<!--0228-->Advanced
+<!--0229-->Basic Settings
+<!--0230-->Private Wi-Fi Network:
+<!--0231-->SSID Broadcast:
+<!--0232-->Security Mode:
+<!--0233-->None (Not Recommended)
+<!--0234-->Register Mode - WPS:
+<!--0235-->WPS Button
+<!--0236-->PIN
+<!--0237-->Associate
+<!--0238-->Advanced Settings
+<!--0239-->Operation Mode:
+<!--0240-->Channel Bandwidth:
+<!--0241-->Transmit Power:
+<!--0242-->Power Saving - WMM:
+<!--0243-->MAC Address:
+<!--0244-->Frequency Band:
+<!--0245-->MAC Filter:
+<!--0246-->MAC Filter
+<!--0247-->Authorized Devices
+<!--0284-->WEP and mixed WPA/WPA2 WiFi security modes are not secure, we recommend to use WPA2. Moreover, if you change the 2,4 GHz security mode to mixed WPA/WPA2 or WEP, WiFi will not have the automatic selection of your best available WiFi network (Roaming WiFi). These security modes are not compatible with the WiFi Roaming functionality.
+<!--0285-->For an easy and fast definition of the MAC filtering, we have created an app that you can download from the application store of your smartphone.
+<!--0287-->If you are changing your WiFi channel, for a better performance, it is recommended to choose the channels 1, 6, 11.
+<!--For client page using-->
+<!--0288-->Wireless Network 2.4 GHz
+<!--0298-->Your password must have:
+<!--0299-->10 or more characters
+<!--0301-->At least one letter
+<!--0302-->At least one number
+<!--0303-->Avoid passwords used on other sites or that are easy to guess
+
+<!--settings-wireless-network-5g.html-->
+<!--0248-->Wireless Network 5 GHz
+<!--0283-->The manual channel selection to one DFS channel can be subject to channel changes by Regulation.
+<!--0286-->If you configure the 5 GHz WiFi channel manually, the functionalities for the 5 GHz WiFi channel automatic selection (SCS), which select the best WiFi channel available in your environment, will be disabled.
+
+<!--popup-op-mode.html-->
+<!--0249-->Are you sure you want to change the operation mode of the Vivo Box?
+<!--0250-->ATTENTION
+<!--0251-->Choosing the Bridge mode you will DISABLE THE TELEPHONE SERVICE, updates and support.
+<!--0252-->You also lose support actions and update with improvements in service!
+<!--0253-->You can not return to this configuration page. If you choose to bridge, and want to return to the default mode, Press the "Reconfigurar" in your Power Box to restore factory settings.
+<!--0254-->I Agree, Proceed
+
+<!--popup-reboot.html-->
+<!--0255-->Are you sure you wanto to reboot the Vivo Box?
+<!--0256-->Your internet services, telephony and TV may be interrupted momentarily while the Vivo Box reestablishes the connection. The process can take up to 5 minutes and will automatically return.
+<!--0257-->Yes, Reboot
+<!--0258-->No, Cancel
+
+<!--popup-resets.html-->
+<!--0259-->Are you sure you want to reconfigure the Vivo Box?
+<!--0260-->All customization will be lost, including the name and password of your Wi-Fi network.
+<!--0261-->Yes, Reconfigure
+
+<!--popup-wan-mode.html-->
+<!--0262-->Are you sure you want to change the WAN mode of the Vivo Box?
+<!--0263-->These changes must be made by a Vivo Technician.
+<!--0264-->The wrong choice will stop the services of Internet, TV and telephony.
+<!--0265-->I am aware, Proceed
+
+<!--instalador.html-->
+<!--0266-->Invalid ID format. It must consist of 10 ASCII characters.
+<!--0267-->Installer
+<!--0268-->Configure the ONT (SLID) identification for manual provisioning.
+
+<!--popup-instalador-slid.html-->
+<!--0269-->Are you sure you want to change the SLID of the Vivo Box?
+<!--0270-->Make sure that the fiber is unplugged before perform this operation.
+<!--0271-->May be required an automatic reboot of the device in order to apply the changes.
+
+<!--addition-->
+<!--0272-->Modification fails
+<!--0273-->Connecting...
+<!--0274--><font color="red">Error 691 - Provider<br /><br />Click back, make sure the login and password are valid and entered correctly. If correct, contact your provider or create a new user provider.</font>
+<!--0275--><font color="red">Network Error<br /><br />This problem can be solved with the shutdown procedure and connect their equipment. If after the procedure the problem persists, call our call center.</font>
+<!--0276--><font color="green">Connected</font>
+<!--0277-->Connection failed:\rUsername and password will be restored to default
+<!--0278-->All Priorities
+
+<!--aluacs/instalador.html-->
+<!--0279-->Vivo TV Configurator.
+<!--0280-->WAN IP Address:
+<!--0281-->WAN Gateway:
+<!--0282-->Subnet Mask:
+
+<!--LAN-HPNA specific-->
+<!--0600-->IP
+<!--0601-->Local Device
+<!--0602-->Test Status:
+<!--0603-->Test Result
+<!--0604-->Start Monitor
+<!--0605-->Refresh
+<!--0606-->Show Last Results
+<!--0607-->Save Results
+<!--0608-->Pass Threshold Max PER:
+<!--0609-->Pass Threshold Min Received Power:
+<!--0610-->Pass Threshold Min Rate:
+<!--0611-->Number of Packets:
+<!--0612-->Source Device:
+<!--0613-->Results
+<!--0614-->PER:
+<!--0615-->Rate:
+<!--0616-->Received Power:
+<!--0617-->Summary Table
+<!--0618-->Time Delta
+<!--0619-->Total TX
+<!--0620-->Total RX
+<!--0621-->Total CRC
+<!--0622-->Total Dropped
+<!--0623-->Total Loss
+<!--0624-->Detailed Table
+<!--0625-->TX
+<!--0626-->RX
+<!--0627-->CRC
+<!--0628-->Dropped
+<!--0629-->Loss
+<!--0630-->PER
+<!--0631-->%Idle Time
+<!--0632-->Clear Table
+<!--0633-->Test Time:
+<!--0634-->Sampling Interval:
+<!--0635-->Seconds
+<!--0636-->Network Test - NetInf
+<!--0637-->Monitor - NetPer
+<!--0638-->None
+<!--0639-->Running
+<!--0640-->Succeeded
+<!--0641-->Execution Failed
+<!--0642-->Requested
+<!--0643-->Invalid Argument
+<!--0644-->Initial Failed
+<!--0645-->Abort
+<!--0646-->Monitoring
+<!--0647-->Bytes:
+<!--0648-->Percentage of Errors [%]:
+<!--0649-->HPNA MAC Address
+<!--0650-->Master
+<!--0651-->Signature
+<!--0652-->Statistics
+<!--0653-->Summary Table (move the mouse over the table to see the detail)
+<!--0654-->Testing
+<!--0655-->Approved
+<!--0656-->Disapproved
+<!--0657-->Device Source
+<!--0658-->HPNA ready
+<!--0659-->HPNA unready
+<!--0660-->Monitor Status:
+<!--0680-->Clear
+
+<!--index.html-->
+<!--0661-->On
+<!--0662-->Off
+<!--0663-->No
+<!--0667-->Restricted Browsing
+
+<!--Default Region-->
+<!--0664-->You could choose default region(Vivo1 or Vivo2)in this page.
+<!--0665-->Select the desired values and click "Apply" and the device will do restoredefault and apply the correct default configuration.
+<!--0666-->Are you sure to change region to
+
+<!--device-management-system-logs.html-->
+<!--0700-->DEBUG or higher
+<!--0701-->INFO or higher
+<!--0702-->NOTICE or higher
+<!--0703-->WARNING or higher
+<!--0704-->ERROR or higher
+<!--0705-->CRITICAL or higher
+<!--0706-->ALERT or higher
+<!--0707-->EMERGENCY or higher
+
+<!--popup-utilities.html-->
+<!--0801-->Go to Status
+<!--0802-->Running the NetInf or NetPer tests may temporarily impact your TV service. If you are affected, wait for the connection to return to normal in 5 minutes.
+<!--0803-->If you do not have the TV service disregard this message.

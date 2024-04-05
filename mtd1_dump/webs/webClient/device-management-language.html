@@ -1,0 +1,111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<%ejGetOther(webLang, head)%>
+
+<script nonce="VGVsZWZvbmljYS1jc3Atbm9uY2U=">
+$(document).ready(function () {
+	$('#accordion a.item').click(function () {
+		window.top.name = '';
+		$('#accordion li').children('ul').slideUp('fast');
+		$('#accordion a').removeClass('active');
+		$(this).addClass('active');
+		$(this).siblings('ul').slideDown('fast');
+		return false;
+	});
+});
+
+$(window).load(function() {
+    //firewall
+    var gvtMode = '<%ejGetOther(devInfo, gvtMode)%>';
+    var accessClass = gvtMode.split('|')[0];
+    /*if (accessClass == 'service02') {
+        var firewall = document.getElementById("firewall");
+        firewall.style.display = "none";
+    }*/	//RM11739
+
+	$('.gerenciamento').trigger('click');
+
+	var webLang;
+	$.get('ajax_getvar.cmd?varName=webLang', function(ret) {
+		webLang = ret;
+		$('#rad_'+webLang).prop('checked', true);
+	});
+
+	$('#btnSave').on('click', function() {
+		var loc = 'ajax_setvar.cmd?sessionKey=<%ejGetOther(sessionKey)%>';
+		loc += '&varName=webLang';
+		loc += '&varValue=' + ($('#rad_en_US').prop('checked') ? 'en_US' : 'pt_BR');
+		$.get(loc, function(ret) {
+			//alert(ret);
+			window.top.location.reload();
+		});
+	});
+
+	$('#btnCancel').on('click', function() {
+		$('#rad_'+webLang).prop('checked', true);
+	});
+});
+</script>
+</head>
+
+<body>
+
+<%ejGetOther(webLang, header-gateway)%>
+
+<div id="content">
+
+	<div class="wrap">
+
+		<div id="conteudo-gateway">
+
+<%ejGetOther(webLang, menu)%>
+
+			<div class="col-722 left">
+			
+				<h3 class="text-up"><%ejGetOther(webLang, 0069)%></h3>
+			
+				<table class="setupWifiTable">
+					<thead>
+						<th><%ejGetOther(webLang, 0069)%></th>
+					</thead>
+					<tbody>
+						</tr>
+						<tr class="header">
+							<td><%ejGetOther(webLang, 0070)%></td>
+						</tr>
+						<tr>
+							<td class="cinza">
+							Português<input type="radio" name="radio" id="rad_pt_BR" /></label> &nbsp; 
+							English<input type="radio" name="radio" id="rad_en_US" /></label>
+							</td>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr>
+							<td>
+								<a href="#" id="btnCancel" class="btn-default-orange-small right"><span><%ejGetOther(webLang, 0067)%></span></a>
+								<a href="#" id="btnSave"   class="btn-default-orange-small right"><span><%ejGetOther(webLang, 0068)%></span></a>
+							</td>
+						</tr>
+					</tfoot>
+				</table>
+				
+			</div><!--col-722-->
+		
+
+			<div class="clear"></div>
+			
+			
+		</div><!--conteudo-->
+		
+		<div class="clear"></div>
+		
+	</div><!--wrap-->
+	
+</div><!--content-->
+
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<%ejGetOther(webLang, head)%>
+<script>
+function btnaAgree() {
+	var loc = 'te_install.cmd?sessionKey=<%ejGetOther(sessionKey)%>';
+	var gponPw = parent.$('#txtSlid').val().replace(/(.)/g, function toAscii(x){return x.charCodeAt().toString(16);});
+	loc += '&gponpw=' + gponPw;
+	parent.window.location = loc;
+}
+
+function btnaCancel() {
+	parent.$.fancybox.close();
+}
+</script>
+</head>
+<body class="no-bg">
+	<div class="page-popup">
+		<table class="setupWifiTable">
+			<tr>
+				<td class="text-left"><%ejGetOther(webLang, 0269)%></td> 
+			</tr>
+			<tr>
+				<td class="text-left"> <span class="red">
+				<%ejGetOther(webLang, 0263)%><br>
+				<%ejGetOther(webLang, 0264)%><br>
+				<br>
+				<%ejGetOther(webLang, 0270)%><br>
+				<%ejGetOther(webLang, 0271)%>
+				</span></td> 
+			</tr>
+			<tr>
+				<td>
+					<a onClick="btnaAgree()"  href="#" class="btn-default-orange-small left"><span><%ejGetOther(webLang, 0265)%></span></a>
+					<a onClick="btnaCancel()" href="#" class="btn-default-orange-small left"><span><%ejGetOther(webLang, 0067)%></span></a>
+				</td>
+			</tr>
+		</table>
+</div>
+</body>
+
+</html>

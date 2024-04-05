@@ -1,0 +1,15 @@
+# libnetfilter_cthelper pkg-config file
+
+prefix=/home/Public/_Build/release/BRCMGPON/RTF35XX/414L04A_gvt/targets/RTF3505VW_NV/fs.install
+exec_prefix=${prefix}
+libdir=/home/Public/_Build/release/BRCMGPON/RTF35XX/414L04A_gvt/targets/RTF3505VW_NV/fs.install/lib/gpl
+includedir=${prefix}/include
+
+Name: libnetfilter_cthelper
+Description: Netfilter user-space helper infrastructure library
+URL: http://netfilter.org/projects/libnetfilter_cthelper/
+Version: 1.0.0
+Requires:
+Conflicts:
+Libs: -L${libdir} -lnetfilter_cthelper
+Cflags: -I${includedir}

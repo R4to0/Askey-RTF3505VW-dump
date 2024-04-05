@@ -1,0 +1,69 @@
+<html>
+   <head>
+      <meta HTTP-EQUIV='Pragma' CONTENT='no-cache'>
+      <link rel="stylesheet" href='stylemain.css' type='text/css'>
+         <link rel="stylesheet" href='colors.css' type='text/css'>
+            <script language="javascript" src="util.js"></script>
+            <script language="javascript">
+<!-- hide
+var choiceRegion='<%ejGetOther(getDefaultRegion)%>';
+var sessionKey = '<%ejGetOther(sessionKey)%>';
+
+function frmLoad() {
+   
+   with ( document.forms[0] ) {
+		if(choiceRegion=='vivo1')
+		{
+			vivoRegion[0].checked=true;
+		}
+		else
+		{
+			vivoRegion[1].checked=true;
+		}
+	}
+}
+
+function btnApply() {
+	var loc = 'setDefaultRegion.cmd?';
+	
+	with ( document.forms[0] ) {
+		var selectRegion=(vivoRegion[0].checked)?"vivo1":"vivo2";
+		var showSelectRegion=(vivoRegion[0].checked)?"Vivo1":"Vivo2";
+		
+		if(confirm("Are you sure to change region to " + showSelectRegion + "?"))
+		{
+			loc += 'region=' + selectRegion;
+			loc += '&sessionKey=' + sessionKey;
+			var code = 'location="' + loc + '"';
+			eval(code);
+		}
+	}
+}
+
+// done hiding -->
+</script>
+   </head>
+   <body onLoad='frmLoad()'>
+      <blockquote>
+         <form>
+ <script language="javascript">
+<!-- hide
+     document.writeln("<b>Default Region Selection</b><br><br>");
+     document.writeln("You could choose default region(Vivo1 or Vivo2)in this page.<br><br>");
+     document.writeln("Select the desired values and click \"Apply\" and the device will do restoredefault and apply the correct default configuration.<br><br>");
+     document.writeln("<table border='0' cellpadding='0' cellspacing='0'>");
+	 document.writeln("<tr>");
+	 document.writeln("<td width='140'>Region:</td>");
+	 document.writeln("<td>");
+	 document.writeln("<input name=\"vivoRegion\" type=\"radio\" value=\"on\"  /> Vivo1 &nbsp; &nbsp;");
+	 document.writeln("<input name=\"vivoRegion\" type=\"radio\" value=\"off\"  /> Vivo2");
+	 document.writeln("</td>");
+	 document.writeln("</tr>");
+     document.writeln("</table><br>");
+     document.writeln("<center><input type='button' onClick='btnApply()' value='Save/Apply'></center>");	  
+// done hiding -->
+</script>            
+         </form>
+      </blockquote>
+   </body>
+</html>

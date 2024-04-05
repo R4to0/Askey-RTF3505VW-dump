@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta name="robots" content="noindex">
+<%ejGetOther(webLang, head)%>
+
+<script nonce="VGVsZWZvbmljYS1jc3Atbm9uY2U=">
+$(document).ready(function () {
+	$('#accordion a.item').click(function () {
+		window.top.name = '';
+		$('#accordion li').children('ul').slideUp('fast');
+		$('#accordion a').removeClass('active');
+		$(this).addClass('active');
+		$(this).siblings('ul').slideDown('fast');
+		return false;
+	});
+});
+
+var sessionKey = '<%ejGetOther(sessionKey)%>';
+$(window).load(function() {
+    //firewall
+    var gvtMode = '<%ejGetOther(devInfo, gvtMode)%>';
+    var accessClass = gvtMode.split('|')[0];
+    /*if (accessClass == 'service02') {
+        var firewall = document.getElementById("firewall");
+        firewall.style.display = "none";
+    }*/	//RM11739
+
+	$('.gerenciamento').trigger('click');
+
+	$('#txtOldPass').select().focus();
+	$('input').keypress(function(e) {
+		if (e.which == 13) $('#btnSave').trigger('click');
+	});
+	$('#btnSave').on('click', function() {
+		var ng = false;
+		var oldpass = $('#txtOldPass').val();
+		var newpass = $('#txtNewPass').val();
+
+		invalidMsg($('#txtOldPass'), '');
+		if ($('#txtConfirm').val() != newpass) {
+			ng = true;
+			invalidMsg($('#txtConfirm'), '<%ejGetOther(webLang, 0058)%>');
+		}
+		else {
+			invalidMsg($('#txtConfirm'), '');
+		}
+
+		var checkspc = /(^ |  | $)/;
+		var checkpwd = /^[\x20-\x7e]{8,32}$/;
+		var checknum = /[0-9]+/;
+		var checkletter = /[a-zA-Z]+/;
+		if (!checkpwd.test(newpass) || checkspc.test(newpass) || !checknum.test(newpass) || !checkletter.test(newpass)) {
+			ng = true;
+			invalidMsg($('#txtNewPass'), '<%ejGetOther(webLang, 0059)%>');
+		}
+		else {
+			invalidMsg($('#txtNewPass'), '');
+		}
+
+		if (ng) return false;
+		var loc = 'ajax_setvar.cmd?sessionKey='+ sessionKey;
+		loc += '&varName=chgPassword&varValue=';
+		loc += '&inOrgPassword=' + encodeURIComponent(oldpass);
+		loc += '&inPassword=' + encodeURIComponent(newpass);
+		$.get(loc, function(ret) {
+			$('input').val('');
+			if (ret.search('failed') >= 0)
+				invalidMsg($('#txtOldPass'), '<%ejGetOther(webLang, 0060)%>');
+			else 
+				window.location = '?Logout=1';
+		});
+	});
+	$('#btnCancel').on('click', function() {
+		$('input').val('');
+	});
+});
+</script>
+</head>
+
+<body>
+
+<%ejGetOther(webLang, header-gateway)%>
+
+
+<div id="content">
+
+	<div class="wrap">
+
+		<div id="conteudo-gateway">
+
+<%ejGetOther(webLang, menu)%>
+
+			<div class="col-722 left">
+			
+				<h3 class="text-up"><%ejGetOther(webLang, 0061)%></h3>
+			
+				<table class="setupWifiTable" cellspacing="0" cellpadding="0">
+					<thead>
+						<tr>
+							<th colspan="2"><%ejGetOther(webLang, 0061)%></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr class="header">
+							<td colspan="2">
+							<%ejGetOther(webLang, 0062)%>
+							<%ejGetOther(webLang, 0063)%>
+							</td>
+						</tr>
+						<tr>
+							<td class="firstChild"><label for="txtOldPass"><%ejGetOther(webLang, 0064)%></label></td>
+							<td><input id="txtOldPass" type="password" maxlength="32" /></td>
+						</tr>
+						<tr>
+							<td class="firstChild"><label for="txtNewPass"><%ejGetOther(webLang, 0065)%></label></td>
+							<td><input id="txtNewPass" type="password" maxlength="32" />
+								<div><%ejGetOther(webLang, 0298)%></div>
+								<div id="chkLen"><img />  8 <%ejGetOther(webLang, 0299)%></div>
+								<div id="chkChr"><img />  <%ejGetOther(webLang, 0301)%></div>
+								<div id="chkNum"><img />  <%ejGetOther(webLang, 0302)%></div>
+								<div id="chkLev"></div>
+								<div id="chkImg"><img />&nbsp;</div>
+								<div><%ejGetOther(webLang, 0303)%></div>
+							</td>
+						</tr>
+						<tr>
+							<td class="firstChild"><label for="txtConfirm"><%ejGetOther(webLang, 0066)%></label></td>
+							<td><input id="txtConfirm" type="password" maxlength="32" /></td>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr>
+							<td colspan="2">
+								<a id="btnCancel" href="#" class="btn-default-orange-small right"><span><%ejGetOther(webLang, 0067)%></span></a>
+								<a id="btnSave"   href="#" class="btn-default-orange-small right"><span><%ejGetOther(webLang, 0068)%></span></a>
+							</td>
+						</tr>
+					</tfoot>
+				</table>
+			
+			</div><!--col-722-->
+		
+			<div class="clear"></div>
+				
+		</div><!--conteudo-->
+		
+		<div class="clear"></div>
+		
+	</div><!--wrap-->
+	
+</div><!--content-->
+
+</body>
+</html>

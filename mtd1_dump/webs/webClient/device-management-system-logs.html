@@ -1,0 +1,243 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<%ejGetOther(webLang, head)%>
+
+<style nonce='VGVsZWZvbmljYS1jc3Atbm9uY2U='>
+    #paginatorCont {
+    	margin: 0;
+    	padding-left: 25px;
+    }
+    .display_none {
+        display: none;
+    }
+    .pad_5px {
+        padding: 5px;
+    }
+    .pad_10px {
+        padding: 10px;
+    }
+</style>
+
+
+<script nonce="VGVsZWZvbmljYS1jc3Atbm9uY2U=">
+$(document).ready(function () {
+	$('#accordion a.item').click(function () {
+		window.top.name = '';
+		$('#accordion li').children('ul').slideUp('fast');
+		$('#accordion a').removeClass('active');
+		$(this).addClass('active');
+		$(this).siblings('ul').slideDown('fast');
+		return false;
+	});
+});
+
+var sessionKey = '<%ejGetOther(sessionKey)%>';
+var logEnbl = '<%ejGetOther(SyslogLocalEnabled)%>';
+var SYSLOG = []; // date, domain, level, module, message
+var ITEMS = 15;
+var PAGES = 18;
+var curPage = 0, minPage = 0, maxPage = 0;
+$(window).load(function() {
+    //firewall
+    var gvtMode = '<%ejGetOther(devInfo, gvtMode)%>';
+    var accessClass = gvtMode.split('|')[0];
+    /*if (accessClass == 'service02') {
+        var firewall = document.getElementById("firewall");
+        firewall.style.display = "none";
+    }*/	//RM11739
+
+	$('.gerenciamento').trigger('click');
+
+	$('#radLogEn'+logEnbl).prop('checked', true);
+	$('#btnApply').attr('onClick', 'applySetting()');
+	$('#btnApply').trigger('click');
+
+	$('#prev').on('click', function() {
+		if ($(this).hasClass('disabled')) return;
+
+		minPage -= PAGES;
+		curPage = minPage+PAGES-1;
+		showPaginator();
+		showPage();
+	})
+
+	$('#next').on('click', function() {
+		if ($(this).hasClass('disabled')) return;
+
+		minPage += PAGES;
+		curPage = minPage;
+		showPaginator();
+		showPage();
+	})
+});
+
+function applySetting() {
+	$('#btnApply').attr('onClick', '');
+	SYSLOG = [];
+	$('#thSysLog').append('<img src="../assets/_images/gateway/busy.gif"/>');
+	$('#prev').addClass('disabled');
+	$('#next').addClass('disabled');
+
+	var loc = 'ajax_setvar.cmd?sessionKey='+ sessionKey;
+	loc += '&varName=sysLog'
+	loc += '&varValue=' + ($('#radLogEn1').prop('checked')?'1':'0');
+	loc += '&facility='+ $('#selEvent').val();
+	loc += '&severity='+ $('#selPriority').val();;
+	$.get(loc, function(ret) {
+		eval(ret);
+		minPage = 0; maxPage = parseInt(SYSLOG.length/ITEMS)+1;
+		curPage = 0;
+		showPaginator();
+		showPage();
+
+		$('#thSysLog img').remove();
+		$('#btnApply').attr('onClick', 'applySetting()');
+	});
+}
+
+function showPaginator() {
+	$('.page-num').remove();
+	for (var i=minPage; i<minPage+PAGES; i++) {
+		if (i >= maxPage) break;
+		var li = '<li id="page_'+ i +'" page="'+ i +'" class="page-num"><span class="trigger">'+ (i+1) +'</span></li>';
+		$('#paginator').append(li);
+	}
+	$('#prev').removeClass('disabled');
+	$('#next').removeClass('disabled');
+	if (i >= maxPage) $('#next').addClass('disabled');
+	if (minPage <= 0) $('#prev').addClass('disabled');
+
+	$('.page-num').on('click', function() {
+		curPage = parseInt($(this).attr('page'));
+		showPage();
+	});
+}
+
+function showPage() {
+	$('.page-num').removeClass('selected');
+	$('#page_'+curPage).addClass('selected');
+	$('#logs ul table tr').remove();
+
+	for (var i=0; i<ITEMS; i++) {
+		var idx = curPage*ITEMS+i;
+		if (idx >= SYSLOG.length) break;
+
+		var level = SYSLOG[idx][2].split('.');
+		var tr = '<tr id="guid_'+ idx +'" class="log '+ level[1] +'">';
+		tr += '<td style="padding:5px"><span class="date"><nobr>'+ SYSLOG[idx][0] +'</nobr></span></td>';
+		tr += '<td style="padding:5px"><span class="domain"> '+ SYSLOG[idx][1] +'</span></td>';
+		tr += '<td style="padding:5px"><span class="level" style="padding:10px" title="'+ level[0] +'">'+ level[1] +'</span></td>';
+		tr += '<td style="padding:5px"><span class="module"> '+ SYSLOG[idx][3] +'</span></td>';
+		tr += '<td style="padding:5px"><span class="message">'+ SYSLOG[idx][4] +'</span></td>';
+		tr += '</tr>';
+		$('#logs ul table').append(tr);
+	}
+}
+</script>
+</head>
+
+<body>
+
+<%ejGetOther(webLang, header-gateway)%>
+
+<div id="content">
+
+	<div class="wrap">
+
+		<div id="conteudo-gateway">
+
+<%ejGetOther(webLang, menu)%>
+
+			<div class="col-722 left">
+			<form action="" method="POST" name="form_wan_mode">
+				<h3 class="text-up"><%ejGetOther(webLang, 0097)%></h3>
+			
+				<table class="setupWifiTable" cellspacing="2" cellpadding="0">
+					<thead>
+						<tr>
+							<th id="thSysLog" colspan="2"><%ejGetOther(webLang, 0098)%></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td colspan="2"><%ejGetOther(webLang, 0099)%></td>
+						</tr>
+						<tr>
+							<td>
+								<%ejGetOther(webLang, 0100)%>
+							</td>
+							<td>
+								<input id="radLogEn1" type="radio" name="radLogEn"></input><%ejGetOther(webLang, 0101)%>
+								<input id="radLogEn0" type="radio" name="radLogEn"></input><%ejGetOther(webLang, 0102)%>
+
+							</td>
+						</tr>
+						<tr>
+							<td class="firstChild"><%ejGetOther(webLang, 0103)%></td>
+							<td>
+								<select name="event" id="selEvent">
+								<option value="ALL"><%ejGetOther(webLang, 0104)%></option>
+								<option value="INTERNET">Internet</option>
+								<option value="LAN">LAN</option>
+								<option value="VOIP">VoIP</option>
+								<option value="VOD">VoD</option>
+								<option value="OTHER">Others</option>
+								</select>
+								
+								<select name="priority" id="selPriority">
+									<option value="debug"><%ejGetOther(webLang, 0278)%></option>
+									<option value="debug"><%ejGetOther(webLang, 0700)%></option>
+									<option value="info"><%ejGetOther(webLang, 0701)%></option>
+									<option value="notice"><%ejGetOther(webLang, 0702)%></option>
+									<option value="warn"><%ejGetOther(webLang, 0703)%></option>
+									<option value="err"><%ejGetOther(webLang, 0704)%></option>
+									<option value="crit"><%ejGetOther(webLang, 0705)%></option>
+									<option value="alert"><%ejGetOther(webLang, 0706)%></option>
+									<option value="emerg"><%ejGetOther(webLang, 0707)%></option>
+								</select>
+								<a id="btnApply" class="btn-default-orange-small right">
+								<span>
+									<%ejGetOther(webLang, 0105)%>
+								</span>
+								</a>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+							<div id="paginatorCont" >
+								<span class="trigger disabled" id="prev">«</span>
+								<ul class="pages" id="paginator"></ul>
+								<span class="trigger disabled" id="next">»</span>
+							</div>
+							</td>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr>
+							<td colspan="2">
+							<div id="logs">
+								<ul class="logs"><table></table></ul>
+							</div>
+							</td>
+						</tr>
+					</tfoot>
+				</table>
+			</form>
+			<textarea id="txtDebug" rows="100" cols="120" class="display_none"></textarea>
+			</div><!--col-722-->
+		
+			<div class="clear"></div>
+				
+		</div><!--conteudo-->
+		
+		<div class="clear"></div>
+		
+	</div><!--wrap-->
+	
+</div><!--content-->
+
+</body>
+</html>

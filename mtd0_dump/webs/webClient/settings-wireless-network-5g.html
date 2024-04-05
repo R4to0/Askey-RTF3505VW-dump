@@ -1,0 +1,739 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta name="robots" content="noindex">
+<script language="javascript" src="qrcode.min.js">		//RTF_DEF, #13994</script>
+<%ejGetOther(webLang, head)%>
+
+<style nonce='VGVsZWZvbmljYS1jc3Atbm9uY2U='>
+
+    #selAuthMode {
+        width: 194px;
+    }
+
+</style>
+
+<script nonce="VGVsZWZvbmljYS1jc3Atbm9uY2U=" language="javascript">
+$(document).ready(function () {
+	$('#accordion a.item').click(function () {
+		window.top.name = '';
+		$('#accordion li').children('ul').slideUp('fast');
+		$('#accordion a').removeClass('active');
+		$(this).addClass('active');
+		$(this).siblings('ul').slideDown('fast');
+		return false;
+	});
+});
+
+var sessionKey = '<%ejGetOther(sessionKey)%>';
+var syncNvram = '<%ejGetWl(wlSyncNvram)%>';
+var unitNum = '<%ejGetWl(wlInstance_id)%>';
+var wlRefresh = '<%ejGetWl(wlRefresh)%>';
+var wlPassword = '';
+
+<% /* CONFIG_QTN_SONIQ start */ %>
+var rmEnable = '<%ejGetWl(roamingEnable)%>';
+var isExist_5gWDSintf = '<%ejGetWl(isExist_5gWDSintf)%>';
+<% /* CONFIG_QTN_SONIQ end */ %>
+
+if (wlRefresh == '1') {
+	window.loation = 'te_wifirefresh_5ghz.wl?wlRefresh=0';
+}
+
+$(window).load(function() {
+    //firewall
+    var gvtMode = '<%ejGetOther(devInfo, gvtMode)%>';
+    var accessClass = gvtMode.split('|')[0];
+    /*if (accessClass == 'service02') {
+        var firewall = document.getElementById("firewall");
+        firewall.style.display = "none";
+    }*/	//RM11739
+
+	$('.configuracoes').trigger('click');
+
+	$('[name="wlWifiEn"]').on('click', function() {
+		if ($('#radWifiEn0').prop('checked')) {
+			$('#menu-wireless a[rel="02"]').hide();
+			$('.tr_basic').hide();
+		}
+		else {
+			$('#menu-wireless a[rel="02"]').show();
+			$('.tr_basic').show();
+			UpdateSecurityMode();
+		}
+	});
+
+	$('#selAuthMode').on('change', function() {
+		UpdateSecurityMode();
+	});
+
+	var wait = -1, retry = 15;
+	waitRestart();
+	function waitRestart() {
+		$.get("ajax_getvar.cmd?varName=wl1_restart", function(ret) {
+			if (ret=='1' && wait<0) {
+				$('#menu-wireless a[rel="02"]').hide();
+				$('#tab-01 tr').hide();
+				$('#tab-01 tr:first').show();
+				wait = setInterval(waitRestart, 1000);
+			}
+			else if (ret=='0' || --retry<0) {
+				if (wait!=-1 && retry>=0)
+					window.location.reload();
+				else {
+					clearInterval(wait);
+					$('#tab-01 tr').show();
+					loadBasic();
+					loadAdvance();
+					wlPassword = $('#txtPassword').val();
+				}
+			}
+		});
+	}
+
+	$('#btnBasSave').on('click', function() {
+		var enbl = $('#radWifiEn1').prop('checked') ? '1' : '0';
+		var loc = '&wlEnbl='+ enbl;
+		if (enbl == '0')
+		{
+			applySetting(loc);
+			return false;
+		}
+
+		var ng = false;
+		var hideSSID = $('#radBcEn1').prop('checked') ? 0 : 1;
+
+		<% /* CONFIG_QTN_SONIQ start */ %>
+		if ((1 == isExist_5gWDSintf) && (true == hideSSID))
+		{
+			alert("No se permite ocultar esta SSID porque tiene un repetidor asociado");
+			$('#radBcEn1').click();
+			return false;
+		}
+		<% /* CONFIG_QTN_SONIQ end */ %>
+
+		loc += '&wlHide='+ hideSSID;
+		loc += '&wlHide_wl1v0='+hideSSID;
+
+		var ssid = $('#txtSsid').val();
+		var checkssidspc = /(^ |  | $)/;
+		if (!checkSSIDValid(ssid) || checkssidspc.test(ssid)) {
+			ng = true;
+			invalidMsg($('#txtSsid'), '<%ejGetOther(webLang, 0220)%>');
+		}
+		else {
+			invalidMsg($('#txtSsid'), '');
+			loc += '&wlSsid='+encodeURIComponent(ssid);
+		}
+
+		var pass = $('#txtPassword').val();
+		var mode = $('#selAuthMode').val();
+		switch (mode) {
+		case 'open':
+			loc += '&wlAuthMode=open&wlAuth=0&wlWep=disabled';
+			break;
+		default:
+			var checkasc = /^[\x20-\x7e]{8,63}$/;
+			var checkspc = /( )/;
+			if (!checkasc.test(pass) || checkspc.test(pass)) {
+				ng = true;
+				invalidMsg($('#txtPassword'), '<%ejGetOther(webLang, 0160)%>');
+			}
+			else {
+				invalidMsg($('#txtPassword'), '');
+				if ($('#txtPassword').val().length>=8 && $('#txtPassword').val().length<15) {
+					if (confirmSpecial('Para evitar riscos de segurança recomenda-se que o comprimento mínino da senha seja de 15 caracteres') == false)
+						return false;
+				}
+				loc += '&wlAuthMode='+ mode;
+				loc += '&wlWpa='+ ((mode=='psk2')?'aes':'tkip+aes') +'&wlAuth=0';
+				loc += '&wlWpaPsk='+encodeURIComponent(pass);
+			}
+			break;
+		}
+
+		var wps = $('[name="input_wps"]').first().prop('checked') ? 'enabled' : 'disabled';
+		loc += '&wl_wsc_mode='+ wps;
+
+		if (ng) return false;
+		applySetting(loc);
+	});
+	$('#btnBasCancel').on('click', function() {loadBasic();});
+
+	$('#btnAdvSave').on('click', function() {
+		var loc = '';
+		//loc += '&wlacmode='+ $('#selMode').val();
+		loc += '&wlChannel='+ $('#selChannel').val();
+		//loc += '&wlNBwCap='+ $('#selBandwidth').val();
+		//loc += '&wlTxPwrPcnt='+ $('#selTxPwrPcnt').val();
+		var wmm = ($('[name=input_WMM]').first().prop('checked')) ? '1' : '0';
+		loc += '&wlWme='+ wmm;
+
+		var flt = $('[name=input_mac_filter]').first().prop('checked') ? 'allow' : 'disabled';
+		loc += '&wlFltMacMode=' + flt;
+
+		if (flt == 'allow') {
+			var maclist = [];
+			$('.trMac').each(function() {
+				maclist.unshift($(this).find('td:eq(1)').text());
+			});
+
+			loc += '&wlFltMacList=' + maclist.join(',');
+		}
+		applySetting(loc);
+	});
+	$('#btnAdvCancel').on('click', function() {loadAdvance()});
+});
+
+var wlEnbl = '<%ejGetWl(wlEnbl_wl1v0)%>';
+var wlHide = parseInt('<%ejGetWl(wlHide_wl1v0)%>');
+var wlSsid = htmlDecode('<%ejGetWl(wlSsid_wl1v0)%>');
+var wlWpaPsk = htmlDecode('<%ejGetWl(wlWpaPsk)%>');
+var wlAuthMode = '<%ejGetWl(wlAuthMode)%>';
+var wpa = '<%ejGetWl(wlWpa)%>';
+var wlWscMode = '<%ejGetWl(wlWscMode)%>';
+function loadBasic() {
+	$('.invalid').removeClass('invalid').next('span').remove();
+	if (wlHide == 1) $('[name="input_wps"]').prop('disabled', true);
+	$('#radBcEn'+(1-wlHide)).prop('checked', true);
+	$('#txtSsid').val(wlSsid);
+
+	$('#txtPassword').val((wlAuthMode=='open') ? '' : wlWpaPsk);
+	$('#selAuthMode').val(wlAuthMode);
+
+	if (wlWscMode == 'enabled')
+		$('[name="input_wps"]').first().prop('checked', true);
+	else
+		$('[name="input_wps"]').last().prop('checked', true);
+
+	$('#radWifiEn'+wlEnbl).prop('checked', true).trigger('click');
+	$('#thBasic img').remove();
+}
+
+function loadAdvance() {
+	//var acmode = '<%ejGetWl(wlacmode)%>';
+	var currChannel = '<%ejGetWl(wlCurrentChannel)%>';
+	var currbw = '<%ejGetWl(wlCurrentBw)%>';
+	var nbwcap= '<%ejGetWl(wlNBwCap)%>';
+	//var txpwrpcnt = '<%ejGetWl(wlTxPwrPcnt)%>';
+	var wme = '<%ejGetWl(wlWme)%>';
+	var bssid = '<%ejGetWl(wlBssid)%>';
+
+	//$('#selMode').val(acmode);
+	loadChannelList();
+	$('#selChannel').next('div').remove();
+	$('#selChannel').after('<div style="display:none">&emsp;&emsp;Current: '+ currChannel +'</div>');
+
+	/*
+	var currBW = Math.pow(2, currbw-1) +'0 MHz';
+	$('#selBandwidth').val(nbwcap);
+	$('#selBandwidth').next('div').remove();
+	$('#selBandwidth').after('<div style="display:none">&emsp;&emsp;Current: '+ currBW +'</div>');
+	*/
+
+	//$('#selTxPwrPcnt').val(txpwrpcnt);
+	if (wme == '1')
+		$('[name="input_WMM"]').first().prop('checked', true);
+	else
+		$('[name="input_WMM"]').last().prop('checked', true);
+
+	$('#tdBssid').text(bssid);
+	//loadFltMac();
+	$('#thAdvance img').remove();
+}
+
+function loadFltMac() {
+	var fltmacmode = '<%ejGetWl(wlFltMacMode)%>';
+	var fltmaclist = '<%ejGetWl(wlFltMacList)%>';
+
+	if (fltmacmode == 'allow') {
+		$('[name="input_mac_filter"]').first().prop('checked', true);
+		if (fltmaclist == '') {
+			$('[name="input_wps"]').prop('disabled', true);
+			$('[name="input_wps"]').next('label').append('<div style="display:inline" class="red">&emsp;&emsp;<%ejGetOther(webLang, 0221)%></div>');
+		}
+	}
+	else
+		$('[name="input_mac_filter"]').last().prop('checked', true);
+
+	var maclist = fltmaclist.split(',');
+	for (var i=0; i<maclist.length; i++) {
+		if (isMacAddr(maclist[i])) appendMacList(i, maclist[i]);
+	}
+	UpdateMacFilter();
+
+	$('#btnFltAdd').on('click', function() {
+		var mac = $('#txtFltMac').val().toUpperCase();
+		if (!isMacAddr(mac)) {
+			invalidMsg($('#txtFltMac'), '<%ejGetOther(webLang, 0222)%>');
+			return false;
+		}
+
+		var edit = $('#spnFltAdd').attr('edit');
+		var dup = $('.trMac').find('td:eq(1):contains("'+ mac +'")');
+		if (dup.length > 0) {
+			if (edit=='' || dup.parent('tr').attr('mac')!=edit) {
+				invalidMsg($('#txtFltMac'), '<%ejGetOther(webLang, 0223)%>');
+				return false;
+			}
+		}
+
+		if (edit != '') {
+			var td = $('.trMac[mac="'+ edit +'"]').find('td');
+			$(td[0]).text(macToHost(mac));
+			$(td[1]).text(mac);
+		}
+		else {
+			var i = $('#mac_filter_table_list_device tbody tr').length;
+			if (i > 31) {
+				invalidMsg($('#txtFltMac'), '<%ejGetOther(webLang, 0224)%>');
+				return false;
+			}
+			appendMacList(i+1, mac);
+		}
+
+		invalidMsg($('#txtFltMac'), '');
+		$('#txtFltMac').val('');
+		$('#spnFltAdd').text('<%ejGetOther(webLang, 0225)%>').attr('edit', '');
+	});
+}
+
+function appendMacList(i, mac) {
+	mac = mac.toUpperCase();
+	var tr = '<tr class="trMac" mac="'+ mac +'">';
+	tr += '<td class="'+ ((i%2)?'cinza2 ':'cinza') +'">'+ macToHost(mac) +'</td>';
+	tr += '<td class="'+ ((i%2)?'cinza2 ':'') +'center">'+ mac +'</td>';
+	tr += '<td class="'+ ((i%2)?'cinza2 ':'') +'center"><div class="actions">';
+	tr += '    <a class="action aFltEdit" mac="'+ mac +'"><img class="img-actions" src="../assets/_images/gateway/edit2.png"/></a>&emsp;&emsp;';
+	tr += '    <a class="action aFltDel"  mac="'+ mac +'"><img class="img-actions" src="../assets/_images/gateway/trash.png"/></a>';
+	tr += '</div></td>';
+	tr += '</tr>';
+	$('#mac_filter_table_list_device').append(tr);
+
+	$('.aFltEdit').on('click', function() {
+		var mac = $(this).attr('mac');
+		var td = $('.trMac[mac="'+ mac +'"]').find('td');
+
+		invalidMsg($('#txtFltMac'), '');
+		$('#txtFltMac').val($(td[1]).text());
+		$('#spnFltAdd').text('<%ejGetOther(webLang, 0143)%>').attr('edit', mac);
+	});
+
+	$('.aFltDel').on('click', function() {
+		$('.trMac[mac="'+ $(this).attr('mac') +'"]').remove();
+		$('#spnFltAdd').text('<%ejGetOther(webLang, 0225)%>').attr('edit', '');
+	});
+}
+
+var dhcpLease; // <iid1>/<Host1>/<MAC1>/<IP1>/<Time1>|<iid2>/<Host2>/<MAC2>/<IP2>/<Time2>
+$.get('ajax_getvar.cmd?varName=dhcpLease', function(ret) {
+	dhcpLease = ret;
+	if (dhcpLease != '') {
+		var leaseip = dhcpLease.split('|');
+		for (var i=0; i<leaseip.length; i++) {
+			// info = [iid, host, mac, ip, time]
+			var info = leaseip[i].split('/');
+			if (info[1]=='' || info[1]=='(null)') info[1] = info[2];
+
+			var opt = '<option value="'+ info[2] +'">'+ info[1] +'</option>';
+			$('#selHost').append(opt);
+		}
+
+		$('#selHost').val('');
+		$('#selHost').on('change', function() {
+			$('#txtFltMac').val($('#selHost').find('option:selected').val());
+			$('#spnFltAdd').text('<%ejGetOther(webLang, 0225)%>').attr('edit', '');
+		});
+	}
+});
+function macToHost(mac) {
+	var ary = dhcpLease.split('/'+ mac + '/');
+	return (ary.length>1) ? ary[0].split('/').pop() : '';
+}
+
+function applySetting(loc) {
+	loc = 'settings-wireless-network-5g.wl?wlSsidIdx=0' + loc;
+	loc += '&wlSyncNvram=1';
+	loc += '&unitNum='+ unitNum;
+	loc += '&sessionKey='+ sessionKey;
+	//alert(loc);
+	window.location = loc;
+}
+
+function loadChannelList() {
+	/* save selected */   
+	var sel_ch = '<%ejGetWl(wlChannel)%>';
+	var sel_band = '<%ejGetWl(wlBand)%>';
+	var sel_nbw_cap = '<%ejGetWl(wlNBwCap)%>';
+	var sel_sb = '<%ejGetWl(wlNCtrlsb)%>';
+	var phy = '<%ejGetWl(wlPhyType)%>';
+	var idx;
+
+	/* load list */
+	document.forms[0].wlChannel.length = 0;
+
+	if ((null != event) && ('change' == event.type))
+	{
+		var bw_cap = $('#selBandwidth').val();
+		if (('' != bw_cap) && (bw_cap.length > 0))
+			sel_nbw_cap = bw_cap;
+	}
+
+	if ((sel_band == "2") && ((phy != "n") && (phy != "v"))) {
+		<%ejGetWl(wlChannelList, b, b, 20)%>
+	}
+	else if ((sel_band == "1") && ((phy != "n") && (phy != "v"))) {
+		<%ejGetWl(wlChannelList, a, a, 20)%>
+	}
+	else if ((sel_band == "2") && (phy == "n") ) { 
+		if(sel_nbw_cap == "1") {
+			if(sel_sb == 1) {
+				<%ejGetWl(wlChannelList, n, b, 40, "upper")%>
+			} else {
+				<%ejGetWl(wlChannelList, n, b, 40, "lower")%>
+			}            
+		} else if(sel_nbw_cap == "0" || sel_nbw_cap == "2") {
+			<%ejGetWl(wlChannelList, n, b, 20 )%>
+		}
+	}
+	else if ((sel_band == "1") && (phy == "n") ) {    
+		if(sel_nbw_cap == "1" || sel_nbw_cap == "2") {
+			if(sel_sb == 1) {
+				<%ejGetWl(wlChannelList, n, a, 40, "upper")%>
+			} else {
+				<%ejGetWl(wlChannelList, n, a, 40, "lower")%>         
+			}
+		} else if (sel_nbw_cap == "0") {
+			<%ejGetWl(wlChannelList, n, a, 20 )%>
+		}
+		else if (unitNum==1 && sel_nbw_cap==3) {
+			<%ejGetWl(wlChannelList, v, a, 80 )%>
+		} else {
+			document.forms[0].wlChannel[0] = new Option("Auto", "0");
+		}
+	}
+	else if ((sel_band == "1") && (phy == "v") && (sel_nbw_cap == "3")) {    
+		/* Band a and AC phy and 80M */
+		<%ejGetWl(wlChannelList, v, a, 80 )%>
+	}
+	else if ((sel_band == "2") && (phy == "v") ) { 
+		if(sel_nbw_cap == "1") {
+			if(sel_sb == 1) {
+				<%ejGetWl(wlChannelList, v, b, 40, "upper")%>
+			} else {
+				<%ejGetWl(wlChannelList, v, b, 40, "lower")%>         
+			}            
+		} else if(sel_nbw_cap == "0" || sel_nbw_cap == "2"){      
+			<%ejGetWl(wlChannelList, v, b, 20 )%>
+		}
+	}
+	else if ((sel_band == "1") && (phy == "v")) {    
+		if(sel_nbw_cap == "1" || sel_nbw_cap == "2") {
+			if(sel_sb == 1) {
+				<%ejGetWl(wlChannelList, v, a, 40, "upper")%>
+			} else {
+				<%ejGetWl(wlChannelList, v, a, 40, "lower")%>         
+			}  
+		} else if (sel_nbw_cap == "0") {
+			<%ejGetWl(wlChannelList, v, a, 20 )%>
+		}
+	}
+	else {
+		document.forms[0].wlChannel[0] = new Option("Auto", "0");
+	}
+
+	/* mark selected */
+	for (idx=0; idx<document.forms[0].wlChannel.options.length; idx++) {
+		if (document.forms[0].wlChannel.options[idx].value == sel_ch) {
+			document.forms[0].wlChannel.options[idx].selected = true;
+			break;
+		}
+	}
+
+	/* set to first channel none-auto if not found */   
+	if (idx == document.forms[0].wlChannel.options.length &&
+		document.forms[0].wlChannel.options.length > 1) {
+		document.forms[0].wlChannel.options[1].selected = true;
+	}
+	document.forms[0].wlChannel.options[0].text = '<%ejGetOther(webLang, 0214)%>';
+}
+
+function wl_channelChange(obj)
+{
+   if(unitNum==1)
+   {
+      if (0 != obj.value)
+      {
+        alert('<%ejGetOther(webLang, 0286)%>');
+      }
+   }
+}
+</script>
+</head>
+
+<body>
+
+<%ejGetOther(webLang, header-gateway)%>
+
+<script nonce="VGVsZWZvbmljYS1jc3Atbm9uY2U=" type="text/javascript">
+
+function UpdateSecurityMode() {
+	var mode = $('#selAuthMode').val();
+	if (mode == 'open')
+		$('#tr_pwd').hide();
+	else {
+		$('#tr_pwd').show();
+		$('#txtPassword').val(wlWpaPsk);
+	}
+}
+
+function UpdateMacFilter() {  
+  if (document.getElementById("input_mac_filter").checked == true) {
+  $("#mac_filter_table_add_device").slideDown("slow");
+  $("#mac_filter_table_list_device").slideDown("slow");
+  
+  $('html, body').animate({ 
+      scrollTop: $('#mac_filter_table_list_device').offset().top 
+  }, 3000);
+  
+  }
+  else {
+  $("#mac_filter_table_add_device").slideUp("fast");
+  $("#mac_filter_table_list_device").slideUp("fast");
+  }
+} 
+</script>
+
+<script nonce="VGVsZWZvbmljYS1jc3Atbm9uY2U=">
+$(document).ready(function() {
+	$('.tab').slideUp();
+	$('#tab-01').slideDown();
+	$('#menu-wireless li:first a').addClass('active');
+	$('#menu-wireless li a').click(function() {
+		var i = $(this).attr('rel');
+		$('#menu-wireless li a').removeClass('active');
+		$(this).addClass('active');
+		$('.tab').slideUp();
+		$('#tab-'+i).slideDown();
+		return false;
+	});
+});
+</script>
+
+<div id="content">
+
+	<div class="wrap">
+
+		<div id="conteudo-gateway">
+
+<%ejGetOther(webLang, menu)%>
+
+			<div class="col-722 left">
+			
+				<h3 class="text-up"><%ejGetOther(webLang, 0248)%></h3>
+				
+				<div class="clear"></div>
+			
+				<div id="menu-wireless">
+					<ul>
+						<li><a href="#" rel="01"><%ejGetOther(webLang, 0227)%></a></li>
+						<li><a href="#" rel="02"><%ejGetOther(webLang, 0228)%></a></li>
+					</ul>
+				</div><!--menu-wireless-->
+				
+				
+				<div id="tab-01" class="tab">
+
+				<!--<form action="#" class="form-configuracoes" name="form_wifi">-->
+					<table class="setupWifiTable">
+						<thead>
+							<th id="thBasic" colspan="3"><%ejGetOther(webLang, 0229)%> <img src="../assets/_images/gateway/busy.gif"/></th>
+						</thead>
+						<tr>
+							<td width="250"><%ejGetOther(webLang, 0230)%></td>
+							<td>
+								<input type="radio" name="wlWifiEn" id="radWifiEn1"/> <%ejGetOther(webLang, 0101)%> &nbsp;&nbsp;
+								<input type="radio" name="wlWifiEn" id="radWifiEn0"/> <%ejGetOther(webLang, 0102)%>
+							</td>
+							<td rowspan="6" class="tr_basic">
+								<div id="qrcode5"></div>
+								<script nonce="VGVsZWZvbmljYS1jc3Atbm9uY2U=" type="text/javascript">
+									//RTF_DEF, #13994
+									var str = 'WIFI:';
+									var ssid = '<%ejGetWl(wlSsid_main1)%>';
+									var pw = '<%ejGetWl(wlWpaPsk_main1)%>';
+									var auth = '<%ejGetWl(wlAuthMode_main1)%>';
+                                    var hide = '<%ejGetWl(wlHide_main1)%>';
+									
+									if (auth == 'open') {
+										pw = '';
+                                        auth = 'nopass';
+									}
+									else
+									{
+										auth = 'WPA';
+									}
+
+                                    //20181011-weichen-F#15480, refer to #5497, handle the special character (\'".:,;)
+                                    var encodedSSID = ssid.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/:/g, '\\:').replace(/'/g, '\\\'').replace(/"/g, '\\"').replace(/\./g, '\\\.');
+                                    var encodedPSK = pw.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/:/g, '\\:').replace(/'/g, '\\\'').replace(/"/g, '\\"').replace(/\./g, '\\\.');
+
+									str += 'T:' + auth + ';S:' + encodedSSID + ';P:' + encodedPSK + ';';
+                                    //20181011-weichen-F#15480, refer to #5655, handle the hide ssid case
+                                    if (hide == '1') {
+                                        str += 'H:true;';
+                                    } else {
+                                        str += ';';
+                                    }
+									
+									var qrcode = new QRCode(document.getElementById("qrcode5"), {
+										text: str,
+										width: 92,
+										height: 92,
+										colorDark : "#4f0077",
+										colorLight : "#f1f2f3",
+										correctLevel : QRCode.CorrectLevel.H
+									});
+								</script>
+							</td>
+						</tr>
+						<tr class="tr_basic">
+							<td><%ejGetOther(webLang, 0231)%></td>
+							<td>
+								<input type="radio" name="wlBroadcast" id="radBcEn1" /> <%ejGetOther(webLang, 0101)%> &nbsp;&nbsp;
+								<input type="radio" name="wlBroadcast" id="radBcEn0" /> <%ejGetOther(webLang, 0102)%>
+							</td>
+						</tr>
+						<tr class="tr_basic">
+							<td>SSID:</td>
+							<td><input name="" type="text" class="input-text" id="txtSsid" maxlength="32"/></td>
+						</tr>
+						<tr class="tr_basic" id="tr_pwd">
+							<td><%ejGetOther(webLang, 0046)%></td>
+							<td><input name="" type="text" class="input-text" id="txtPassword" maxlength="64" />
+								<div><%ejGetOther(webLang, 0298)%></div>
+								<div id="chkLen"><img />  10 <%ejGetOther(webLang, 0299)%></div>
+								<div id="chkChr"><img />  <%ejGetOther(webLang, 0301)%></div>
+								<div id="chkNum"><img />  <%ejGetOther(webLang, 0302)%></div>
+								<div id="chkLev"></div>
+								<div id="chkImg"><img />&nbsp;</div>
+								<div><%ejGetOther(webLang, 0303)%></div>
+							</td>
+						</tr>
+						<tr class="tr_basic">
+							<td><%ejGetOther(webLang, 0232)%></td>
+							<td><select id="selAuthMode" onChange="UpdateSecurityMode()">
+								<option value="psk2">WPA2</option>
+								<option value="open"><%ejGetOther(webLang, 0233)%></option>
+							</select></td>
+						</tr>
+						<tr class="tr_basic" id="tr_wps">
+							<td>WPS:</td>
+							<td>
+								<input type="radio" name="input_wps" id="input_WPS" /> <%ejGetOther(webLang, 0101)%> &nbsp;&nbsp;
+								<input type="radio" name="input_wps" id="input_WPS" /> <label><%ejGetOther(webLang, 0102)%></label>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="3" class="text-right">
+								<a id="btnBasCancel" class="btn-default-orange-small right"><span><%ejGetOther(webLang, 0067)%></span></a>
+								<a id="btnBasSave"   class="btn-default-orange-small right"><span><%ejGetOther(webLang, 0068)%></span></a>
+							</td>
+						</tr>
+					</table>
+				<!--</form>-->
+				</div>
+				<div id="tab-02" class="tab">
+					<form action="#" class="form-configuracoes" name="form_wifi2">
+					<table class="setupWifiTable">
+						<thead>
+							<th id="thAdvance" colspan="2"><%ejGetOther(webLang, 0238)%> <img src="../assets/_images/gateway/busy.gif"/></th>
+						</thead>
+						<tr>
+							<td width="250"><%ejGetOther(webLang, 0239)%></td>
+							<td>
+								<select name="wlMode" id="selMode">
+								<option value="0">802.11n/ac</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td><%ejGetOther(webLang, 0031)%>
+							</td>
+							<td>
+								<select name="wlChannel" id="selChannel" onchange="wl_channelChange(this)">
+								</select>
+								</br><%ejGetOther(webLang, 0283)%>
+							</td>
+						</tr>
+						<!--
+						<tr>
+							<td><%ejGetOther(webLang, 0240)%></td>
+							<td><select name="wlBandwidth" id="selBandwidth" onChange="loadChannelList();">
+								<option value="0">20 MHz</option>
+								<option value="1">40 MHz</option>
+								<option value="3">80 MHz</option>
+							</select></td>
+						</tr>
+						-->
+						<!--
+						<tr>
+							<td><%ejGetOther(webLang, 0241)%></td>
+							<td><select name="wlTxPwrPcnt" id="selTxPwrPcnt">
+								<option value="100">100%</option>
+								<option value="90">90%</option>
+								<option value="80">80%</option>
+								<option value="70">70%</option>
+								<option value="60">60%</option>
+								<option value="50">50%</option>
+								<option value="40">40%</option>
+								<option value="30">30%</option>
+								<option value="20">20%</option>
+								<option value="10">10%</option>
+								<option value="0">0</option>
+							</select></td>
+						</tr>
+						-->
+						<tr>
+							<td>WMM:</td>
+							<td>
+								<input type="radio" name="input_WMM" id="input_WMM"/> <%ejGetOther(webLang, 0101)%> &nbsp;&nbsp;
+								<input type="radio" name="input_WMM" id="input_WMM"/> <%ejGetOther(webLang, 0102)%>
+							</td>
+						</tr>
+						<tr>
+							<td><%ejGetOther(webLang, 0243)%></td>
+							<td id="tdBssid">00:0c:c3:3a:3c:6c</td>
+						</tr>
+						<tr>
+							<td><%ejGetOther(webLang, 0244)%></td>
+							<td>5 GHz</td>
+						</tr>
+						<tr>
+							<td><%ejGetOther(webLang, 0245)%></td>
+							<td><%ejGetOther(webLang, 0285)%></td>
+						</tr>
+						<tr>
+							<td colspan="2" class="text-right">
+								<a id="btnAdvCancel" class="btn-default-orange-small right"><span><%ejGetOther(webLang, 0067)%></span></a>
+								<a id="btnAdvSave"   class="btn-default-orange-small right"><span><%ejGetOther(webLang, 0068)%></span></a>
+							</td>
+						</tr>
+					</table>
+					</form>
+				</div>
+			</div><!--col-722-->
+		
+			<div class="clear"></div>
+				
+		</div><!--conteudo-->
+		
+		<div class="clear"></div>
+		
+	</div><!--wrap-->
+	
+</div><!--content-->
+
+</body>
+</html>

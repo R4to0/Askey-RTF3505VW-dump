@@ -1,0 +1,651 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta name="robots" content="noindex">
+	<script language="javascript" src="qrcode.min.js">		//RTF_DEF, #13994</script>
+<%ejGetOther(webLang, head)%>
+
+<script>
+$(document).ready(function () {
+	if ('<%ejGet(curUserName)%>' == '') $('#divLogout').hide();
+
+	$('#accordion a:first').addClass('menuactive');
+	$('#accordion a.item').click(function () {
+		window.top.name = '';
+		$('#accordion li').children('ul').slideUp('fast');
+		$('#accordion a').removeClass('active');
+		$(this).addClass('active');
+		$(this).siblings('ul').slideDown('fast');
+		return false;
+	});
+});
+
+$(window).load(function()
+{
+    //firewall
+    var gvtMode = '<%ejGetOther(devInfo, gvtMode)%>';
+    var accessClass = gvtMode.split('|')[0];
+    /*if (accessClass == 'service02') {
+        var firewall = document.getElementById("firewall");
+        firewall.style.display = "none";
+    }*/	//RM11739
+
+	// Optical Status
+	var gponUp='<%ejGetOther(installation, gponUp)%>';
+	$('#divOptical br').after(gponUp=='1'?'<%ejGetOther(webLang, 0001)%>':'<%ejGetOther(webLang, 0002)%>');
+	$('#divOptical').addClass(gponUp=='1'?'green':'red');
+	$('#divOptTx').addClass(gponUp=='1'?'green':'red');
+	$('#divOptRx').addClass(gponUp=='1'?'green':'red');
+
+	var opticalPower='<%ejGetOther(installation, opticalPower)%>';
+	var opticalPowerTx=parseFloat(opticalPower.split(';')[0].substr(opticalPower.split(';')[0].search('TX:')+3)).toFixed(3);
+	var opticalPowerRx=parseFloat(opticalPower.split(';')[1].substr(opticalPower.split(';')[1].search('RX:')+3)).toFixed(3);
+	if(opticalPowerRx == -40.0) {
+		opticalPowerTx='-inf';
+		opticalPowerRx='-inf';
+	}
+	$('#divOptTx br').after(opticalPowerTx +' dBm');
+	$('#divOptRx br').after(opticalPowerRx +' dBm');
+
+
+	// Internet
+	var gponStatus = '<%ejGetOther(wanInterfaceInfo, gponLinkStatus)%>';
+	var pppStatus = '<%ejGetOther(wanInterfaceInfo, connectionStatus)%>';
+	//Tank ONT_Protection
+	var protectionStatus = '<%ejGetOther(ProtectionStatus)%>';
+	if(protectionStatus == '0')
+	{
+		$('#divPpp').addClass((pppStatus=='Connected')?'yellow':'red');
+		$('#divPpp br').after((pppStatus=='Connected')?'<%ejGetOther(webLang, 0003)%>:<%ejGetOther(webLang, 0667)%>':'<%ejGetOther(webLang, 0004)%>');
+	} //end
+	else //original
+	{
+		$('#divPpp').addClass((pppStatus=='Connected')?'green':'red');
+		$('#divPpp br').after((pppStatus=='Connected')?'<%ejGetOther(webLang, 0003)%>':'<%ejGetOther(webLang, 0004)%>');
+	}
+	
+	var pppUptime = parseInt('<%ejGetOther(wanInterfaceInfo, pppUptime)%>');
+	$('#liPpp').html(toDDHHMMSS(pppUptime));
+
+	$('#liLanIp').html('<%ejGetOther(sysInfo, lanAddr)%>');
+	$('#liWanIp').html((pppUptime==0)?'--':'<%ejGetOther(wanInterfaceInfo, externalIPAddress)%>');
+	$('#liWanGw').html((pppUptime==0)?'--':'<%ejGetOther(wanInterfaceInfo, defaultGateway)%>');
+	$('#liDNS1').html((pppUptime==0)?'--':'<%ejGetOther(sysInfo, dns1)%>');
+	$('#liDNS2').html((pppUptime==0)?'--':'<%ejGetOther(sysInfo, dns2)%>');
+
+	var ipv6Pd = '<%ejGetOther(wanInterfaceInfo, ipv6Pd)%>';
+	$('#liLan6Pd').html((pppUptime==0 || ipv6Pd=='(null)')?'--':ipv6Pd);
+	$('#liLan6Local').html('<%ejGetOther(localIPv6Address)%>');
+	var ipv6Addr = '<%ejGetOther(wanInterfaceInfo, ipv6Addr)%>';
+	$('#liWan6Ip').html((pppUptime==0 || ipv6Addr=='(null)')?'--':ipv6Addr);
+	$('#liWan6Gw').html((pppUptime==0)?'--':'<%ejGetOther(wanInterfaceInfo, ipv6DefGw)%>');
+	var dns6 = '<%ejGetOther(wanInterfaceInfo, ipv6Dns)%>'.split(',');
+	$('#liDns6Pri').html((pppUptime==0 || dns6[0]=='(null)')?'--':dns6[0]);
+	$('#liDns6Sec').html((pppUptime==0 || dns6.length<2)?'--':dns6[1]);
+
+//text: "WIFI:S:VIVO-D540;T:WPA;P:0123456789;;",
+	// Wireless 2.4 GHz
+	$('#divWifi').addClass(('<%ejGetWl(wlEnbl_main0Ssid0)%>'=='1')?'green':'red');
+	$('#divWifi strong').after(htmlDecode('<%ejGetWl(wlSsid_main0)%>'));
+
+	var hide = '<%ejGetWl(wlHide_main0)%>';
+	$('#divWifi br').after((hide=='0')?'<%ejGetOther(webLang, 0005)%>':'<%ejGetOther(webLang, 0006)%>');
+	$('#liHide').html((hide=='0')?'<%ejGetOther(webLang, 0030)%>':'<%ejGetOther(webLang, 0663)%>');
+
+	var auth = '<%ejGetWl(wlAuthMode_main0)%>';
+	var wep = '<%ejGetWl(wlWep_main0)%>';
+	if (auth=='open' && wep=='enabled') auth = 'wep';
+	auth = auth.replace(/psk/g, 'WPA').replace(' ', '/').replace('open', 'none').toUpperCase();
+	$('#liAuth').html(auth);
+	$('#liWps' ).html('<%ejGetWl(wlWscMode_main0)%>'=='enabled'?'<%ejGetOther(webLang, 0661)%>':'<%ejGetOther(webLang, 0662)%>');
+	$('#liChan').html('<%ejGetWl(wlCurrentChannel_main0)%>');
+
+	var staList = '<%ejGetWl(wlAssociatedList_main0)%>';
+	var hostList = staToHostList(staList);
+	$('#txtWifi').val((hostList.length==0)?'<%ejGetOther(webLang, 0007)%>':hostList.join('\n'));
+
+	// Wireless 5 GHz
+	$('#divWifi5').addClass(('<%ejGetWl(wlEnbl_main1Ssid1)%>'=='1')?'green':'red');
+	$('#divWifi5 strong').after(htmlDecode('<%ejGetWl(wlSsid_main1)%>'));
+
+	var hide5 = '<%ejGetWl(wlHide_main1)%>';
+	$('#divWifi5 br').after((hide5=='0')?'<%ejGetOther(webLang, 0005)%>':'<%ejGetOther(webLang, 0006)%>');
+	$('#liHide5').html((hide5=='0')?'<%ejGetOther(webLang, 0030)%>':'<%ejGetOther(webLang, 0663)%>');
+
+	var auth5 = '<%ejGetWl(wlAuthMode_main1)%>';
+	auth5 = auth5.replace(/psk/g, 'WPA').replace(' ', '/').replace('open', 'none').toUpperCase();
+	$('#liAuth5').html(auth5);
+	$('#liWps5' ).html('<%ejGetWl(wlWscMode_main1)%>'=='enabled'?'<%ejGetOther(webLang, 0661)%>':'<%ejGetOther(webLang, 0662)%>');
+	$('#liChan5').html('<%ejGetWl(wlCurrentChannel_main1)%>');
+
+	var staList5 = '<%ejGetWl(wlAssociatedList_main1)%>';
+	var hostList5 = staToHostList(staList5);
+	$('#txtWifi5').val((hostList5.length==0)?'<%ejGetOther(webLang, 0007)%>':hostList5.join('\n'));
+
+
+	// Local Network
+	var enetStatus = '<%ejGetOther(devInfo, enetStatus)%>'.split('|');
+	for (var i=0; i<enetStatus.length; i++) {
+		var eth = enetStatus[i].split(',');
+		var port = eth[0].charAt(3);
+		var lanHost = $('.lanHost')[port];
+		$(lanHost).addClass(eth[1]=='Up'?'green':'red');
+		$(lanHost).find('br').after(eth[1]=='Up'?'&nbsp;':'<%ejGetOther(webLang, 0008)%>');
+	}
+
+	var portMacList = '<%ejGetOther(devInfo, portMacList)%>';
+	var ipv6MacList = '<%ejGetOther(devInfo, ipv6MacList)%>';
+	var ethHost = [];
+	var txtLanHost = '';
+	for (var i=0; i<4; i++) {
+		var lanHost = $('.lanHost')[i];
+		ethHost[i] = enetToHostList(portMacList, ipv6MacList, 'eth'+i+'.0');
+		if (ethHost[i].length > 0) {
+			for (var j=0; j<ethHost[i].length; j++) {
+				if (ethHost[i][j].search('Hostname:') >= 0) {
+					var host = ethHost[i][j].split('Hostname:')[1].split('\n')[0];
+					$(lanHost).find('br').after(host);
+					break;
+				}
+			}
+			txtLanHost += '---------- LAN '+ (i+1) +' ----------\n'+ ethHost[i].join('\n') +'\n';
+		}
+	}
+	if (txtLanHost == '') txtLanHost = '<%ejGetOther(webLang, 0007)%>';
+	$('#txtLanHost').val(txtLanHost);
+
+
+	// TV
+	var vodst = '<%ejGetOther(wanIpoeInfo, connStatus_Vod_ip_interface)%>';
+	$('#divVod').addClass(vodst=='Connected'?'green':'red');
+	$('#divVod').find('strong').html(vodst=='Connected'?'<%ejGetOther(webLang, 0009)%>':'<%ejGetOther(webLang, 0010)%>');
+	$('#liVodIp').html('<%ejGetOther(wanIpoeInfo, extIpAddr_Vod_ip_interface)%>');
+
+	var mngHostList = '<%ejGetOther(devInfo, mngDevToHostList)%>';
+	var mngHost = mngToHostList(mngHostList, ',GVT-STB,RSTIH89-500_HD,DSTIH78_GVT,VM1110,DSTIH79_GVT,VM1110_HD_HYBRID,DSITH79_GVT_HD,');
+	var virtualHostList = '<%ejGetOther(devInfo, virtualDevToHostList)%>';
+	var virtualHost = mngToHostList(virtualHostList, '');
+	if (virtualHost.length > 0) mngHost.push(virtualHost);
+	$('#txtMngDev').val((mngHost.length==0)?'<%ejGetOther(webLang, 0007)%>':mngHost.join('\n'));
+	$('#liStbNum').html(mngHost.length);
+
+
+	// Telephone
+	var telst = '<%ejGetOther(wanIpoeInfo, connStatus_Voip_ip_interface)%>';
+	$('#divTelStatus').addClass(telst=='Connected'?'green':'red');
+	$('#divTelStatus br').after(telst=='Connected'?'<%ejGetOther(webLang, 0009)%>':'<%ejGetOther(webLang, 0010)%>');
+
+	var tmpss = '<%ejGetVoice(serviceStatus)%>'.match(/"([^"]+)"/);
+	var tmpan = '<%ejGetVoice(authName)%>'.match(/"([^"]+)"/);
+	tmpss = (tmpss==null ? '(null)' : tmpss[1]);
+	tmpan = (tmpan==null ? '(null)' : tmpan[1]);
+	$('#divTelNum').addClass(tmpss=='Up'?'green':'red');
+	$('#divTelNum br').after(tmpss=='Up'?tmpan:'<%ejGetOther(webLang, 0011)%>');
+});
+
+// lanHostList = [[iid,host,mac,ip,lease,source,userclass,active],...]
+var lanHostList = '<%ejGetOther(devInfo, lanHostList)%>';
+var hostList = lanHostList.split('|');
+lanHostList = [];
+for (var i=0; i<hostList.length; i++) {
+	var host = hostList[i].split('/');
+	host[1] = htmlDecode(host[1]);
+	lanHostList.push(host);
+}
+
+// staList = 'mac1,time1/mac2,time2'
+function staToHostList(staList) {
+	var hostList = [];
+	var sta = staList.split('/');
+	for (var i=0; i<sta.length; i++) {
+		var mac = sta[i].split(',')[0].toUpperCase();
+		for (var j=0; j<lanHostList.length; j++) {
+			if (mac == lanHostList[j][2]) {
+				var itm = 'Hostname: '+ lanHostList[j][1] +'\n'+
+						  'MAC: '     + lanHostList[j][2] +'\n'+
+						  'IP: '      + lanHostList[j][3] +'\n'+
+										lanHostList[j][5] +'\n';
+				hostList.push(itm);
+				break;
+			}
+		}
+	}
+	return hostList;
+}
+
+// enetList = 'eth1.0,00:26:18:CA:E3:5B|eth2.0,00:0C:29:22:3B:81'
+// ipv6List = '2001:db8::1,00:26:18:ca:e3:5b|2001:db8::2,00:0c:29:22:3b:81'
+function enetToHostList(enetList, ipv6List, eth) {
+	var hostList = [];
+	var enet = enetList.toUpperCase().split('|');
+	var ipv6 = ipv6List.toUpperCase().split('|');
+	eth = eth.toUpperCase();
+	for (var i=0; i<enet.length; i++) {
+		var net = enet[i].split(',');
+		for (var j=0; j<lanHostList.length; j++) {
+			if (net[0]==eth && net[1]==lanHostList[j][2]) {
+				var itm=''; if (lanHostList[j][1] != '')
+				itm += 'Hostname: '+ lanHostList[j][1] +'\n';
+				itm += 'MAC: '     + lanHostList[j][2] +'\n';
+				itm += 'IP: '      + lanHostList[j][3] +'\n';
+				for (var k=0; k<ipv6.length; k++) {
+					var ip6 = ipv6[k].split(',');
+					if (ip6[1] == net[1]) {
+						ipv6.splice(k, 1);
+						itm += 'IPv6: '+ ip6[0] +'\n';
+						break;
+					}
+				}
+				itm += lanHostList[j][5] +'\n';
+				hostList.push(itm);
+				break;
+			}
+		}
+
+		for (var j=0; j<ipv6.length; j++) {
+			var ip6 = ipv6[j].split(',');
+			if (net[0]==eth && net[1]==ip6[1]) {
+				var itm = 'MAC: ' + ip6[1] +'\n'+
+						  'IPv6: '+ ip6[0] +'\n';
+				hostList.push(itm);
+				break;
+			}
+		}
+	}
+	return hostList;
+}
+
+// mngList = 'active/host/mac/ip/source/userclass/vendorclass|...'
+function mngToHostList(mngList, userClass) {
+	var hostList = [];
+	mng = mngList.split('|');
+	for (var i=0; i<mng.length; i++) {
+		var info = mng[i].split('/');
+		for (var j=0; j<lanHostList.length; j++) {
+			if ((userClass.search(','+info[5]+',')>=0 || info[6]=='MSFT_IPTV') &&
+				info[2].toUpperCase()==lanHostList[j][2]) {
+				var itm = 'Hostname: '+ lanHostList[j][1] +'\n'+
+						  'MAC: '     + lanHostList[j][2] +'\n'+
+						  'IP: '      + lanHostList[j][3] +'\n'+
+										lanHostList[j][5] +'\n';
+				hostList.push(itm);
+				break;
+			}
+		}
+	}
+	return hostList;
+}
+// 
+</script>
+</head>
+
+<body>
+
+<%ejGetOther(webLang, header-gateway)%>
+
+<script>
+$(document).ready(function(){
+	$("table#status tr:odd").hide();
+	$("table#status tr:even td.status-link a").bind('click', function(event){
+		event.preventDefault();
+
+		var $this = $(this);
+		var $tr = $(this).closest("tr").next();
+
+		if($tr.css("display") == "none"){
+			$tr.show();
+			$this.html("<%ejGetOther(webLang, 0012)%>");
+		} else {
+			$tr.hide();
+			$this.html("<%ejGetOther(webLang, 0013)%>");
+		}
+
+		return false;
+	});
+});
+</script>
+
+<script>
+	$(document).ready(function(){
+
+		$(".tab").slideUp();
+		$("#tabip-01").slideDown();
+		$("#menu-ip-mode li:first a").addClass("active");
+
+		$("#menu-ip-mode  li a").click(function(){
+			var i = $(this).attr("rel");
+			$("#menu-ip-mode  li a").removeClass("active");
+			$(this).addClass("active");
+			$(".tab").slideUp();
+			$("#tabip-"+i).slideDown();
+			return false;
+		});
+	});
+</script>
+
+<div id="content">
+
+	<div class="wrap">
+
+		<div id="conteudo-gateway">
+
+<%ejGetOther(webLang, menu)%>
+
+			<div class="col-722 left">
+
+				<table id="status">
+					<tr>
+						<th>
+							<img src="../assets/_images/gateway/icon-fiber.png" alt="GPON" />
+							<span>GPON</span>
+						</th>
+						<td>
+							<div id="divOptical" class="status-line-2">
+								<strong>Link:</strong><br />
+							</div>
+							<div id="divOptRx" class="status-line-2">
+								<strong><%ejGetOther(webLang, 0014)%></strong><br />
+							</div>
+							<div id="divOptTx" class="status-line-2">
+								<strong><%ejGetOther(webLang, 0015)%></strong><br />
+							</div>
+						</td>
+							<td class="status-link">
+
+						</td>
+					</tr>
+					<tr></tr>
+					<tr>
+						<th>
+							<img src="../assets/_images/gateway/icon-internet.png" alt="Internet" />
+							<span>Internet</span>
+						</th>
+						<td>
+							<div id="divPpp" class="status-line-2">
+								<strong>PPP:</strong><br />
+							</div>
+						</td>
+						<td class="status-link">
+							<a href="#"><%ejGetOther(webLang, 0013)%></a>
+						</td>
+					</tr>
+					<tr>
+						<td class="text-title">
+						<div id="tabela_esquerda">
+						<ul>
+						<li class="li_par"><%ejGetOther(webLang, 0016)%></li>
+						<li id="liPpp" class="li_impar"></li>
+						</ul>
+						</div>
+						</td>
+						<td class="values" colspan="2">
+							<div id="menu-ip-mode">
+								<ul>
+								<li><a href="#" rel="01">IPv4</a></li>
+								<li><a href="#" rel="02">IPv6</a></li>
+								</ul>
+							</div>
+							<strong><%ejGetOther(webLang, 0017)%></strong>
+								<div id="tabip-01" class="tab">
+									<div id="tabela_esquerda">
+										<ul>
+										<li><%ejGetOther(webLang, 0018)%></li>
+										<li><%ejGetOther(webLang, 0019)%></li>
+										<li><%ejGetOther(webLang, 0020)%></li>
+										<li><%ejGetOther(webLang, 0021)%></li>
+										<li><%ejGetOther(webLang, 0022)%></li>
+										</ul>
+									</div>
+									<div id="tabela_direita">
+										<ul>
+										<li id="liLanIp"></li>
+										<li id="liWanIp"></li>
+										<li id="liWanGw"></li>
+										<li id="liDNS1"></li>
+										<li id="liDNS2"></li>
+										</ul>
+									</div>
+								</div>
+
+								<div id="tabip-02" class="tab">
+									<div id="tabela_esquerda">
+										<ul>
+										<li><%ejGetOther(webLang, 0023)%></li>
+										<li><%ejGetOther(webLang, 0024)%></li>
+										<li><%ejGetOther(webLang, 0025)%></li>
+										<li><%ejGetOther(webLang, 0020)%></li>
+										<li><%ejGetOther(webLang, 0021)%></li>
+										<li><%ejGetOther(webLang, 0022)%></li>
+										</ul>
+									</div>
+									<div id="tabela_direita">
+										<ul>
+										<li id="liLan6Pd"></li>
+										<li id="liLan6Local"></li>
+										<li id="liWan6Ip"></li>
+										<li id="liWan6Gw"></li>
+										<li id="liDns6Pri"></li>
+										<li id="liDns6Sec"></li>
+										</ul>
+									</div>
+								</div>
+						</td>
+					</tr>
+
+					<tr>
+						<th>
+							<img src="../assets/_images/gateway/wifi-locked2.png" alt="REDE WI-FI"/>
+							<span><%ejGetOther(webLang, 0026)%></span>
+						</th>
+						<td>
+							<div id="divWifi" class="status-line-1">
+							<strong>SSID: </strong><br/>
+							</div>
+						</td>
+						<td class="status-link">
+							<a href="#"><%ejGetOther(webLang, 0013)%></a>
+						</td>
+					</tr>
+					<tr>
+						<td class="text-title"><div id="tabela_esquerda">
+						<ul>
+						<li class="li_par"><%ejGetOther(webLang, 0027)%></li>
+						<li class="li_impar" id="liAuth">WPA2</li>
+						<li class="li_par">WPS:</li>
+						<li class="li_impar" id="liWps"><%ejGetOther(webLang, 0028)%></li>
+						<li class="li_par"><%ejGetOther(webLang, 0029)%></li>
+						<li class="li_impar" id="liHide"><%ejGetOther(webLang, 0030)%></li>
+						<li class="li_par"><%ejGetOther(webLang, 0031)%></li>
+						<li class="li_impar" id="liChan">6</li>
+						</ul>
+						</div></td>
+						<td colspan="1" class="bg-cinza">
+							<textarea id="txtWifi" rows="9" cols="57" readonly="readonly" class="text-left"></textarea>
+						</td>
+						<td id="qrcode-space" colspan="1" class="bg-cinza">
+								<div id="qrcode2"></div>
+								<script type="text/javascript">
+								//RTF_DEF, #13994
+								var str = 'WIFI:S:';
+								var ssid = '<%ejGetWl(wlSsid_main0)%>';
+								var pw = '<%ejGetWl(wlWpaPsk_main0)%>';
+								var auth = '<%ejGetWl(wlAuthMode_main0)%>';
+								var wep = '<%ejGetWl(wlWep_main0)%>';
+								var keys = new Array( '<%ejGetWl(wlKey1)%>', '<%ejGetWl(wlKey2)%>',
+													  '<%ejGetWl(wlKey3)%>', '<%ejGetWl(wlKey4)%>' );
+					  
+								if (auth=='open' && wep=='enabled') auth = 'wep';
+								auth = auth.replace(/psk/g, 'WPA').replace(' ', '/').replace('open', 'none').toUpperCase();
+								
+								if (auth == 'open') {
+									pw = '';
+								}
+								else {
+									if (auth == 'wep') {
+										var keyIdx = '<%ejGetWl(wlKeyIndex)%>';
+										if (keyIdx > 0) pw = keys[keyIdx-1];
+									}
+									else {
+										pw = '<%ejGetWl(wlAuthMode_main0)%>';
+									}
+								}
+								
+								str += ssid + ';T:' + auth + ';P:' + pw + ';;';
+								var qrcode = new QRCode(document.getElementById("qrcode2"), {
+									text: str,
+									width: 92,
+									height: 92,
+									colorDark : "#4f0077",
+									colorLight : "#f1f2f3",
+									correctLevel : QRCode.CorrectLevel.H
+								});
+								</script>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<img src="../assets/_images/gateway/wifi-locked2.png" alt="REDE WI-FI"/>
+							<span><%ejGetOther(webLang, 0032)%></span>
+						</th>
+						<td>
+							<div id="divWifi5" class="status-line-1 green">
+							<strong>SSID: </strong><br/>
+							</div>
+						</td>
+						<td class="status-link">
+							<a href="#"><%ejGetOther(webLang, 0013)%></a>
+						</td>
+					</tr>
+					<tr>
+						<td class="text-title"><div id="tabela_esquerda">
+						<ul>
+						<li class="li_par"><%ejGetOther(webLang, 0027)%></li>
+						<li class="li_impar" id="liAuth5">WPA2</li>
+						<li class="li_par">WPS:</li>
+						<li class="li_impar" id="liWps5"><%ejGetOther(webLang, 0028)%></li>
+						<li class="li_par"><%ejGetOther(webLang, 0029)%></li>
+						<li class="li_impar" id="liHide5"><%ejGetOther(webLang, 0030)%></li>
+						<li class="li_par"><%ejGetOther(webLang, 0031)%></li>
+						<li class="li_impar" id="liChan5">108</li>
+						</ul>
+						</div></td>
+						<td colspan="1" class="bg-cinza">
+							<textarea id="txtWifi5" rows="9" cols="57" readonly="readonly" class="text-left">
+							</textarea>
+						</td>
+						<td id="qrcode-space" colspan="1" class="bg-cinza qrcode">
+								<div id="qrcode5"></div>
+								<script type="text/javascript">
+								//RTF_DEF, #13994
+								var str5 = 'WIFI:S:';
+								var ssid5 = '<%ejGetWl(wlSsid_main1)%>';
+								var pw5 = '<%ejGetWl(wlWpaPsk_main1)%>';
+								var auth5 = '<%ejGetWl(wlAuthMode_main1)%>';
+								auth5 = auth5.replace(/psk/g, 'WPA').replace(' ', '/').replace('open', 'none').toUpperCase();
+								str5 += ssid5 + ';T:' + auth5 + ';P:' + pw5 + ';;';
+								
+								var qrcode = new QRCode(document.getElementById("qrcode5"), {
+									text: str5,
+									width: 92,
+									height: 92,
+									colorDark : "#4f0077",
+									colorLight : "#f1f2f3",
+									correctLevel : QRCode.CorrectLevel.H
+								});
+								</script>
+						</td>
+					</tr>
+
+					<tr>
+						<th>
+							<img src="../assets/_images/gateway/icon-local.png" alt="REDE LOCAL" />
+							<span><%ejGetOther(webLang, 0033)%></span>
+						</th>
+						<td>
+							<div class="status-line-2 lanHost">
+								<strong>LAN 1:</strong><br />
+							</div>
+							<div class="status-line-2 lanHost">
+								<strong>LAN 2:</strong><br />
+							</div>
+							<div class="status-line-2 lanHost">
+								<strong>LAN 3:</strong><br />
+							</div>
+							<div class="status-line-2 lanHost">
+								<strong>LAN 4:</strong><br />
+							</div>
+						</td>
+						<td class="status-link">
+							<a href="#"><%ejGetOther(webLang, 0013)%></a>
+						</td>
+					</tr>
+					<tr>
+					<td></td>
+						<td colspan="2" class="bg-cinza">
+							<textarea id="txtLanHost" rows="9" cols="57" readonly="readonly" class="text-left">
+							</textarea>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<img src="../assets/_images/gateway/icon-set-top.png" alt="TV" />
+							<span>TV</span>
+						</th>
+						<td>
+							<div id="divVod" class="status-line-1">
+								<strong></strong>
+							</div>
+						</td>
+						<td class="status-link">
+							<a href="#"><%ejGetOther(webLang, 0013)%></a>
+						</td>
+					</tr>
+					<tr>
+						<td class="text-title">
+						<div id="tabela_esquerda">
+						<ul>
+						<li class="li_par" style="font-weight: bold;"><%ejGetOther(webLang, 0034)%></li>
+						<li class="li_impar" id="liVodIp"></li>
+						<li class="li_par">Set-Top Boxes:</li>
+						<li class="li_impar" id="liStbNum"></li>
+						</ul>
+						</div>
+						</td>
+						<td colspan="2" class="bg-cinza">
+							<textarea id="txtMngDev" rows="9" cols="57" readonly="readonly" class="text-left"></textarea>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<img src="../assets/_images/gateway/icon-phone.png" alt="Phone" />
+							<span><%ejGetOther(webLang, 0035)%></span>
+						</th>
+						<td>
+							<div id="divTelStatus" class="status-line-2">
+								<strong><%ejGetOther(webLang, 0036)%></strong><br />
+							</div>
+							<div id="divTelNum" class="status-line-2">
+								<strong><%ejGetOther(webLang, 0037)%></strong><br />
+							</div>
+						</td>
+						<td class="status-link">
+						</td>
+					</tr>
+
+
+				</table>
+			</div><!--col-722-->
+
+			<div class="clear"></div>
+
+		</div><!--conteudo-->
+
+		<div class="clear"></div>
+
+	</div><!--wrap-->
+
+</div><!--content-->
+
+</body>
+</html>

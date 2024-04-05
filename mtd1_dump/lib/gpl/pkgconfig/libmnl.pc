@@ -1,0 +1,15 @@
+# libmnl pkg-config file
+
+prefix=/home/Public/_Build/release/BRCMGPON/RTF35XX/414L04A_gvt/targets/RTF3505VW_NV/fs.install
+exec_prefix=${prefix}
+libdir=/home/Public/_Build/release/BRCMGPON/RTF35XX/414L04A_gvt/targets/RTF3505VW_NV/fs.install/lib/gpl
+includedir=${prefix}/include
+
+Name: libmnl
+Description: Minimalistic Netlink communication library
+URL: http://netfilter.org/projects/libmnl/
+Version: 1.0.3
+Requires:
+Conflicts:
+Libs: -L${libdir} -lmnl
+Cflags: -I${includedir}

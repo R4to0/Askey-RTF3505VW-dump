@@ -1,0 +1,139 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<%ejGetOther(webLang, head)%>
+
+<script type="text/javascript" src="../assets/_js/games.js"></script>
+<script type="text/javascript" src="../assets/_js/settings-games.js"></script>
+
+<script nonce="VGVsZWZvbmljYS1jc3Atbm9uY2U=">
+
+
+var sessionKey = '<%ejGetOther(sessionKey)%>';
+var lanIp = '<%ejGet(ethIpAddress)%>';
+var lanMask = '<%ejGet(ethSubnetMask)%>';
+var mngHostList = '<%ejGetOther(devInfo, mngDevToHostList)%>';
+var pppPortMappingList='<%ejGetOther(PppPortMappingList)%>';
+var pppPortMappingIntf='<%ejGetOther(tefPppIntf)%>';
+var PPP_PORT_MAPPING_PREPENDED_DESCRIPTION="";
+var GAMES_PREPENDED_DESCRIPTION="";
+
+var gvtMode = '<%ejGetOther(devInfo, gvtMode)%>';
+
+var _0117 = '<%ejGetOther(webLang, 0117)%>';
+var _0149 = '<%ejGetOther(webLang, 0149)%>';
+var _0150 = '<%ejGetOther(webLang, 0150)%>';
+
+</script>
+
+</head>
+
+<body>
+
+<%ejGetOther(webLang, header-gateway)%>
+
+<div id="content">
+
+	<div class="wrap">
+
+		<div id="conteudo-gateway">
+
+<%ejGetOther(webLang, menu)%>
+
+			<div class="col-722 left">
+			
+				<h3 class="text-up"><%ejGetOther(webLang, 0151)%></h3>
+			
+				<table class="setupWifiTable" cellspacing="0" cellpadding="0">
+					<thead>
+						<tr>
+							<th colspan="2"><%ejGetOther(webLang, 0151)%></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr class="header">
+							<td colspan="2">
+								<%ejGetOther(webLang, 0152)%>
+							</td>
+						</tr>
+						<tr>
+							<td class="firstChild">
+								<%ejGetOther(webLang, 0153)%><br />
+								<select name="select" id="selGames"></select>
+							</td>
+							<td class="firstChild">
+								<strong><%ejGetOther(webLang, 0090)%></strong><br />
+							    <input type="text" name="textfield" id="txtPortMappingInternalClient" />
+							</td>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr>
+							<td colspan="2" class="red">
+								<span class="vmsg error"><%ejGetOther(webLang, 0154)%></span>
+								<span class="vmsg error"><%ejGetOther(webLang, 0155)%></span>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<a href="#" class="btn-default-orange-small right" id="aGamesCancel"><span><%ejGetOther(webLang, 0067)%></span></a>
+								<a href="#" class="btn-default-orange-small right" id="aGamesApply"><span><%ejGetOther(webLang, 0068)%></span></a>
+							</td>
+						</tr>
+					</tfoot>
+				</table>
+				
+				<table class="setupWifiTable" id="tblGames">
+						<thead>
+							<tr>
+								<th colspan="4"><%ejGetOther(webLang, 0156)%></th>
+							</tr>
+							<tr>
+								<th><%ejGetOther(webLang, 0157)%></th>
+								<th><%ejGetOther(webLang, 0090)%></th>
+								<th><%ejGetOther(webLang, 0158)%></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="cinza">Battlefield 4</td>
+								<td class="cinza center">192.168.15.2</td>
+								<td class="cinza center"><div class="actions">
+								<a class="action delete"><img class="img-actions" src="../assets/_images/gateway/trash.png"</a> 
+								</div></td>
+							</tr>
+							<tr>
+								<td class="cinza2">Team Fortress 2</td>
+								<td class="cinza2 center">192.168.15.9</td>
+								<td class="cinza2 center"><div class="actions">
+								<a class="action delete"><img class="img-actions" src="../assets/_images/gateway/trash.png"</a> 
+								</div></td>
+							</tr>
+							<tr>
+								<td class="cinza">GeoVision Webcam</td>
+								<td class="cinza center">192.168.15.2</td>
+								<td class="cinza center"><div class="actions">
+								<a class="action delete"><img class="img-actions" src="../assets/_images/gateway/trash.png"</a> 
+								</div></td>
+							</tr>
+						</tbody>
+					</table>
+				</div><!--tab-01-->
+				
+			
+			</div><!--col-722-->
+		
+			<div class="clear"></div>
+				
+		</div><!--conteudo-->
+		
+		<div class="clear"></div>
+		
+	</div><!--wrap-->
+	
+</div><!--content-->
+
+</body>
+</html>
